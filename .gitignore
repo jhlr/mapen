@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# pacote editable
+*.egg-info/
+
+# MLflow (experimentos regeneráveis)
+mlflow.db
+
+# modelos / dados derivados (regeráveis)
+models/
+data/
+data.zip
+
+# graphify (índice regenerável)
+graphify-out/
+
+# OS
+.DS_Store
