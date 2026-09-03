@@ -47,6 +47,10 @@ Não rodou — usuário recusou explicitamente segunda opinião cross-provider (
 ### Approach A: Fechar bem o que já existe (portfólio/acadêmico)
 Preencher as lacunas que o próprio `docs/crisp_dm.md` já mapeou — critérios de sucesso mensuráveis (fase 1), treinar o modelo 3.2 com validação temporal, validar as 13 redflags UF contra eventos conhecidos. Effort S, risco baixo. Fecha a maior lacuna sem depender de terceiro; não resolve nenhuma premissa de negócio.
 
+**Correção feita no `/plan-eng-review` (2026-09-03):** o plano original assumia sazonalidade mensal nos dois níveis. Verificado direto no dado: `data/consumo/epe/mercado_distribuicao.xlsx` (nível UF) tem só **1 ponto por UF por ano** (todo dezembro, 2004-2024) — não é mensal. `data/consumo/samp_balanco/samp-balanco.parquet` (nível distribuidora) É genuinamente mensal (545k linhas, todos os 12 meses, 2003-2026). Consequências:
+- Nível UF: corte temporal é por **ano**, não mês. ~21 anos × 27 UFs (~567 linhas) é pouco dado pra XGBoost/LightGBM superar o heurístico z-score já rodando — **modelo 3.2 fica só no nível distribuidora**; UF mantém o baseline heurístico (`src/redflags_perdas.py`) como versão final.
+- Critério de sucesso técnico em `docs/crisp_dm.md` reescrito de "% precisão/recall" pra "nº de redflags corroboradas por evento real encontrado" — não existe rótulo de fiscalização confirmada pra calcular percentual sem inventar número (viola honestidade epistêmica).
+
 ### Approach B: Perseguir o wedge real dentro da distribuidora
 Usar o Kickoff Neoenergia (12/09) para pedir dado de fiscalização confirmada (rótulo) + granularidade por cliente. Único caminho que gera produto realmente operacional (abordagem 3.1 supervisionada, alinhada à literatura). Effort L, risco alto — depende de terceiro liberar dado sensível, e concorre direto com ferramenta interna que provavelmente já existe.
 
