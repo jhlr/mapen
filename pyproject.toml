@@ -3,30 +3,24 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "mapen-cv"
+name = "mapen-analise"
 version = "0.1.0"
-description = "MAPEN - subprojeto de visao computacional: leitura e validacao de fotos de medidores (TrOCR/PP-OCR)"
+description = "MAPEN - camada de dados e modelagem de redflags de perda energetica"
 requires-python = ">=3.11"
 dependencies = [
-    "torch",
-    "torchvision",
-    "transformers",
-    "datasets",
-    "accelerate",
-    "sentencepiece",
-    "tokenizers",
     "pandas",
     "pyarrow",
     "duckdb",
-    "pillow",
-    "mlflow",
+    "openpyxl",
+    "matplotlib",
+    "huggingface_hub",
+    "xgboost",
+    "lightgbm",
+    "scikit-learn",
 ]
 
-[project.scripts]
-mapen-cv = "mapen_cv.cli:main"
+[project.optional-dependencies]
+dev = ["pytest"]
 
 [tool.setuptools]
-package-dir = {"" = "src"}
-
-[tool.setuptools.packages.find]
-where = ["src"]
+py-modules = []
