@@ -1,11 +1,15 @@
 """Redflags de perdas por área — protótipo.
 
 Cruza as duas fontes canônicas já baixadas:
-- EPE `MERCADO DISTRIBUICAO UF` → perda_total_GWh + consumo por UF/mês (2013→2024).
+- EPE `MERCADO DISTRIBUICAO UF` → perda_total_GWh + consumo por UF/**ano** (ponto único
+  em dezembro, 2004→2024 — a série é ANUAL, não mensal; ver docs/crisp_dm.md).
 - ANEEL SAMP-Balanço → perdas por distribuidora/mês (Saldo/Perdas na Distribuição,
-  valor medido; 2003→2026), e quando há Requisitos/Energia Vendida, perda relativa.
+  valor medido; 2003→2026), essa sim genuinamente mensal, e quando há
+  Requisitos/Energia Vendida, perda relativa.
 
-Redflag = perda relativa fora da faixa histórica (z-score sazonal por mês > 2).
+Redflag = perda relativa fora da faixa histórica (z-score > 2). Nível UF: z-score
+ano-a-ano (todos os pontos caem em dezembro, então "agrupar por mês" degenera pra
+"agrupar por UF"). Nível distribuidora: z-score sazonal por mês do ano, aí sim.
 
 Saídas:
 - data/analise/perdas_uf_mes.csv      (perda relativa UF)
@@ -67,11 +71,15 @@ def perda_dist() -> pd.DataFrame:
 
 
 def redflags(df: pd.DataFrame, key: str, value: str) -> pd.DataFrame:
-    """z-score sazonal (por mês do ano) do valor; flag se z > 2.
+    """z-score do valor por (key, mes); flag se z > 2.
 
     UF usa `perda_rel`; distribuidora usa `perda_GWh` absoluto (o SAMP mede
     perda com definição diferente da EPE — normalizar por vendida/disponibilidade
     distorce, ver docs/redflags_perdas_prototipo.md).
+
+    A EPE (UF) só tem ponto em dezembro (série anual), então pra UF isso é um
+    z-score ano-a-ano dentro da própria UF, não uma decomposição sazonal real.
+    Pra distribuidora (SAMP-Balanço, mensal de fato) é sazonal por mês do ano.
     """
     df = df.copy()
     df["mes"] = df["data"].dt.month
