@@ -29,9 +29,18 @@ from mapen_plataforma.application.casos_de_uso import (
     RegistrarLeitura,
     SolicitarDesligamento,
 )
+from mapen_plataforma.application.portas import ResultadosM3Indisponiveis
+from mapen_plataforma.application.resultados_m3 import (
+    LIMITE_ALERTAS_MAX,
+    LIMITE_ALERTAS_PADRAO,
+    ConsultarEconomiaM3,
+    ConsultarResumoM3,
+    ListarAlertasM3,
+)
 from mapen_plataforma.domain.comando import Motivo
 from mapen_plataforma.domain.credenciais import Principal
 from mapen_plataforma.domain.entidades import ErroDominio
+from mapen_plataforma.domain.resultados_m3 import FiltroAlertas, TipoAlerta
 from mapen_plataforma.interface.api import esquemas as e
 
 TAMANHO_MAX_CREDENCIAL = 256
@@ -56,6 +65,9 @@ class Servicos:
     alterar_configuracao: AlterarConfiguracao
     desligar: SolicitarDesligamento
     eventos: ListarEventos
+    resumo_m3: ConsultarResumoM3
+    alertas_m3: ListarAlertasM3
+    economia_m3: ConsultarEconomiaM3
 
 
 def _nao_autenticado() -> HTTPException:
@@ -83,6 +95,10 @@ def criar_app(servicos: Servicos) -> FastAPI:
     @app.exception_handler(ErroDominio)
     async def _erro_dominio(_: Request, erro: ErroDominio) -> JSONResponse:
         return JSONResponse(status_code=422, content={"detail": str(erro)})
+
+    @app.exception_handler(ResultadosM3Indisponiveis)
+    async def _m3_indisponivel(_: Request, erro: ResultadosM3Indisponiveis) -> JSONResponse:
+        return JSONResponse(status_code=503, content={"detail": f"resultados do M3 indisponiveis: {erro}"})
 
     @app.exception_handler(RequestValidationError)
     async def _validacao(_: Request, erro: RequestValidationError) -> JSONResponse:
@@ -218,5 +234,26 @@ def criar_app(servicos: Servicos) -> FastAPI:
         p: Autenticado, limite: Annotated[int, Query(ge=1, le=LIMITE_EVENTOS_MAX)] = 100
     ) -> list[e.EventoOut]:
         return [e.EventoOut.de(x) for x in servicos.eventos.executar(p.empresa_id, limite)]
+
+    @app.get("/modelos/resumo")
+    def resumo_modelos(p: Autenticado) -> e.ResumoOut:
+        return e.ResumoOut.de(servicos.resumo_m3.executar(p.empresa_id))
+
+    @app.get("/alertas")
+    def listar_alertas(
+        p: Autenticado,
+        equipamento: Annotated[str | None, Query(min_length=1, max_length=128)] = None,
+        tipo: TipoAlerta | None = None,
+        de: AwareDatetime | None = None,
+        ate: AwareDatetime | None = None,
+        limite: Annotated[int, Query(ge=1, le=LIMITE_ALERTAS_MAX)] = LIMITE_ALERTAS_PADRAO,
+        offset: Annotated[int, Query(ge=0)] = 0,
+    ) -> e.AlertasOut:
+        filtro = FiltroAlertas(equipamento, tipo, de, ate)
+        return e.AlertasOut.de(servicos.alertas_m3.executar(p.empresa_id, filtro, limite, offset))
+
+    @app.get("/economia")
+    def economia(p: Autenticado) -> e.EconomiaOut:
+        return e.EconomiaOut.de(servicos.economia_m3.executar(p.empresa_id))
 
     return app

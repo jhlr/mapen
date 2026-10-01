@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient
 
 from mapen_aconselhamento.infrastructure.tarifa_csv import carregar_tarifas
 from mapen_plataforma.application.casos_de_uso import EmitirCredenciaisDispositivo, ProvisionarEmpresa
-from mapen_plataforma.application.portas import Atuador
+from mapen_plataforma.application.portas import Atuador, ResultadosM3Repositorio
 from mapen_plataforma.domain.comando import Acao, ConfiguracaoSeguranca, assinar
 from mapen_plataforma.domain.entidades import Equipamento, Leitura, Sensor, Unidade
 from mapen_plataforma.infrastructure.banco import BancoDuckDB
@@ -21,6 +21,7 @@ from mapen_plataforma.infrastructure.repositorios import (
     SensorDuckDB,
     UnidadeDuckDB,
 )
+from mapen_plataforma.infrastructure.resultados_m3_json import ResultadosM3Json
 from mapen_plataforma.infrastructure.servicos import (
     AtuadorSimulado,
     DerivadorHmac,
@@ -33,6 +34,11 @@ from mapen_plataforma.interface.api.composicao import montar_provisionamento, mo
 AGORA = datetime(2026, 10, 5, 12, 0, tzinfo=UTC)
 SEGREDO_MESTRE = b"segredo-mestre-de-teste-0123456789"
 FUSO = "-03:00"
+
+
+def sem_m3(empresa: str = "emp-a") -> ResultadosM3Json:
+    """Repositorio de resultados do M3 apontando para um diretorio inexistente (testes que nao usam o M3)."""
+    return ResultadosM3Json(Path("/nonexistent-m3-dir"), empresa)
 
 
 def bearer(chave: str) -> dict[str, str]:
@@ -99,7 +105,12 @@ def _leituras_sinteticas(sensor_id: str, equipamento: str, watts: float) -> list
     ]
 
 
-def montar(habilitado: bool = True, caminho: str | Path = ":memory:", atuador: Atuador | None = None) -> Ambiente:
+def montar(
+    habilitado: bool = True,
+    caminho: str | Path = ":memory:",
+    atuador: Atuador | None = None,
+    resultados_m3: ResultadosM3Repositorio | None = None,
+) -> Ambiente:
     banco = BancoDuckDB(caminho)
     ids, derivador = GeradorSequencial(), DerivadorHmac(SEGREDO_MESTRE)
     provisionar, emitir = montar_provisionamento(banco, ids, derivador)
@@ -122,7 +133,8 @@ def montar(habilitado: bool = True, caminho: str | Path = ":memory:", atuador: A
     relogio = RelogioFixo(AGORA)
     usado = atuador or AtuadorSimulado()
     servicos = montar_servicos(
-        banco, relogio, GeradorSequencial("srv"), derivador, usado, CalculadoraM1(banco, carregar_tarifas())
+        banco, relogio, GeradorSequencial("srv"), derivador, usado, CalculadoraM1(banco, carregar_tarifas()),
+        resultados_m3 if resultados_m3 is not None else sem_m3(),
     )
     amb = Ambiente(
         TestClient(criar_app(servicos)), banco, relogio, usado, servicos, provisionar, emitir,

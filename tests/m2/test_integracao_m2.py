@@ -10,7 +10,7 @@ import pandas as pd
 import pytest
 from fastapi.testclient import TestClient
 
-from ambiente import Ambiente, bearer
+from ambiente import Ambiente, bearer, sem_m3
 from mapen_aconselhamento.domain.custo import custo_por_faixa
 from mapen_aconselhamento.infrastructure.duckdb_leituras import ler_leituras
 from mapen_aconselhamento.infrastructure.tarifa_csv import carregar_tarifas
@@ -89,7 +89,9 @@ def test_demo_cu_bems_ate_o_custo_real_do_m1(tmp_path: Path) -> None:
     ids, derivador = GeradorSequencial(), DerivadorHmac(b"m" * 32)
     provisionar, emitir = montar_provisionamento(banco, ids, derivador)
     segredos = {s.empresa_id: s for s in semear_demo(banco, provisionar, emitir)}
-    servicos = montar_servicos(banco, RelogioSistema(), ids, derivador, AtuadorSimulado(), CalculadoraM1(banco))
+    servicos = montar_servicos(
+        banco, RelogioSistema(), ids, derivador, AtuadorSimulado(), CalculadoraM1(banco), sem_m3(EMPRESA_DEMO)
+    )
     client = TestClient(criar_app(servicos))
     demo, outra = bearer(segredos[EMPRESA_DEMO].chave_api), bearer(segredos[EMPRESA_OUTRA].chave_api)
     assert [s["id"] for s in client.get("/sensores", headers=demo).json()] == [SENSOR_CU_BEMS]
