@@ -9,6 +9,7 @@ from mapen_modelos.application.detectar_anomalias import TIPO_LIGHTGBM, TIPO_ZSC
 from mapen_modelos.application.executar_m3 import ResultadoM3
 from mapen_modelos.application.treinar_e_avaliar import ResultadoTreino
 from mapen_modelos.domain.baseline import SEMANAS_MINIMAS
+from mapen_modelos.domain.comparacao import DESCRICAO_REGRA_CONTROLES, resumir_varredura
 from mapen_modelos.domain.injecao import TIPOS
 
 MAX_ALERTAS_LISTADOS = 15
@@ -186,8 +187,9 @@ def _secao_economia(r: ResultadoM3) -> list[str]:
     fracos = [e for e, c in ad.por_equipamento.items() if c.baseline_fraca]
     c = ad.por_equipamento[red.equipamento]
     alvo = 100.0 * red.fracao
-    erros = np.array([v - alvo for v in r.varredura_recuperado_pct.values()])
-    dentro = int((np.abs(erros) <= ad.tolerancia_pp).sum())
+    v_base = resumir_varredura(r.varredura.baseline_pct, alvo, ad.tolerancia_pp)
+    v_ctrl = resumir_varredura(r.varredura.controle_pct, alvo, ad.tolerancia_pp)
+    cc = ad.por_equipamento_controle[red.equipamento]
     linhas = [
         "## 6. Antes x depois com baseline normalizado (validacao de METODO)",
         "",
@@ -200,23 +202,29 @@ def _secao_economia(r: ResultadoM3) -> list[str]:
         f"{'dentro' if ad.dentro_da_tolerancia else 'FORA'} da tolerancia.",
         f"- `{red.equipamento}`: antes {c.kwh_antes:.1f} kWh, depois {c.kwh_depois:.1f} kWh, contrafactual {c.kwh_contrafactual:.1f} kWh, "
         f"fator de nivel {c.fator_nivel:.3f}, economia {c.economia_kwh:.1f} kWh.",
-        f"- Varredura: a mesma reducao de {alvo:.0f}% aplicada, uma por vez, a cada um dos {len(erros)} equipamentos modelados: "
-        f"{dentro} de {len(erros)} recuperam dentro de +-{ad.tolerancia_pp} pp; erro absoluto mediano {np.median(np.abs(erros)):.2f} pp, "
-        f"maximo {np.abs(erros).max():.2f} pp. A deriva semanal real de nivel (ocupacao, calendario letivo) nao e normalizada pelo "
-        "baseline sazonal e domina o erro.",
+        f"- Varredura (baseline normalizado): a mesma reducao de {alvo:.0f}% aplicada, uma por vez, a cada um dos {v_base.avaliados} "
+        f"equipamentos modelados: {v_base.dentro_da_tolerancia} de {v_base.avaliados} recuperam dentro de +-{ad.tolerancia_pp} pp; "
+        f"erro absoluto mediano {v_base.erro_abs_mediano_pp:.2f} pp, maximo {v_base.erro_abs_maximo_pp:.2f} pp. A deriva semanal real "
+        "de nivel (ocupacao, calendario letivo) nao e normalizada pelo baseline sazonal.",
+        f"- Com grupo-controle (diferenca em diferencas; controles = {DESCRICAO_REGRA_CONTROLES}): alvo `{red.equipamento}` recupera "
+        f"**{ad.recuperado_controle_pct:.2f}%** com controles {', '.join(cc.controles) or 'nenhum'}: "
+        f"{'dentro' if ad.dentro_da_tolerancia_controle else 'FORA'} da tolerancia. Varredura: {v_ctrl.dentro_da_tolerancia} de "
+        f"{v_ctrl.avaliados} dentro de +-{ad.tolerancia_pp} pp; erro absoluto mediano {v_ctrl.erro_abs_mediano_pp:.2f} pp, "
+        f"maximo {v_ctrl.erro_abs_maximo_pp:.2f} pp; sem controle valido: {', '.join(v_ctrl.sem_resultado) or 'nenhum'}.",
         f"- Controle (sem reducao): economia espuria por equipamento, |media| {ctrl_abs.mean():.2f}%, maximo {ctrl_abs.max():.2f}%.",
         f"- Baseline fraca (menos de {SEMANAS_MINIMAS} semanas completas): "
         f"{', '.join(fracos) if fracos else 'nenhum equipamento'}. Semanas completas no treino: "
         f"{next(iter(r.treino.modelos.values())).baseline.semanas_completas}.",
         "",
-        "| Equipamento | kWh antes | kWh depois | Economia % (com reducao no alvo) | Economia % (controle) | Recuperado % (reducao so neste equipamento) | Baseline fraca |",
-        "|---|---|---|---|---|---|---|",
+        "| Equipamento | kWh antes | kWh depois | Economia % (com reducao no alvo) | Economia % (controle) | Recuperado % baseline (reducao so neste equipamento) | Recuperado % grupo-controle | Controles | Baseline fraca |",
+        "|---|---|---|---|---|---|---|---|---|",
     ]
     for eq, x in ad.por_equipamento.items():
         k = r.controle.por_equipamento[eq]
         linhas.append(
             f"| {eq} | {x.kwh_antes:.1f} | {x.kwh_depois:.1f} | {x.economia_pct:.2f} | {k.economia_pct:.2f} | "
-            f"{r.varredura_recuperado_pct[eq]:.2f} | {'sim' if x.baseline_fraca else 'nao'} |"
+            f"{r.varredura.baseline_pct[eq]:.2f} | {r.varredura.controle_pct[eq]:.2f} | "
+            f"{', '.join(r.varredura.controles[eq]) or 'sem controle valido'} | {'sim' if x.baseline_fraca else 'nao'} |"
         )
     return [*linhas, ""]
 

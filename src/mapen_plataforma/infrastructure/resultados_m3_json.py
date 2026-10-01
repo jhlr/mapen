@@ -148,6 +148,24 @@ class _BaselineFraca(_Modelo):
     semanas_completas_treino: Contagem
 
 
+class _MetodoAntesDepois(_Modelo):
+    metodo: Texto
+    recuperado_pct_alvo: Finito | None
+    dentro_da_tolerancia_alvo: bool
+    equipamentos_avaliados: int
+    equipamentos_dentro_da_tolerancia: int
+    equipamentos_sem_resultado: list[Texto]
+    erro_abs_mediano_pp: Finito | None
+    erro_abs_maximo_pp: Finito | None
+
+
+class _AntesDepoisResumo(_Modelo):
+    equipamento_alvo: Texto
+    injetado_pct: Finito
+    tolerancia_pp: Annotated[float, Field(allow_inf_nan=False, gt=0)]
+    metodos: list[_MetodoAntesDepois]
+
+
 class _Resumo(_Modelo):
     versao_esquema: Literal[1]
     sensor_id: Texto
@@ -156,6 +174,7 @@ class _Resumo(_Modelo):
     shap: _Shap
     benchmark_sintetico: _Benchmark
     baseline_fraca: _BaselineFraca
+    antes_depois: _AntesDepoisResumo | None = None  # opcional: comparacao dos dois metodos; a API ainda nao a expoe
 
     def dominio(self) -> ResumoM3:
         d, m, s, b = self.dados, self.mae, self.shap, self.benchmark_sintetico
@@ -257,6 +276,9 @@ class _EconomiaEq(_Modelo):
     recuperado_pct_com_reducao_sintetica: Finito | None
     reducao_sintetica_aplicada: bool
     baseline_fraca: bool
+    recuperado_pct_controle: Finito | None = None
+    economia_pct_controle_sem_reducao: Finito | None = None
+    controles_usados: list[Texto] | None = None
 
 
 class _Reducao(_Modelo):
@@ -276,6 +298,10 @@ class _Economia(_Modelo):
     recuperado_pct: Finito | None
     tolerancia_pp: Annotated[float, Field(allow_inf_nan=False, gt=0)]
     dentro_da_tolerancia: bool
+    metodo_recuperado_pct: Texto | None = None
+    metodo_controle: Texto | None = None
+    recuperado_pct_controle: Finito | None = None
+    dentro_da_tolerancia_controle: bool | None = None
     equipamentos: list[_EconomiaEq]
 
     def dominio(self) -> EconomiaM3:

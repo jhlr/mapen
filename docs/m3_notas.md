@@ -172,3 +172,28 @@ Mutantes equivalentes (sobrevivem por desenho, nao por lacuna), todos de grupos 
 Todos os grupos (401, tenant, esquema, artefato ausente, filtros/limites, veredito derivado) provados vermelhos. Nenhum grupo ficou sem prova.
 
 Estado final (2026-10-01): `gtimeout 900 .venv/bin/pytest -W error -q`: 313 passed (304 anteriores + 2 de contrato + 7 casos novos da API); mypy strict em todos os pacotes e em `tests/m1`, `tests/m2`, `tests/m3`, `tests/contratos`: `Success: no issues found in 101 source files`; `lint-imports`: 9 kept, 0 broken.
+
+## Antes x depois com grupo-controle
+
+Dono: `domain/comparacao.py` (funcoes puras); `CompararAntesDepois` orquestra e `ExecutarM3` publica. O metodo antigo (baseline normalizado) continua no codigo e nos artefatos para comparacao.
+
+**Metodo (diferenca em diferencas multiplicativa).** Economia % = `100 * (1 - R_tratado / R_controle)`, com `R = kWh depois / kWh antes`; o controle e a soma dos kWh dos controles escolhidos (so horas validas em todas as series). Contrafactual = `kWh_antes_tratado * R_controle`. A deriva de carga comum a todo o andar (ocupacao, calendario) entra nos dois lados da razao e cancela.
+
+**Regra de escolha dos controles (`selecionar_controles`, fixada antes de ver o resultado, nao ajustada).** Candidatos = os outros equipamentos modelados do mesmo andar (um unico sensor), sem o tratado e, no varrimento, sem nenhum equipamento com reducao sintetica. Pontuacao = Pearson entre os perfis semanais (media horaria por semana de 168 h, semana valida com >= 90% das horas) do pre-periodo inteiro (2018-07-01 a 2018-11-18, antes da reducao). Fica quem tem correlacao >= 0.5; os 3 maiores; desempate por nome. Nenhum candidato passando = sem controle valido (resultado NaN com motivo, nunca um numero inventado). O tratado e excluido por construcao (teste dedicado).
+
+**Resultado real (CU-BEMS 2018 Floor2, reducao sintetica de 15% em cada um dos 19 equipamentos, um por vez, tolerancia +-3 pp declarada antes):**
+
+| Metodo | Dentro de +-3 pp | Erro abs. mediano | Erro abs. maximo | Alvo `z1_Light` |
+|---|---|---|---|---|
+| Baseline normalizado (antigo) | 7 de 19 | 6.71 pp | 18.90 pp | 27.18% (fora) |
+| Diferenca em diferencas com controle (novo) | 12 de 19 | 1.88 pp | 13.09 pp | 17.14% (dentro) |
+
+- Todos os 19 equipamentos acharam controle valido (`sem controle valido: nenhum`). Nenhuma baseline fraca (18 semanas completas de treino), entao nenhum equipamento marcado.
+- **O novo metodo ainda falha em 7 de 19**: z1_Plug (10.20%), z2_AC10 (19.37%), z2_AC8 (19.28%), z2_Light (11.58%), z2_Plug (28.09%), z3_Light (9.59%), z3_Plug (8.12%). Nao e uma vitoria completa: a tolerancia nao foi alterada. z3_Plug passava no metodo antigo e saiu no novo.
+- Controle sem reducao: economia espuria |media| 3.41% (antigo: 7.56%), maxima 15.41% (antigo: 22.24%, z2_Plug). Causa do residuo nao investigada; hipotese: controles que so correlacionam parcialmente com o tratado e equipamentos de pouco consumo (z2_Plug, 52 kWh no antes).
+- Os controles de cada equipamento estao na ultima tabela de `data/m3/relatorio_m3.md` e em `economia.json` (`controles_usados`).
+- Prova vermelha do teste (sem git): copia do teste em scratchpad com a afirmacao de recuperacao apontada para o metodo antigo: `1 failed` (obtido -19.2% contra 15% esperado, deriva sintetica comum de +40%); com o metodo novo passa. Testes: `tests/m3/domain/test_m3_controle.py` (8) e 1 de integracao.
+
+**Artefatos.** `economia.json` e `resumo.json` mantem todos os campos e ganham campos opcionais: em `economia.json`, `metodo_recuperado_pct`, `metodo_controle`, `recuperado_pct_controle`, `dentro_da_tolerancia_controle` e, por equipamento, `recuperado_pct_controle`, `economia_pct_controle_sem_reducao`, `controles_usados`; em `resumo.json`, o bloco `antes_depois` (por metodo: recuperado no alvo, dentro no alvo, equipamentos dentro da tolerancia, sem resultado, erro mediano e maximo). O esquema estrito da plataforma (`extra="forbid"`) recusaria os campos novos; foram adicionados como opcionais em `src/mapen_plataforma/infrastructure/resultados_m3_json.py` (so validacao; o dominio da plataforma e a API ainda nao os expoem; "Contrato M3" nao mudou).
+
+**Limites.** Os controles sao do mesmo andar e do mesmo periodo, entao a deriva especifica de um equipamento nao e removida; correlacao de perfil semanal com 20 semanas e uma estimativa ruidosa; sem temperatura. Continua sendo validacao de metodo com reducao sintetica, nao economia real.
