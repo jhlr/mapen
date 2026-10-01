@@ -32,17 +32,17 @@ py-modules = []
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["mapen_aconselhamento*", "mapen_plataforma*"]
+include = ["mapen_aconselhamento*", "mapen_plataforma*", "mapen_modelos*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 
 [tool.mypy]
 strict = true
-files = ["src/mapen_aconselhamento", "src/mapen_plataforma", "tests/m1", "tests/m2"]
+files = ["src/mapen_aconselhamento", "src/mapen_plataforma", "src/mapen_modelos", "tests/m1", "tests/m2", "tests/m3"]
 
 [tool.importlinter]
-root_packages = ["mapen_aconselhamento", "mapen_plataforma"]
+root_packages = ["mapen_aconselhamento", "mapen_plataforma", "mapen_modelos"]
 include_external_packages = true
 
 [[tool.importlinter.contracts]]
@@ -82,3 +82,42 @@ name = "M2 dominio e aplicacao sem I/O nem framework"
 type = "forbidden"
 source_modules = ["mapen_plataforma.domain", "mapen_plataforma.application"]
 forbidden_modules = ["fastapi", "starlette", "pydantic", "duckdb", "pandas", "numpy", "httpx", "mapen_aconselhamento"]
+
+[[tool.importlinter.contracts]]
+name = "M3 camadas: interface > infrastructure > application > domain"
+type = "layers"
+layers = [
+    "mapen_modelos.interface",
+    "mapen_modelos.infrastructure",
+    "mapen_modelos.application",
+    "mapen_modelos.domain",
+]
+
+[[tool.importlinter.contracts]]
+name = "M3 dominio e aplicacao sem I/O, modelos, banco nem camadas externas do M1"
+type = "forbidden"
+source_modules = ["mapen_modelos.domain", "mapen_modelos.application"]
+forbidden_modules = [
+    "duckdb",
+    "lightgbm",
+    "shap",
+    "yaml",
+    "httpx",
+    "fastapi",
+    "starlette",
+    "mapen_plataforma",
+    "mapen_aconselhamento.infrastructure",
+    "mapen_aconselhamento.interface",
+]
+
+[[tool.importlinter.contracts]]
+name = "M3 nao depende da plataforma"
+type = "forbidden"
+source_modules = ["mapen_modelos"]
+forbidden_modules = ["mapen_plataforma"]
+
+[[tool.importlinter.contracts]]
+name = "M1 e M2 nao dependem do M3"
+type = "forbidden"
+source_modules = ["mapen_aconselhamento", "mapen_plataforma"]
+forbidden_modules = ["mapen_modelos"]
