@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "mapen-api",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-c", "set -a; . dashboard/.env.local; set +a; exec .venv/bin/python -m uvicorn --factory mapen_plataforma.interface.api.composicao:criar_app_padrao --port 8000"],
+      "port": 8000
+    },
+    {
+      "name": "mapen-dashboard",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-c", "cd dashboard && exec npm run dev -- --port 3000"],
+      "port": 3000
+    }
+  ]
+}
