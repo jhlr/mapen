@@ -197,3 +197,96 @@ Dono: `domain/comparacao.py` (funcoes puras); `CompararAntesDepois` orquestra e 
 **Artefatos.** `economia.json` e `resumo.json` mantem todos os campos e ganham campos opcionais: em `economia.json`, `metodo_recuperado_pct`, `metodo_controle`, `recuperado_pct_controle`, `dentro_da_tolerancia_controle` e, por equipamento, `recuperado_pct_controle`, `economia_pct_controle_sem_reducao`, `controles_usados`; em `resumo.json`, o bloco `antes_depois` (por metodo: recuperado no alvo, dentro no alvo, equipamentos dentro da tolerancia, sem resultado, erro mediano e maximo). O esquema estrito da plataforma (`extra="forbid"`) recusaria os campos novos; foram adicionados como opcionais em `src/mapen_plataforma/infrastructure/resultados_m3_json.py` (so validacao; o dominio da plataforma e a API ainda nao os expoem; "Contrato M3" nao mudou).
 
 **Limites.** Os controles sao do mesmo andar e do mesmo periodo, entao a deriva especifica de um equipamento nao e removida; correlacao de perfil semanal com 20 semanas e uma estimativa ruidosa; sem temperatura. Continua sendo validacao de metodo com reducao sintetica, nao economia real.
+
+## Estudo de previsao (2026-10-01)
+
+Motivo: o LightGBM do M3 usa `kw_lag1`, entao e um nowcast de 1 passo, e 59.5% do SHAP esta nessa feature (D7). Comparar o MAE dele (0.2051 kW) com o baseline sazonal (0.6113 kW) nao e justo. Este estudo compara previsores sob um protocolo de previsao de verdade.
+
+### Pre-registro (escrito ANTES de rodar qualquer previsor)
+
+**Protocolo.** Por equipamento (os 19 modelados), mesmo subconjunto, mesmas dobras walk-forward (5 dobras de 2 semanas apos 8 semanas de treino inicial, dentro das 18 semanas 2018-07-01 a 2018-11-04) e o mesmo periodo reservado (2018-11-04 a 2018-12-02, 4 semanas). Origem da previsao = meia-noite; horizonte = as 24 horas do dia seguinte. Cada hora alvo `t` so pode usar observacoes de `t - 24 h` para tras.
+
+**Regra de defasagem (obrigatoria).** Nenhuma feature da hora alvo `t` pode depender de um valor com defasagem menor que 24 h em relacao a `t`. Features permitidas: calendario (hora, dia da semana, feriado, hora da semana = tipo de dia x hora, com feriado como domingo), `kw_lag24`, `kw_lag48`, `kw_lag168`, media e desvio de 24 h calculados sobre a serie deslocada em 24 h. Sem `kw_lag1`. Cada hora alvo usa so dados disponiveis ate a meia-noite do seu dia. Guard: teste que perturba os valores com defasagem < 24 h e falha se alguma feature mudar (prova vermelha com uma feature violadora).
+
+**Candidatos** (todos atras da porta `Previsor`): (1) seasonal-naive-168 e seasonal-naive-24; (2) baseline sazonal existente (media por hora da semana, feriado = domingo, ajustada na janela de treino); (3) Ridge com calendario one-hot, lags 24/48/168 e media/desvio 24 h sobre a serie deslocada 24 h (alpha escolhido dentro de cada ajuste por validacao cruzada temporal, `TimeSeriesSplit` de 5 particoes com folga de 24 h, grade 0.1, 1, 10, 100, so com dados anteriores ao fim do treino; o periodo reservado nunca participa); (4) ETS (statsmodels `ETSModel`, erro aditivo, sazonalidade aditiva de periodo 24, uma serie por tipo de dia: dia util, sabado, domingo/feriado; dias com qualquer hora ausente sao descartados da serie do tipo, nada e interpolado); (5) LightGBM por equipamento, hiperparametros ja existentes, so com as features permitidas.
+
+**Metrica.** Sobre as horas do periodo reservado com alvo valido e previsao de todos os candidatos (suporte comum; o numero de horas e reportado). MAE, RMSE e MASE; MASE = MAE / escala, escala = MAE dentro da amostra do seasonal-naive-168 na janela de treino (pares com os dois valores validos). Todos os modelos sao ajustados nas 18 semanas de treino e avaliados nas 4 semanas reservadas; as dobras walk-forward sao desenvolvimento (reportadas, nao decidem) e fornecem o sigma do residuo fora da amostra para o benchmark. Previsao fisica: valores negativos sao truncados em 0 kW para todos os candidatos.
+
+**Regra de decisao.** "Adotado para previsao" so se, no periodo reservado: (a) a mediana (entre equipamentos) do MASE do modelo e pelo menos 10% menor que a do seasonal-naive-168 (mediana_modelo <= 0.90 x mediana_naive168), E (b) o modelo vence o seasonal-naive-168 (MASE menor no mesmo equipamento) em pelo menos 12 dos 19 equipamentos. Se varios passam, vale o mais simples dentro de 5% da melhor mediana entre os que passaram. Se nenhum passa, adota-se o modelo mais simples cuja mediana de MASE esteja dentro de 5% da melhor mediana de todos os candidatos (mediana <= 1.05 x melhor). Ordem de simplicidade: seasonal-naive-24 < seasonal-naive-168 < baseline sazonal < Ridge < ETS < LightGBM. Contagem de vitorias por melhor-de-todos tambem e reportada, mas nao entra na regra.
+
+**SHAP / D7 (LightGBM de previsao).** Participacao no |SHAP| medio no periodo reservado, por grupo (calendario, lags, janela movel) e por feature; flag D7 se uma unica feature passa de 50%.
+
+**Benchmark sintetico.** Mesmas anomalias injetadas (mesma semente e mesmo gerador do benchmark existente), detector = |residuo do previsor adotado| / sigma >= 4, sigma = desvio dos residuos fora da amostra das dobras walk-forward. Rotulado SINTETICO.
+
+### Implementacao (arquitetura em camadas, mesmas quatro camadas do M3)
+
+| Arquivo | Camada | Dono de |
+|---|---|---|
+| `domain/previsao.py` | domain | protocolo (origem meia-noite, 24 h), features permitidas, `naive_sazonal`, guard `defasagem_violadora` |
+| `domain/metricas_previsao.py` | domain | MAE, RMSE, MASE, suporte comum, `decidir_adocao` (a regra pre-registrada), participacao SHAP por grupo |
+| `application/portas.py` | application | porta `Previsor` (e `PrevisorExplicavel`) |
+| `application/estudo_previsao.py` | application | `EstudoPrevisao`: dono do ciclo (dobras, reservado, decisao, SHAP, benchmark) |
+| `application/benchmark_previsao.py`, `application/injecao_periodo.py` | application | benchmark sintetico com residuo do previsor; injecao compartilhada com `BenchmarkSintetico` (consolidada, mesmo gerador, mesma semente) |
+| `infrastructure/previsores_simples.py`, `previsor_ridge.py`, `previsor_ets.py`, `previsor_lightgbm.py` | infrastructure | adaptadores `Previsor` (naive 24/168, baseline sazonal, Ridge, ETS, LightGBM) |
+| `interface/artefatos_previsao.py`, `interface/cli_previsao.py` | interface | `previsao.json`, `relatorio_previsao.md` e CLI (`python -m mapen_modelos.interface.cli_previsao`) |
+
+`sklearn` e `statsmodels` entraram na lista de modulos proibidos em domain/application (import-linter). `statsmodels` foi adicionado a `pyproject.toml`; `sklearn.*` e `statsmodels.*` ganharam `ignore_missing_imports` no mypy (as duas bibliotecas nao publicam `py.typed`).
+
+Decisoes de implementacao do ETS: periodo 168 descartado (168 estados sazonais, 18 ciclos de treino, estimacao instavel e lenta); usado periodo 24 com uma serie por tipo de dia (dia util, sabado, domingo/feriado), dias com qualquer hora ausente descartados da serie do tipo (sem interpolacao), parametros estimados uma vez por tipo no treino e filtro reaplicado (`smooth`) a cada dia alvo sobre os dias anteriores. Serie de treino constante (log de variancia zero, `RuntimeWarning` do statsmodels): o previsor repete o ultimo dia do tipo. O statsmodels emitia `ConvergenceWarning` com o `maxfun` padrao (15000 avaliacoes de funcao, gradiente numerico de ~27 parametros; reproduzido em z2_Light, dia util); a causa foi corrigida com `maxiter=1000`, `maxfun=100000` e nao ha `filterwarnings`. Nota: o statsmodels registra `simplefilter("always", ConvergenceWarning)` ao importar, entao `-W error` nao transforma esse aviso em erro; o adaptador conta ajustes sem convergencia (`ajustes_sem_convergencia`) e o CLI os poe em `avisos`. Execucao real: 0 ajustes sem convergencia. Importar `statsmodels` e `sklearn` sob `-W error` nao emite aviso nenhum.
+
+### Resultados reais (execucao de 2026-10-01, ~5 min; relatorio completo em `data/m3/relatorio_previsao.md`, gitignored)
+
+Periodo reservado (2018-11-04 a 2018-12-02), 19 equipamentos, 12.571 horas-equipamento no suporte comum (alvo valido e previsao de todos os candidatos). Modelos ajustados nas 18 semanas de treino, sem reajuste durante o periodo reservado.
+
+| Modelo | MAE agregado (kW) | Mediana MASE | Mediana MASE (dobras, desenvolvimento) | Vitorias vs naive-168 | Melhor de todos em |
+|---|---|---|---|---|---|
+| seasonal-naive-24 | 0.5006 | 0.7293 | 0.9201 | 9/19 | 9 |
+| **seasonal-naive-168** | **0.1185** | **0.5089** | 0.8970 | - | 9 |
+| baseline sazonal (media por hora da semana) | 0.5107 | 1.7505 | 1.1632 | 0/19 | 0 |
+| Ridge | 0.3089 | 0.6941 | 0.9584 | 7/19 | 0 |
+| ETS-24 por tipo de dia | 0.4044 | 0.8217 | 1.2096 | 2/19 | 0 |
+| LightGBM (lag >= 24 h) | 0.2536 | 0.6602 | 0.9740 | 4/19 | 1 |
+
+MAE, RMSE e MASE por modelo e equipamento: `previsao.json` (`metricas_reservado`) e `relatorio_previsao.md`.
+
+**Desfecho da regra pre-registrada: nenhum candidato passou.** Nenhum chega a 10% abaixo da mediana do seasonal-naive-168 (todos estao acima dela) e o melhor ganho de vitorias e 9 de 19 (naive-24, e Ridge 7 de 19), longe de 12. O LightGBM NAO ganha: mediana de MASE 0.6602 contra 0.5089 do naive-168 (30% pior), 4 vitorias de 19. Pela regra de fallback, o modelo adotado e o **seasonal-naive-168**, que tambem e o de melhor mediana.
+
+Leitura honesta. (1) O 0.2051 kW contra 0.6113 kW do M3 era uma comparacao entre nowcast e baseline estatico; sob protocolo de previsao do dia seguinte, o baseline sazonal estatico e o PIOR candidato (mediana de MASE 1.75), e o naive-168 (MAE agregado 0.1185 kW) bate todos. (2) A causa e deriva de regime, nao bug: p.ex. z2_AC5 liga e desliga em horarios que mudaram durante os 5 meses; a media por hora da semana de 18 semanas mistura os dois regimes (esperado 0.7 kW em horas em que a carga real e 0), enquanto o naive-168 copia a semana passada. Os candidatos treinados uma vez nas 18 semanas nao se adaptam; o naive-168 se adapta por construcao. (3) Isso e uma propriedade do protocolo pre-registrado (modelos fixos no periodo reservado), nao prova que um modelo com reajuste semanal tambem perderia; nao testado (ver "Nao feito"). (4) Em z2_AC10, AC2, AC3, AC4, AC6 e AC8 o naive-24 fica abaixo do naive-168 em MASE (0.50 a 0.57 contra 0.61 a 0.71), mas isso so da 9 vitorias de 19 e a mediana continua pior.
+
+**SHAP / D7 (LightGBM de previsao, periodo reservado, 12.571 horas-equipamento).** Calendario 32.0% (hora 12.2%, dia da semana 9.5%, hora da semana 10.0%, feriado 0.3%), lags 61.5% (`kw_lag168` 30.2%, `kw_lag24` 23.9%, `kw_lag48` 7.3%), janela movel 6.6%. **O flag D7 de feature unica > 50% NAO dispara no agregado** (a maior e `kw_lag168`, 30.2%): a tautologia de `kw_lag1` (59.5%) some sem o lag 1. Por equipamento dispara em 6 de 19 (z2_AC10, AC5, AC6, AC7, AC8, AC9). Nota: o LightGBM sem lag 1 tambem nao passa o naive-168; a atribuicao ficar mais equilibrada nao o torna melhor.
+
+**Benchmark SINTETICO com o residuo do previsor adotado (seasonal-naive-168).** Mesma semente (20181104), mesmos 114 eventos, mesmo limiar |z| >= 4, sigma = desvio do residuo fora da amostra nas 5 dobras (um valor por equipamento). Rotulado SINTETICO: nao e precisao/recall em dado real.
+
+| Detector | Pico | Elevacao fora de horario | Ligado continuo | Total | Falso alarme |
+|---|---|---|---|---|---|
+| z-score sazonal (existente) | 38/38 (100%) | 19/38 (50.0%) | 27/38 (71.1%) | 84/114 (73.7%) | 114/9145 (1.2%) |
+| LightGBM nowcast, lag 1 (existente) | 38/38 (100%) | 22/38 (57.9%) | 30/38 (78.9%) | 90/114 (78.9%) | 45/9145 (0.5%) |
+| residuo do seasonal-naive-168 | 38/38 (100%) | 0/38 (0.0%) | 17/38 (44.7%) | 55/114 (48.2%) | 3/7266 (0.04%) |
+
+Leitura: o naive-168 e um detector muito conservador (poucos falsos alarmes) e quase cego as elevacoes de madrugada, porque um sigma unico por equipamento, calibrado no residuo diurno, e grande demais para o ruido de madrugada (os dois detectores existentes usam sigma por hora da semana ou nowcast). A zona excluida do falso alarme e maior que a do benchmark original (um evento contamina as horas p, p+1 a p+48 e p+168, porque a janela dos features cobre [t-47, t-24]); por isso o denominador e 7.266, nao 9.145, e o falso alarme nao e comparavel ponto a ponto. Compartilhar o gerador de eventos deixou os numeros do benchmark original intactos (testes de integracao existentes verdes).
+
+### Esquema de `data/m3/previsao.json` (gitignored; NAO e lido pela API ainda)
+
+`{versao_esquema: 1, sensor_id, natureza: "estudo_previsao_dia_seguinte", aviso, protocolo{origem, horizonte_h, defasagem_minima_h, treino{inicio,fim}, reservado{inicio,fim}, dobras_walk_forward, referencia_mase}, equipamentos[], sem_carga[], modelos[], metricas_reservado{modelo{equipamento{mae_kw, rmse_kw, mase, horas}}}, mae_agregado_kw{modelo}, mediana_mase_reservado{modelo}, mediana_mase_desenvolvimento{modelo}, vitorias_vs_naive168{modelo}, vitorias_melhor_de_todos{modelo}, decisao{regra_aplicada, adotado, passaram_regra_de_ganho[], melhor_mediana, motivo}, mase_por_equipamento{modelo{equipamento}}, avisos[], shap_lightgbm{participacao_por_feature{}, participacao_por_grupo{calendario, lags, janela_movel}, d7_feature_dominante, d7_flag, equipamentos_com_flag[], horas}, benchmark_sintetico{sintetico: true, previsor, semente, eventos_por_tipo_por_equipamento, limiar_z, injetados{tipo}, detectados{tipo}, taxa_deteccao, taxa_deteccao_por_tipo{}, alertas_fora_da_zona, horas_fora_da_zona, taxa_falso_alarme}}`. NaN vira null; MAE/RMSE/MASE e taxas com 4 casas.
+
+### Testes do estudo
+
+`tests/m3/domain/test_m3_previsao.py` (guard de defasagem, lacuna, naive, MASE, regra de decisao), `tests/m3/infrastructure/test_m3_previsores.py` (um teste por previsor em serie sintetica de estrutura conhecida, nao enxergar dados a partir da meia-noite para os 6 previsores, lacuna: Ridge so deixa NaN onde o lag falta, ETS descarta o dia com lacuna, ETS com serie constante, contribuicoes SHAP), `tests/m3/application/test_m3_estudo_previsao.py` (ciclo completo sintetico, serializacao sem NaN).
+
+**Prova vermelha do guard de defasagem (sem git).** `test_nenhuma_feature_de_previsao_usa_defasagem_menor_que_24h` usa `CONSTRUTOR = montar_features_previsao`. Copia do arquivo de teste em `/private/tmp/.../scratchpad/red/` com `CONSTRUTOR = construtor_violador` (acrescenta `kw_lag1 = kw.shift(1)`):
+
+```
+E         Left contains one more item: 'kw_lag1'
+FAILED test_red_previsao.py::test_nenhuma_feature_de_previsao_usa_defasagem_menor_que_24h
+1 failed, 13 deselected
+```
+
+1 caso falhou (o guard); com o construtor real, os 14 testes do arquivo passam. Os testes `test_guard_detecta_lag1` e `test_guard_detecta_janela_movel_sem_deslocamento` mostram que o guard pega tambem uma janela movel sem o deslocamento de 24 h. Nao-vazamento dos adaptadores: `test_previsao_do_dia_nao_enxerga_dados_a_partir_da_meia_noite` (6 previsores). Este ultimo nao foi visto vermelho contra um adaptador quebrado.
+
+### Nao feito / limites do estudo
+
+1. Modelos fixos no periodo reservado (ajustados uma vez em 18 semanas); nao foi testado reajuste semanal/expansivo, que e o que um sistema real faria e que pode mudar a classificacao de Ridge e LightGBM frente ao naive-168. Seria um estudo novo com regra pre-registrada nova.
+2. Sigma unico por equipamento no benchmark do naive-168 (sem sigma por hora); sensibilidade a elevacoes de madrugada ficou em 0%.
+3. Um andar, 22 semanas, uma unica janela reservada de 4 semanas; a classificacao pode mudar com outra janela.
+4. Os artefatos de alerta, economia e resumo e a API nao foram alterados; o `previsao.json` ainda nao e consumido por nenhum adaptador da plataforma.
+5. ETS usa periodo 24 com tipo de dia, nao periodo 168 (justificativa acima).

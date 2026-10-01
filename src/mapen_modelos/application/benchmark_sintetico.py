@@ -8,7 +8,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-import numpy as np
 import pandas as pd
 
 from mapen_modelos.application.detectar_anomalias import (
@@ -17,10 +16,11 @@ from mapen_modelos.application.detectar_anomalias import (
     TIPO_ZSCORE,
     DetectarAnomalias,
 )
+from mapen_modelos.application.injecao_periodo import injetar_no_periodo
 from mapen_modelos.application.portas import LeitorSeries
 from mapen_modelos.application.treinar_e_avaliar import ResultadoTreino
 from mapen_modelos.domain.features import DEFASAGENS, JANELA_MOVEL
-from mapen_modelos.domain.injecao import TIPOS, EventoInjetado, injetar_anomalias, zona_contaminada
+from mapen_modelos.domain.injecao import TIPOS, zona_contaminada
 
 
 @dataclass
@@ -68,18 +68,9 @@ class BenchmarkSintetico:
         por_tipo: int,
     ) -> ResultadoBenchmark:
         series = self._leitor.ler_series_horarias(sensor_id, inicio - AQUECIMENTO, fim)
-        rng = np.random.default_rng(semente)
         taxas = {TIPO_ZSCORE: TaxasDetector(), TIPO_LIGHTGBM: TaxasDetector()}
         equipamentos = list(treino.modelos)
-        eventos_por_eq: dict[str, list[EventoInjetado]] = {}
-        injetada = series.copy()
-        for eq in equipamentos:
-            janela = pd.DatetimeIndex(injetada.index) >= inicio
-            sub = injetada.loc[janela, eq]
-            p95 = float(series.loc[series.index < inicio, eq].quantile(0.95))
-            nova, eventos = injetar_anomalias(sub, p95, rng, por_tipo)
-            injetada.loc[janela, eq] = nova
-            eventos_por_eq[eq] = eventos
+        injetada, eventos_por_eq = injetar_no_periodo(series, equipamentos, inicio, semente, por_tipo)
         resultado = self._detector.detectar_em(injetada, treino, inicio, fim, limiar, explicar=False)
         indice_det = pd.DatetimeIndex(series.index[series.index >= inicio])
         for eq in equipamentos:

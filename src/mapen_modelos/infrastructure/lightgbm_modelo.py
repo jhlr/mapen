@@ -32,6 +32,9 @@ class TreinadorLightGBM:
         self._n_arvores = n_arvores
 
     def treinar(self, x: pd.DataFrame, y: pd.Series) -> Regressor:
+        return self.treinar_lightgbm(x, y)
+
+    def treinar_lightgbm(self, x: pd.DataFrame, y: pd.Series) -> ModeloLightGBM:
         modelo = lgb.LGBMRegressor(
             n_estimators=self._n_arvores,
             learning_rate=0.05,

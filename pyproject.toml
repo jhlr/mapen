@@ -17,6 +17,7 @@ dependencies = [
     "xgboost",
     "lightgbm",
     "scikit-learn",
+    "statsmodels",
     "shap",
     "pyyaml",
     "python-dateutil",
@@ -43,6 +44,12 @@ testpaths = ["tests"]
 [tool.mypy]
 strict = true
 files = ["src/mapen_aconselhamento", "src/mapen_plataforma", "src/mapen_modelos", "src/mapen_simulador", "tests/m1", "tests/m2", "tests/m3", "tests/simulador", "tests/contratos"]
+
+# scikit-learn e statsmodels nao publicam marcador py.typed nem stubs: tipos Any so nas fronteiras
+# dos adaptadores de infraestrutura do M3.
+[[tool.mypy.overrides]]
+module = ["sklearn.*", "statsmodels.*"]
+ignore_missing_imports = true
 
 [tool.importlinter]
 root_packages = ["mapen_aconselhamento", "mapen_plataforma", "mapen_modelos", "mapen_simulador"]
@@ -104,6 +111,8 @@ forbidden_modules = [
     "duckdb",
     "lightgbm",
     "shap",
+    "sklearn",
+    "statsmodels",
     "yaml",
     "httpx",
     "fastapi",
