@@ -35,3 +35,31 @@ class Explicador(Protocol):
     def valores(self, modelo: Regressor, x: pd.DataFrame) -> np.ndarray:
         """Valores SHAP (linhas x features, mesma ordem de colunas de `x`)."""
         ...
+
+
+class Previsor(Protocol):
+    """Previsor do dia seguinte para uma serie horaria (um equipamento).
+
+    Contrato: ajusta so com observacoes anteriores a `treino_fim`; a previsao de cada hora alvo
+    usa so observacoes ate a meia-noite do dia dela e, para features, so defasagens >= 24 h.
+    `serie` e horaria, completa (NaN nas lacunas) e pode conter valores posteriores ao alvo: o
+    previsor nao pode le-los (um teste confere isso adulterando dados a partir da meia-noite).
+    `alvo` e uma sequencia de dias inteiros, hora a hora.
+    """
+
+    @property
+    def nome(self) -> str: ...
+
+    def prever(self, serie: pd.Series, treino_fim: pd.Timestamp, alvo: pd.DatetimeIndex) -> pd.Series:
+        """kW previsto em cada hora de `alvo` (NaN onde o previsor nao consegue prever)."""
+        ...
+
+
+class PrevisorExplicavel(Previsor, Protocol):
+    """Previsor cujas previsoes se decompoem em contribuicoes por feature (SHAP)."""
+
+    def contribuicoes(
+        self, serie: pd.Series, treino_fim: pd.Timestamp, alvo: pd.DatetimeIndex
+    ) -> pd.DataFrame:
+        """Contribuicao por feature em cada hora de `alvo` (colunas = nomes das features)."""
+        ...
