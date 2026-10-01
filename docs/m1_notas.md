@@ -63,3 +63,7 @@ Pacote `src/mapen_aconselhamento/` (ingest, tarifa, custo, ranking, recomenda, r
 ## Criterios de aceite
 
 Todos os 7 atendidos: (1) `pip install -e .` e `import mapen_aconselhamento` ok; (2) custo da fixture 24 h dentro de R$ 0,01 (convencional 38,35, branca 39,21, calculo manual no teste); (3) teste da lacuna da reindexacao (a prova vermelha do `defasar` foi retirada junto com a funcao); (4) relatorio real com top-5, custo em R$ e recomendacoes; (5) recomendacao so para `flexivel` (e nao `critico`); (6) disclaimer no relatorio; (7) testes verdes.
+
+## Guard de lag (recriado em 2026-10-01)
+
+`src/mapen_aconselhamento/features.py::adicionar_lags` calcula o lag depois de reindexar ao calendario completo. Teste: `tests/test_features.py`. Prova de vermelho (sem git): trocando `adicionar_lags` por um shift posicional ingenuo, `test_lag_nao_pula_a_lacuna` falha com `AssertionError` (o ingenuo devolve 2.0 em t4 onde o lag correto e NaN); com a implementacao real, 57 testes passam e mypy strict esta limpo.
