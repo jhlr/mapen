@@ -1,7 +1,7 @@
 # MAPEN — assinatura mensal de tomadas inteligentes (IoT) + dashboard próprio
 
 **Data:** 2026-09-30
-**Status:** RASCUNHO para revisão da Natália (nada aqui está decidido)
+**Status:** RASCUNHO v2 para revisão da Natália (nada aqui está decidido). A seção 1.1 incorpora o retorno do professor e prevalece sobre o resto onde houver conflito.
 **Origem:** sugestão do professor — pivotar para uma assinatura mensal de um sistema IoT de tomadas inteligentes, com dashboard próprio de gerenciamento e otimização.
 **Docs de base:** `contexto_mapen.md`, `designs/mapen-negocio-ou-nao.md` (03/09), `designs/eficiencia-energetica-pf-pj.md` (11/09), `modelos_negocio_eficiencia_energetica.md` (17/09), `oportunidades_negocio_energia.md`, `crisp_dm.md`, `modelagem_redflags.md`.
 
@@ -14,6 +14,33 @@
 3. O MAPEN mostra num dashboard próprio onde, quando e quanto cada equipamento consome, e o que está sendo desperdiçado.
 4. O sistema recomenda (e, numa fase posterior, executa com autorização) ações de otimização: desligar o que está ocioso, mover cargas flexíveis de horário, avisar de anomalia.
 5. O cliente paga mensalidade. O valor vendido é o serviço contínuo (monitoramento + diagnóstico + otimização), não o hardware.
+
+## 1.1. Atualização (retorno do professor, mesmo dia)
+
+Três esclarecimentos que mudam o desenho. Onde conflitam com o texto abaixo, **vale esta seção**.
+
+1. **Produto central = aconselhamento energético para empresas (PJ):** quando usar, como o preço da energia varia por horário, quais equipamentos gastam mais. O professor disse que é um mercado que pagaria e tem formação na área para afirmar isso. Isso é um sinal de especialista, **não** um comprador nomeado dizendo que paga: sobe a confiança no mercado, mas o critério de "sinal forte" do design de 11/09 (pessoa real que pagaria) continua aberto.
+2. **A tomada é o instrumento de registro e de ação:** guarda consumo com data/hora e permite **desligamento remoto ou automatizado**. Logo o comando de relé entra no núcleo, não na "fase 3". Continuam valendo as travas de segurança (seção 3): nunca em equipamento crítico, regra explícita do cliente, confirmação antes de qualquer automação nova, e registro de quem/que regra desligou.
+3. **Segundo uso: prova contra a distribuidora.** O log de tensão e de falta de energia com carimbo de tempo serviria para comprovar quedas e danos a aparelhos num pedido de ressarcimento.
+
+### 1.1.1. Preço da energia por horário (o coração do aconselhamento)
+
+- Empresas atendidas em média tensão (grupo A) costumam ter tarifa com **ponta e fora de ponta** e demanda contratada; baixa tensão tem opção de **tarifa branca**. `[?]` confirmar modalidades e valores da Neoenergia PE (fonte: resolução tarifária ANEEL vigente) antes de qualquer cálculo em R$.
+- O serviço vira: (a) curva de consumo por equipamento × tarifa por horário = custo real de cada equipamento; (b) lista dos equipamentos mais caros; (c) recomendação "mover/desligar X do horário Y economiza R$ Z/mês"; (d) agendamento/desligamento automático via tomada para o que for flexível.
+- Isso é o modelo **Best Time** + **Zero Waste** + **Smart Investment** juntos, e passam a ser o núcleo. Energy Health e Energy Intensity seguem no roadmap.
+- Limite: a tomada só controla o que cabe nela. Carga de potência alta ligada no quadro (motor, ar de maior capacidade, chuveiro) exige contator/medidor de quadro, não tomada. `[?]` perguntar ao professor que tipo de empresa e equipamento ele tem em mente.
+
+### 1.1.2. Comprovar queda de energia e dano a aparelho
+
+O que a tomada pode registrar: tensão e potência por amostra, momentos de sumiço e retorno de energia, sobretensão/subtensão.
+
+O que precisa ser verificado antes de prometer isso a qualquer cliente:
+- **Regra vigente de ressarcimento por dano elétrico** (ANEEL, REN 1000/2021 pelo que lembro, com prazo para o consumidor pedir e prazo para a distribuidora responder). `[?]` ler o texto atual; os prazos e o ônus da prova mudam o valor da evidência.
+- **Valor probatório:** medição de tomada comercial não é medidor calibrado. Pode servir como indício e para organizar o pedido, mas a distribuidora tem os próprios registros e pode contestar. Precisa de: relógio sincronizado (NTP), registro que não possa ser editado depois (hash/assinatura dos blocos de log), calibração conhecida do sensor de tensão.
+- **Queda × Wi-Fi caído:** na queda de energia o roteador também cai. Tomada offline não prova queda. Solução técnica: guardar dado localmente na tomada (ou bateria/supercapacitor para um último pacote) e enviar ao voltar, com o carimbo do próprio dispositivo.
+- **Dano ao aparelho:** o log mostra o evento elétrico, não que o aparelho queimou por causa dele. Prova de dano continua exigindo laudo.
+- **Conflito estratégico com a Neoenergia:** um produto que ajuda o cliente a cobrar da distribuidora é adversarial a ela. Isso contradiz a hipótese da seção 2.3 de tratar a distribuidora como canal. As duas posições não cabem juntas; o grupo precisa escolher qual contar, e isso afeta o desafio do Projeto 4. Registrado como decisão pendente na seção 7.
+- **Elo com a Fase A:** eventos de tensão/queda agregados de muitos clientes seriam um dado de qualidade de fornecimento por região, que hoje não existe em dado aberto no MAPEN. Hipótese de longo prazo, não promessa.
 
 ## 2. Por que isso encaixa no que já temos
 
@@ -79,14 +106,14 @@ Tudo abaixo é hipótese; **nenhum número foi validado**. Os campos marcados `[
 |---|---|---|
 | Hardware | (a) cliente compra, (b) comodato incluso na mensalidade, (c) kit de entrada + assinatura | (b) reduz a barreira de entrada mas prende capital em estoque e aumenta o risco de churn |
 | Preço | por tomada/mês, por faixa de nº de tomadas, ou por instalação | `[?]` custo do hardware, custo de nuvem por tomada, preço que o cliente aceita pagar |
-| Segmento inicial | PF (casa/apartamento) ou PME pequena (padaria, clínica, loja, escritório) | PME tem conta maior e mais disposição de pagar para reduzir custo, mas a Premise 2 do design de 11/09 já alertou: "ninguém hoje investiga a própria conta" |
+| Segmento inicial | **PJ** (direção dada pelo professor; ver 1.1). Resta decidir porte: PME de baixa tensão ou empresa de média tensão com tarifa horária. PF só pelo caso de prova contra distribuidora | PME tem conta maior e mais disposição de pagar para reduzir custo, mas a Premise 2 do design de 11/09 já alertou: "ninguém hoje investiga a própria conta" |
 | Narrativa de venda | "assinatura se paga com a economia" | Só funciona se a economia medida > mensalidade. Se a economia média for menor que a mensalidade, o produto não fecha, e isso é o primeiro número a medir no piloto |
 
 Pergunta de unit economics que o piloto precisa responder: **economia mensal medida por cliente > mensalidade + custo de servir?** Se não, a assinatura não se sustenta, por melhor que seja o dashboard.
 
 ## 5. Riscos e limites (o que um revisor cético vai apontar)
 
-1. **Sem evidência de demanda.** Segue igual a 03/09 e 11/09: nenhuma pessoa nomeada disse que pagaria. A sugestão do professor é um sinal acadêmico, não de mercado.
+1. **Demanda sem comprador nomeado.** O professor afirma que o mercado pagaria (sinal de especialista, ver 1.1), mas nenhuma empresa nomeada disse que paga. Continua sendo o maior risco aberto.
 2. **Cobertura da medição.** Tomada só mede o que se liga nela. As maiores cargas residenciais/PME brasileiras, como chuveiro elétrico e ar-condicionado de maior capacidade, geralmente são ligadas direto no quadro e **ficam fora**. O produto pode medir bem o "barulho" (standby, eletrônicos, geladeira) e perder a maior parte do gasto. Precisa de dado: que fração da conta típica é acessível por tomada?
 3. **Economia pode ser pequena.** Desperdício em standby costuma ser fração modesta da conta `[?]`. Se for pouco, a mensalidade não se paga.
 4. **Concorrência.** Existem tomadas inteligentes baratas com app próprio no mercado, e plataformas de monitoramento de energia no exterior. A diferenciação tem que estar em diagnóstico/otimização/comprovação, não em ligar e desligar pelo celular. `[?]` levantar concorrentes brasileiros e preços antes de afirmar o diferencial.
@@ -105,13 +132,14 @@ Pergunta de unit economics que o piloto precisa responder: **economia mensal med
 
 ## 7. Perguntas para a Natália decidir
 
-1. **Segmento inicial:** PF ou PME? (afeta preço, canal de venda e tipo de equipamento.)
+1. **Segmento inicial:** PJ (direção do professor). Qual porte e setor? (afeta preço, tarifa aplicável e tipo de equipamento.)
 2. **Hardware:** usar tomada comercial no piloto (recomendação) ou desenhar a nossa?
-3. **Escopo do MVP:** Zero Waste + anomalia + relatório mensal (recomendação), ou incluir comando/agendamento já?
+3. **Escopo do MVP:** registro com horário + custo por tarifa horária + ranking de equipamentos + desligamento remoto/agendado (núcleo definido pelo professor). Entra ou não a prova de queda/dano já no MVP, ou só como fase 2?
 4. **Fase A:** manter como trilha acadêmica separada (recomendação) ou absorver na nova narrativa?
-5. **Neoenergia:** apresentar como possível canal (hipótese) ou deixar fora da apresentação até alguém confirmar?
+5. **Neoenergia:** canal/parceira (seção 2.3) ou contraparte adversarial (prova de dano, seção 1.1.2)? Não dá para vender as duas coisas ao mesmo tempo.
 6. **Quem do grupo cuida de quê:** hardware/firmware, backend/ingestão, modelos, dashboard, regulatório/LGPD, entrevistas de demanda.
-7. **Primeira pessoa nomeada** para a pergunta "pagaria?". Sem nome, o piloto não começa.
+7. **Primeira empresa nomeada** para a pergunta "pagaria?". Pedir ao professor 1 a 2 contatos de empresas é o caminho mais curto. Sem nome, o piloto não começa.
+8. **Perguntas ao professor:** que tipo de empresa e equipamento ele imagina? Qual a forma de cobrança que ele considera viável (mensalidade fixa, % da economia)?
 
 ## 8. Próximos passos propostos (ordem)
 
