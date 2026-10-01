@@ -1,0 +1,17 @@
+[   75719ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/desligamento?_rsc=GmPMR1rwwe9Eap4E:0
+[   75720ms] [ERROR] Failed to fetch RSC payload for http://localhost:3000/desligamento. Falling back to browser navigation. TypeError: Failed to fetch
+    at n (http://localhost:3000/_next/static/chunks/3oofgi32zspvi.js:2:34010)
+    at N (http://localhost:3000/_next/static/chunks/3oofgi32zspvi.js:1:20576)
+    at async v (http://localhost:3000/_next/static/chunks/3oofgi32zspvi.js:1:18535)
+    at async k (http://localhost:3000/_next/static/chunks/3oofgi32zspvi.js:1:30377) @ http://localhost:3000/_next/static/chunks/3oofgi32zspvi.js:0
+[   75724ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/?_rsc=6aT2tSow24Fv0Krq:0
+[   75724ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/horario?_rsc=6aT2tSow24Fv0Krq:0
+[   75725ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/custo?_rsc=6aT2tSow24Fv0Krq:0
+[   75726ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/ranking?_rsc=6aT2tSow24Fv0Krq:0
+[   75727ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/?_rsc=SRcFi8KbCqF_bcXm:0
+[   75728ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/ranking?_rsc=SRcFi8KbCqF_bcXm:0
+[   75729ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/horario?_rsc=SRcFi8KbCqF_bcXm:0
+[   75729ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/custo?_rsc=SRcFi8KbCqF_bcXm:0
+[   75729ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/cadastro?_rsc=SRcFi8KbCqF_bcXm:0
+[   75730ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/desligamento?_rsc=SRcFi8KbCqF_bcXm:0
+[   75731ms] [ERROR] Failed to load resource: net::ERR_CONNECTION_REFUSED @ http://localhost:3000/eventos?_rsc=SRcFi8KbCqF_bcXm:0

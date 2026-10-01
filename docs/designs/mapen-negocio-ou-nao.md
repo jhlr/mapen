@@ -12,7 +12,7 @@ MAPEN hoje é a camada de dados de um projeto de disciplina (BD2026.1, Cesar Sch
 
 ## Demand Evidence
 
-Nenhuma. Interesse do Kickoff Neoenergia (12/09) e aprovação do professor não são demanda — ninguém pagou, pediu prazo, ou demonstrou que sentiria falta se o MAPEN sumisse. Confirmado explicitamente pelo usuário.
+Nenhuma. Interesse do Kickoff Neoenergia (sem data marcada) e aprovação do professor não são demanda — ninguém pagou, pediu prazo, ou demonstrou que sentiria falta se o MAPEN sumisse. Confirmado explicitamente pelo usuário.
 
 ## Status Quo
 
@@ -52,7 +52,7 @@ Preencher as lacunas que o próprio `docs/crisp_dm.md` já mapeou — critérios
 - Critério de sucesso técnico em `docs/crisp_dm.md` reescrito de "% precisão/recall" pra "nº de redflags corroboradas por evento real encontrado" — não existe rótulo de fiscalização confirmada pra calcular percentual sem inventar número (viola honestidade epistêmica).
 
 ### Approach B: Perseguir o wedge real dentro da distribuidora
-Usar o Kickoff Neoenergia (12/09) para pedir dado de fiscalização confirmada (rótulo) + granularidade por cliente. Único caminho que gera produto realmente operacional (abordagem 3.1 supervisionada, alinhada à literatura). Effort L, risco alto — depende de terceiro liberar dado sensível, e concorre direto com ferramenta interna que provavelmente já existe.
+Usar um Kickoff Neoenergia (sem data marcada) para pedir dado de fiscalização confirmada (rótulo) + granularidade por cliente. Único caminho que gera produto realmente operacional (abordagem 3.1 supervisionada, alinhada à literatura). Effort L, risco alto — depende de terceiro liberar dado sensível, e concorre direto com ferramenta interna que provavelmente já existe.
 
 ### Approach C: Virar produto de transparência externa
 Vender o dashboard de redflags para quem NÃO tem acesso a isso hoje (ANEEL/fiscalização, jornalismo de dados, investidores/analistas de crédito de distribuidoras listadas), não para a distribuidora que já tem processo interno. A granularidade UF/distribuidora — fraca para ação — é a granularidade certa para comparação/auditoria externa entre empresas, usando só dado 100% público. Effort M, risco médio — sidesteps a premissa 2, mas mercado menor e demanda ainda não testada.
@@ -65,7 +65,7 @@ Vender o dashboard de redflags para quem NÃO tem acesso a isso hoje (ANEEL/fisc
 
 - Quem exatamente, dentro de ANEEL/imprensa de dados/mercado financeiro, seria o primeiro comprador/usuário do dashboard de transparência (C)? Não resolvido — precisa de nome, não categoria.
 - O leiturista (~/Developer/leiturista) e o MAPEN podem se completar como duas camadas de um produto maior — mas são grupos diferentes; não assumir fusão sem decisão explícita dos dois grupos.
-- Se a distribuidora já tem processo interno de perdas (confirmado como hipótese forte, não verificado com ninguém de dentro), vale a pena perguntar diretamente no Kickoff 12/09 antes de investir mais em B.
+- Se a distribuidora já tem processo interno de perdas (confirmado como hipótese forte, não verificado com ninguém de dentro), vale a pena perguntar diretamente no Kickoff Neoenergia (ainda sem data marcada) antes de investir mais em B.
 
 ## Success Criteria
 
