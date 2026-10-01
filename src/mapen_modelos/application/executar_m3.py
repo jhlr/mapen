@@ -11,6 +11,7 @@ from mapen_modelos.application.comparar_antes_depois import (
     CompararAntesDepois,
     ReducaoSintetica,
     ResultadoAntesDepois,
+    Varredura,
 )
 from mapen_modelos.application.detectar_anomalias import DetectarAnomalias, ResultadoDeteccao
 from mapen_modelos.application.resumo_m3 import FonteDados, ResumoM3, montar_resumo
@@ -41,7 +42,12 @@ class ResultadoM3:
     benchmark: ResultadoBenchmark
     antes_depois: ResultadoAntesDepois
     controle: ResultadoAntesDepois
-    varredura_recuperado_pct: dict[str, float]
+    varredura: Varredura
+
+    @property
+    def varredura_recuperado_pct(self) -> dict[str, float]:
+        """Recuperado (%) pelo metodo baseline normalizado, um equipamento tratado por vez."""
+        return self.varredura.baseline_pct
 
 
 class ExecutarM3:
@@ -59,11 +65,13 @@ class ExecutarM3:
         )
         reducao = ReducaoSintetica(p.equipamento_reducao, p.fracao_reducao, p.meio_do_teste)
         antes_depois = self._comparar.executar(
-            p.sensor_id, treino, p.fim_treino, p.meio_do_teste, p.fim_teste, reducao
+            p.sensor_id, treino, p.fim_treino, p.meio_do_teste, p.fim_teste, reducao, inicio_pre=p.inicio
         )
-        controle = self._comparar.executar(p.sensor_id, treino, p.fim_treino, p.meio_do_teste, p.fim_teste)
+        controle = self._comparar.executar(
+            p.sensor_id, treino, p.fim_treino, p.meio_do_teste, p.fim_teste, inicio_pre=p.inicio
+        )
         varredura = self._comparar.varredura_reducao(
-            p.sensor_id, treino, p.fim_treino, p.meio_do_teste, p.fim_teste, p.fracao_reducao
+            p.sensor_id, treino, p.fim_treino, p.meio_do_teste, p.fim_teste, p.fracao_reducao, inicio_pre=p.inicio
         )
         return ResultadoM3(p, config, treino, deteccao, benchmark, antes_depois, controle, varredura)
 

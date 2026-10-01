@@ -14,12 +14,17 @@ import pandas as pd
 from mapen_modelos.application.detectar_anomalias import STATUS_CANDIDATO, Alerta
 from mapen_modelos.application.executar_m3 import ResultadoM3
 from mapen_modelos.application.resumo_m3 import JanelaResumo, ResumoM3
+from mapen_modelos.domain.comparacao import NOME_METODO_BASELINE, NOME_METODO_CONTROLE
 
 VERSAO_ESQUEMA = 1
 
 
 def _num(v: float) -> float | None:
     return None if math.isnan(v) else v
+
+
+def _arred(v: float) -> float | None:
+    return None if math.isnan(v) else round(v, 1)
 
 
 def _ts(t: pd.Timestamp) -> str:
@@ -73,6 +78,9 @@ def montar_economia(r: ResultadoM3) -> dict[str, object]:
                 "recuperado_pct_com_reducao_sintetica": _num(r.varredura_recuperado_pct[eq]),
                 "reducao_sintetica_aplicada": eq == red.equipamento,
                 "baseline_fraca": c.baseline_fraca,
+                "recuperado_pct_controle": _num(r.varredura.controle_pct[eq]),
+                "economia_pct_controle_sem_reducao": _num(r.controle.por_equipamento_controle[eq].economia_pct),
+                "controles_usados": list(r.varredura.controles[eq]),
             }
         )
     return {
@@ -90,6 +98,10 @@ def montar_economia(r: ResultadoM3) -> dict[str, object]:
         "recuperado_pct": _num(ad.recuperado_pct),
         "tolerancia_pp": ad.tolerancia_pp,
         "dentro_da_tolerancia": ad.dentro_da_tolerancia,
+        "metodo_recuperado_pct": NOME_METODO_BASELINE,
+        "metodo_controle": NOME_METODO_CONTROLE,
+        "recuperado_pct_controle": _num(ad.recuperado_controle_pct),
+        "dentro_da_tolerancia_controle": ad.dentro_da_tolerancia_controle,
         "equipamentos": por_eq,
     }
 
@@ -166,6 +178,24 @@ def montar_resumo_json(r: ResumoM3) -> dict[str, object]:
         "baseline_fraca": {
             "criterio": r.baseline_fraca.criterio,
             "semanas_completas_treino": r.baseline_fraca.semanas_completas_treino,
+        },
+        "antes_depois": {
+            "equipamento_alvo": r.antes_depois.equipamento_alvo,
+            "injetado_pct": round(r.antes_depois.injetado_pct, 1),
+            "tolerancia_pp": r.antes_depois.tolerancia_pp,
+            "metodos": [
+                {
+                    "metodo": x.metodo,
+                    "recuperado_pct_alvo": None if math.isnan(x.recuperado_pct_alvo) else round(x.recuperado_pct_alvo, 1),
+                    "dentro_da_tolerancia_alvo": x.dentro_da_tolerancia_alvo,
+                    "equipamentos_avaliados": x.equipamentos_avaliados,
+                    "equipamentos_dentro_da_tolerancia": x.equipamentos_dentro_da_tolerancia,
+                    "equipamentos_sem_resultado": list(x.equipamentos_sem_resultado),
+                    "erro_abs_mediano_pp": _arred(x.erro_abs_mediano_pp),
+                    "erro_abs_maximo_pp": _arred(x.erro_abs_maximo_pp),
+                }
+                for x in r.antes_depois.metodos
+            ],
         },
     }
 

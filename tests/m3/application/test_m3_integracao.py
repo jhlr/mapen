@@ -172,3 +172,14 @@ def test_baseline_com_pouco_historico_sai_marcada_como_fraca() -> None:
     res = TreinarEAvaliar(LeitorEmMemoria(largo), TreinadorLightGBM(n_arvores=20)).executar(SENSOR, INICIO, fim, cfg)
     assert all(m.baseline.fraca for m in res.modelos.values())
     assert all(m.baseline.semanas_completas == 3 for m in res.modelos.values())
+
+
+def test_comparacao_com_controle_e_consistente_com_a_selecao(resultado: ResultadoM3) -> None:
+    """Cada equipamento tem resultado do novo metodo; sem controle valido e NaN, com controle nunca inclui o tratado."""
+    ad = resultado.antes_depois
+    assert set(ad.por_equipamento_controle) == set(ad.por_equipamento)
+    for eq, c in ad.por_equipamento_controle.items():
+        assert eq not in c.controles
+        assert (len(c.controles) == 0) == (c.motivo_invalido is not None)
+        assert np.isnan(c.economia_pct) == (c.motivo_invalido is not None)
+    assert resultado.varredura.controles.keys() == resultado.varredura.controle_pct.keys()

@@ -15,6 +15,7 @@ import pandas as pd
 from mapen_modelos.application.detectar_anomalias import TIPO_LIGHTGBM, TIPO_ZSCORE
 from mapen_modelos.application.treinar_e_avaliar import ResultadoTreino
 from mapen_modelos.domain.baseline import COBERTURA_SEMANA_COMPLETA, SEMANAS_MINIMAS
+from mapen_modelos.domain.comparacao import NOME_METODO_BASELINE, NOME_METODO_CONTROLE, resumir_varredura
 from mapen_modelos.domain.explica import LIMIAR_FEATURE_DOMINANTE
 from mapen_modelos.domain.injecao import TIPOS
 
@@ -128,6 +129,26 @@ class BaselineFracaResumo:
 
 
 @dataclass(frozen=True)
+class MetodoAntesDepoisResumo:
+    metodo: str
+    recuperado_pct_alvo: float
+    dentro_da_tolerancia_alvo: bool
+    equipamentos_avaliados: int
+    equipamentos_dentro_da_tolerancia: int
+    equipamentos_sem_resultado: tuple[str, ...]
+    erro_abs_mediano_pp: float
+    erro_abs_maximo_pp: float
+
+
+@dataclass(frozen=True)
+class AntesDepoisResumo:
+    equipamento_alvo: str
+    injetado_pct: float
+    tolerancia_pp: float
+    metodos: tuple[MetodoAntesDepoisResumo, ...]
+
+
+@dataclass(frozen=True)
 class ResumoM3:
     sensor_id: str
     dados: DadosResumo
@@ -135,6 +156,7 @@ class ResumoM3:
     shap: ShapResumo
     benchmark_sintetico: BenchmarkResumo
     baseline_fraca: BaselineFracaResumo
+    antes_depois: AntesDepoisResumo
 
 
 def _mae_por_equipamento(t: ResultadoTreino) -> tuple[MaeEquipamentoResumo, ...]:
@@ -159,6 +181,28 @@ def _mae(t: ResultadoTreino) -> MaeResumo:
         ressalva_nowcast=RESSALVA_NOWCAST,
         por_equipamento=por_eq,
     )
+
+
+def _antes_depois(r: ResultadoM3) -> AntesDepoisResumo:
+    ad = r.antes_depois
+    red = ad.reducao
+    if red is None:
+        raise ValueError("resumo exige a reducao sintetica")
+    alvo = 100.0 * red.fracao
+    por_metodo = (
+        (NOME_METODO_BASELINE, ad.recuperado_pct, ad.dentro_da_tolerancia, r.varredura.baseline_pct),
+        (NOME_METODO_CONTROLE, ad.recuperado_controle_pct, ad.dentro_da_tolerancia_controle, r.varredura.controle_pct),
+    )
+    metodos = []
+    for nome, recuperado, dentro, varredura in por_metodo:
+        v = resumir_varredura(varredura, alvo, ad.tolerancia_pp)
+        metodos.append(
+            MetodoAntesDepoisResumo(
+                nome, recuperado, dentro, v.avaliados, v.dentro_da_tolerancia, v.sem_resultado,
+                v.erro_abs_mediano_pp, v.erro_abs_maximo_pp,
+            )
+        )
+    return AntesDepoisResumo(red.equipamento, alvo, ad.tolerancia_pp, tuple(metodos))
 
 
 def montar_resumo(r: ResultadoM3, fonte: FonteDados) -> ResumoM3:
@@ -213,4 +257,5 @@ def montar_resumo(r: ResultadoM3, fonte: FonteDados) -> ResumoM3:
             ),
             semanas_completas_treino=modelos.baseline.semanas_completas,
         ),
+        antes_depois=_antes_depois(r),
     )
