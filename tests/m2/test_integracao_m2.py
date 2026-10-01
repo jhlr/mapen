@@ -11,9 +11,9 @@ import pytest
 from fastapi.testclient import TestClient
 
 from ambiente import Ambiente, bearer
-from mapen_aconselhamento.custo import custo_por_faixa
-from mapen_aconselhamento.ingest import ler_leituras
-from mapen_aconselhamento.tarifa import Tarifas
+from mapen_aconselhamento.domain.custo import custo_por_faixa
+from mapen_aconselhamento.infrastructure.duckdb_leituras import ler_leituras
+from mapen_aconselhamento.infrastructure.tarifa_csv import carregar_tarifas
 from mapen_plataforma.infrastructure.banco import BancoDuckDB
 from mapen_plataforma.infrastructure.custo_m1 import CalculadoraM1
 from mapen_plataforma.infrastructure.demo import EMPRESA_DEMO, EMPRESA_OUTRA, SENSOR_CU_BEMS, semear_demo
@@ -40,7 +40,7 @@ def test_api_usa_exatamente_o_calculo_do_m1(amb: Ambiente) -> None:
     leituras = ler_leituras(
         amb.banco.conexao, "sa", pd.Timestamp("2026-10-05T00:00:00"), pd.Timestamp("2026-10-06T00:00:00")
     )
-    direto = custo_por_faixa(leituras, Tarifas.carregar(), "convencional")
+    direto = custo_por_faixa(leituras, carregar_tarifas(), "convencional")
     via_api: list[dict[str, Any]] = amb.client.get(
         f"/sensores/sa/custo?inicio={INICIO}&fim={FIM}&modalidade=convencional", headers=amb.ha
     ).json()
@@ -107,10 +107,10 @@ def test_demo_cu_bems_ate_o_custo_real_do_m1(tmp_path: Path) -> None:
 
 
 def test_critico_inicial_falha_fechada_para_o_que_o_yaml_nao_classifica() -> None:
-    from mapen_aconselhamento.recomenda import ConfigEquipamentos
+    from mapen_aconselhamento.infrastructure.equipamentos_yaml import carregar_config_equipamentos
     from mapen_plataforma.infrastructure.demo import critico_inicial
 
-    config = ConfigEquipamentos.carregar()
+    config = carregar_config_equipamentos()
     assert critico_inicial(config, "z1_AC1") is False
     assert critico_inicial(config, "z1_Light") is False
     assert critico_inicial(config, "z1_Bomba_UTI") is True  # nao casa com nenhum padrao

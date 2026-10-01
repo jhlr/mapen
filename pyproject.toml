@@ -39,14 +39,36 @@ testpaths = ["tests"]
 
 [tool.mypy]
 strict = true
-files = ["src/mapen_aconselhamento", "src/mapen_plataforma", "tests/m2"]
+files = ["src/mapen_aconselhamento", "src/mapen_plataforma", "tests/m1", "tests/m2"]
 
 [tool.importlinter]
-root_package = "mapen_plataforma"
+root_packages = ["mapen_aconselhamento", "mapen_plataforma"]
 include_external_packages = true
 
 [[tool.importlinter.contracts]]
-name = "Camadas: interface > infrastructure > application > domain"
+name = "M1 camadas: interface > infrastructure > application > domain"
+type = "layers"
+layers = [
+    "mapen_aconselhamento.interface",
+    "mapen_aconselhamento.infrastructure",
+    "mapen_aconselhamento.application",
+    "mapen_aconselhamento.domain",
+]
+
+[[tool.importlinter.contracts]]
+name = "M1 dominio e aplicacao sem I/O, banco, YAML nem a plataforma"
+type = "forbidden"
+source_modules = ["mapen_aconselhamento.domain", "mapen_aconselhamento.application"]
+forbidden_modules = ["duckdb", "yaml", "httpx", "fastapi", "starlette", "mapen_plataforma"]
+
+[[tool.importlinter.contracts]]
+name = "M1 nao depende da plataforma"
+type = "forbidden"
+source_modules = ["mapen_aconselhamento"]
+forbidden_modules = ["mapen_plataforma"]
+
+[[tool.importlinter.contracts]]
+name = "M2 camadas: interface > infrastructure > application > domain"
 type = "layers"
 layers = [
     "mapen_plataforma.interface",
@@ -56,7 +78,7 @@ layers = [
 ]
 
 [[tool.importlinter.contracts]]
-name = "Dominio e aplicacao sem I/O nem framework"
+name = "M2 dominio e aplicacao sem I/O nem framework"
 type = "forbidden"
 source_modules = ["mapen_plataforma.domain", "mapen_plataforma.application"]
 forbidden_modules = ["fastapi", "starlette", "pydantic", "duckdb", "pandas", "numpy", "httpx", "mapen_aconselhamento"]

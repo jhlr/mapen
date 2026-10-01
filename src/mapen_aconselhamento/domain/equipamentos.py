@@ -1,18 +1,11 @@
-"""Recomendacao de mover carga flexivel entre faixas horarias."""
+"""Regras por equipamento: flexibilidade, criticidade e fracao movivel por cenario."""
 
 from __future__ import annotations
 
 import math
+from collections.abc import Mapping
 from dataclasses import dataclass
 from fnmatch import fnmatchcase
-from pathlib import Path
-
-import pandas as pd
-import yaml
-
-from mapen_aconselhamento.tarifa import BRANCA, FAIXAS_BRANCA, FORA_PONTA, RAIZ, Tarifas
-
-YAML_PADRAO: Path = RAIZ / "config" / "equipamentos.yaml"
 
 BAIXA = "baixa"
 CENTRAL = "central"
@@ -45,9 +38,14 @@ class ConfigEquipamentos:
     padrao: Regra
 
     @classmethod
-    def carregar(cls, caminho: Path = YAML_PADRAO) -> ConfigEquipamentos:
-        bruto = yaml.safe_load(caminho.read_text(encoding="utf-8"))
-        regras = tuple((str(e["padrao"]), _regra(e)) for e in bruto["equipamentos"])
+    def de_dict(cls, bruto: object) -> ConfigEquipamentos:
+        """Monta a config a partir do documento ja lido (mapa com `equipamentos` e `padrao`)."""
+        if not isinstance(bruto, Mapping):
+            raise ValueError("config de equipamentos deve ser um mapa")
+        entradas = bruto["equipamentos"]
+        if not isinstance(entradas, list):
+            raise ValueError("`equipamentos` deve ser uma lista")
+        regras = tuple((str(e["padrao"]), _regra(e)) for e in entradas)
         return cls(regras, _regra(bruto.get("padrao", {})))
 
     def encontrar(self, equipamento_id: str) -> Regra | None:
@@ -64,7 +62,7 @@ class ConfigEquipamentos:
         return self.padrao
 
 
-def _fracao(entrada: dict[str, object], chave: str, equipamento: str) -> float | None:
+def _fracao(entrada: Mapping[str, object], chave: str, equipamento: str) -> float | None:
     """Le uma fracao movivel da config; valida finita e 0 < f <= 1. None se ausente."""
     if chave not in entrada:
         return None
@@ -79,7 +77,7 @@ def _fracao(entrada: dict[str, object], chave: str, equipamento: str) -> float |
     return valor
 
 
-def _regra(entrada: dict[str, object]) -> Regra:
+def _regra(entrada: Mapping[str, object]) -> Regra:
     nome = str(entrada.get("padrao", "padrao"))
     flexivel = bool(entrada.get("flexivel", False))
     central = _fracao(entrada, "fracao_movivel", nome)
@@ -101,49 +99,3 @@ def _regra(entrada: dict[str, object]) -> Regra:
         fracao_movivel=central,
         faixa_fracao=faixa,
     )
-
-
-@dataclass(frozen=True)
-class Recomendacao:
-    equipamento_id: str
-    faixa_origem: str
-    faixa_destino: str
-    kwh_movido: float
-    economia_rs: float
-    fracao_movivel: float
-
-
-def recomendar(
-    custos_branca: pd.DataFrame,
-    tarifas: Tarifas,
-    config: ConfigEquipamentos,
-    faixa_destino: str = FORA_PONTA,
-    cenario: str = CENTRAL,
-) -> list[Recomendacao]:
-    """Economia de mover kWh da faixa A para a faixa B = kWh x (preco A - preco B).
-
-    So considera equipamento marcado `flexivel` (e nao `critico`) em config. O kWh movido e
-    kWh da faixa A x fracao movivel do `cenario` (baixa/central/alta; hipotese da config, nao
-    medicao). Ordenado por economia.
-    """
-    preco_destino = tarifas.preco_posto(BRANCA, faixa_destino)
-    saida: list[Recomendacao] = []
-    linhas = zip(
-        custos_branca["equipamento_id"].astype(str),
-        custos_branca["faixa"].astype(str),
-        custos_branca["kwh"].astype(float),
-        strict=True,
-    )
-    for equipamento, faixa, kwh in linhas:
-        regra = config.para(equipamento)
-        if not regra.flexivel or regra.critico or faixa not in FAIXAS_BRANCA:
-            continue
-        diferenca = tarifas.preco_posto(BRANCA, faixa) - preco_destino
-        if diferenca <= 0:
-            continue
-        fracao = regra.fracao(cenario)
-        movido = kwh * fracao
-        if movido <= 0:
-            continue
-        saida.append(Recomendacao(equipamento, faixa, faixa_destino, movido, movido * diferenca, fracao))
-    return sorted(saida, key=lambda r: r.economia_rs, reverse=True)

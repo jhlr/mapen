@@ -10,7 +10,7 @@ from collections.abc import Sequence
 
 import pandas as pd
 
-from mapen_aconselhamento.ingest import reindexar
+from mapen_aconselhamento.domain.calendario import reindexar
 
 
 def adicionar_lags(

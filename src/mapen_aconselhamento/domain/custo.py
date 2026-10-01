@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import pandas as pd
 
-from mapen_aconselhamento.tarifa import Tarifas
+from mapen_aconselhamento.domain.tarifa import Tarifas
 
 COLUNAS_CUSTO: list[str] = ["equipamento_id", "faixa", "kwh", "custo_rs"]
 

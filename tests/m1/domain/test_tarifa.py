@@ -6,14 +6,16 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from mapen_aconselhamento.tarifa import BRANCA, CONVENCIONAL, Tarifas, feriados_nacionais
+from mapen_aconselhamento.domain.tarifa import BRANCA, CONVENCIONAL, Tarifas, feriados_nacionais
+from mapen_aconselhamento.infrastructure.tarifa_csv import carregar_tarifas
+from mapen_aconselhamento.interface.relatorio_markdown import descrever_valores
 
 PONTA, INTERM, FORA = 1.62479, 1.05341, 0.66447
 
 
 @pytest.fixture(scope="module")
 def tarifas() -> Tarifas:
-    return Tarifas.carregar()
+    return carregar_tarifas()
 
 
 def test_convencional_preco_unico(tarifas: Tarifas) -> None:
@@ -51,7 +53,7 @@ def test_branca_preco_por_horario(tarifas: Tarifas, ts: str, esperado: float) ->
     ],
 )
 def test_branca_hora_21_toggle(ts: str, esperado: float) -> None:
-    ligado = Tarifas.carregar(hora_21_intermediaria=True)
+    ligado = carregar_tarifas(hora_21_intermediaria=True)
     assert ligado.preco_em(pd.Timestamp(ts), BRANCA) == pytest.approx(esperado)
 
 
@@ -95,7 +97,7 @@ def test_chave_duplicada_na_mesma_vigencia_e_rejeitada(tmp_path: Path) -> None:
         ],
     )
     with pytest.raises(ValueError, match="repetida"):
-        Tarifas.carregar(caminho)
+        carregar_tarifas(caminho)
 
 
 def test_selecao_por_data_de_referencia(tmp_path: Path) -> None:
@@ -106,23 +108,23 @@ def test_selecao_por_data_de_referencia(tmp_path: Path) -> None:
             "branca,ponta,2.0,2026-01-01,2026-12-31",
         ],
     )
-    assert Tarifas.carregar(caminho, date(2025, 6, 1)).preco_posto(BRANCA, "ponta") == 1.0
-    assert Tarifas.carregar(caminho, date(2026, 6, 1)).preco_posto(BRANCA, "ponta") == 2.0
+    assert carregar_tarifas(caminho, date(2025, 6, 1)).preco_posto(BRANCA, "ponta") == 1.0
+    assert carregar_tarifas(caminho, date(2026, 6, 1)).preco_posto(BRANCA, "ponta") == 2.0
     with pytest.raises(ValueError, match="nenhuma tarifa vigente"):
-        Tarifas.carregar(caminho, date(2027, 6, 1))
+        carregar_tarifas(caminho, date(2027, 6, 1))
     with pytest.raises(ValueError, match="mais de uma vigencia"):
-        Tarifas.carregar(caminho)
+        carregar_tarifas(caminho)
 
 
 def test_gross_up_e_bandeira_padrao_vazios_e_opcionais(tarifas: Tarifas) -> None:
     assert tarifas.gross_up is None and tarifas.bandeira_rs_kwh is None
-    assert "SEM tributos e SEM bandeira" in tarifas.descricao_valores()
-    com = Tarifas.carregar(gross_up=1.25, bandeira_rs_kwh=0.05)
+    assert "SEM tributos e SEM bandeira" in descrever_valores(tarifas)
+    com = carregar_tarifas(gross_up=1.25, bandeira_rs_kwh=0.05)
     assert com.preco_posto(BRANCA, "ponta") == pytest.approx((PONTA + 0.05) * 1.25)
-    assert "gross-up" in com.descricao_valores() and "bandeira" in com.descricao_valores()
+    assert "gross-up" in descrever_valores(com) and "bandeira" in descrever_valores(com)
 
 
 @pytest.mark.parametrize("gross_up", [0.9, float("nan"), float("inf")])
 def test_gross_up_invalido_e_rejeitado(gross_up: float) -> None:
     with pytest.raises(ValueError, match="gross_up"):
-        Tarifas.carregar(gross_up=gross_up)
+        carregar_tarifas(gross_up=gross_up)

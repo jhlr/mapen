@@ -1,18 +1,14 @@
-"""Tabela de tarifa (Neoenergia PE, B3) e preco R$/kWh por timestamp e modalidade."""
+"""Regras de tarifa (Neoenergia PE, B3): postos horarios, feriados e preco R$/kWh por timestamp."""
 
 from __future__ import annotations
 
 import math
 from dataclasses import dataclass
 from datetime import date, timedelta
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
 from dateutil.easter import easter
-
-RAIZ: Path = Path(__file__).resolve().parents[2]
-CSV_PADRAO: Path = RAIZ / "data" / "tarifas" / "neoenergia_pe.csv"
 
 CONVENCIONAL = "convencional"
 BRANCA = "branca"
@@ -107,20 +103,20 @@ class Tarifas:
             _positivo_finito(self.bandeira_rs_kwh, "bandeira_rs_kwh", 0.0)
 
     @classmethod
-    def carregar(
+    def de_tabela(
         cls,
-        caminho: Path = CSV_PADRAO,
+        tabela: pd.DataFrame,
         referencia: date | None = None,
         hora_21_intermediaria: bool = False,
         gross_up: float | None = None,
         bandeira_rs_kwh: float | None = None,
     ) -> Tarifas:
-        """Carrega a tabela vigente em `referencia`.
+        """Monta as tarifas vigentes em `referencia` a partir da tabela bruta (ja lida do CSV).
 
         A chave (modalidade, posto) deve ser unica por vigencia (erro caso contrario). Sem
         `referencia`, a tabela so pode ter uma vigencia; com mais de uma, e obrigatoria.
         """
-        tabela = pd.read_csv(caminho, dtype={"modalidade": str, "posto": str})
+        tabela = tabela.copy()
         tabela["vigencia_inicio"] = pd.to_datetime(tabela["vigencia_inicio"])
         tabela["vigencia_fim"] = pd.to_datetime(tabela["vigencia_fim"])
         chave = ["modalidade", "posto", "vigencia_inicio"]
@@ -158,23 +154,6 @@ class Tarifas:
         except KeyError as erro:
             raise KeyError(f"sem preco para modalidade={modalidade!r} posto={posto!r}") from erro
         return (base + (self.bandeira_rs_kwh or 0.0)) * (self.gross_up or 1.0)
-
-    def descricao_valores(self) -> str:
-        """Texto para o relatorio: o que os valores incluem."""
-        if self.gross_up is None and self.bandeira_rs_kwh is None:
-            return "SEM tributos e SEM bandeira (tarifa base homologada)"
-        partes = []
-        partes.append(
-            "sem bandeira"
-            if self.bandeira_rs_kwh is None
-            else f"com bandeira de R$ {self.bandeira_rs_kwh:.5f}/kWh somada a todos os postos (hipotese)"
-        )
-        partes.append(
-            "sem tributos"
-            if self.gross_up is None
-            else f"com gross-up multiplicativo de {self.gross_up:.4f} (tributos, informado, nao conferido)"
-        )
-        return ", ".join(partes)
 
     def faixas(self, indice: pd.DatetimeIndex, modalidade: str) -> np.ndarray:
         """Faixa de cada timestamp: 'unico' na convencional, posto horario na branca."""

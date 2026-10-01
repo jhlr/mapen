@@ -7,7 +7,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from mapen_aconselhamento.recomenda import ConfigEquipamentos
+from mapen_aconselhamento.domain.equipamentos import ConfigEquipamentos
+from mapen_aconselhamento.infrastructure.equipamentos_yaml import carregar_config_equipamentos
 from mapen_plataforma.application.casos_de_uso import EmitirCredenciaisDispositivo, ProvisionarEmpresa
 from mapen_plataforma.domain.credenciais import CredenciaisNovas
 from mapen_plataforma.domain.entidades import Equipamento, Sensor, Unidade
@@ -49,7 +50,7 @@ def semear_demo(
 ) -> list[SegredosDemo]:
     """Cria o que falta (idempotente) e rotaciona as chaves de demo. `chaves_api` fixa a chave por empresa."""
     unidades, sensores, equipamentos = UnidadeDuckDB(banco), SensorDuckDB(banco), EquipamentoDuckDB(banco)
-    config = ConfigEquipamentos.carregar()
+    config = carregar_config_equipamentos()
     segredos: list[SegredosDemo] = []
     for empresa_id, nome, sensor_id in _DEMOS:
         novo = not banco.consultar("SELECT 1 FROM empresa WHERE id = ?", [empresa_id])

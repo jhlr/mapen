@@ -8,7 +8,7 @@ import pandas as pd
 import pytest
 
 from ambiente import Ambiente, bearer
-from mapen_aconselhamento.tarifa import Tarifas
+from mapen_aconselhamento.infrastructure.tarifa_csv import carregar_tarifas
 
 DIA = "inicio=2026-10-05T00:00:00-03:00&fim=2026-10-06T00:00:00-03:00"
 
@@ -30,7 +30,7 @@ def test_serie_horaria_em_kw_com_faixa_branca(amb: Ambiente) -> None:
 def test_faixa_vem_do_m1_e_a_convencional_e_unica(amb: Ambiente) -> None:
     faixas = [p["faixa"] for p in _horario(amb, modalidade="convencional").json()]
     assert faixas == ["unico", "unico"]
-    esperado = Tarifas.carregar().faixas(pd.DatetimeIndex(["2026-10-05 17:00", "2026-10-05 18:00"]), "branca")
+    esperado = carregar_tarifas().faixas(pd.DatetimeIndex(["2026-10-05 17:00", "2026-10-05 18:00"]), "branca")
     assert [p["faixa"] for p in _horario(amb).json()] == list(esperado)
 
 
