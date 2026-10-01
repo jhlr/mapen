@@ -1,50 +1,45 @@
-import { brl, buscar, mesDe, num, type ConsumoAgora, type Custo } from "../../lib/api";
-import { contexto, type Params } from "../../lib/contexto";
+import { Aviso, Barra, Cabecalho, Cartao, Cartoes, Tabela, Vazio } from "../../components/Basicos";
+import { SeletorModalidade, SeletorSensor } from "../../components/Seletores";
+import { consumoAgora, custoPorFaixa } from "../../lib/api";
+import { contexto } from "../../lib/contexto";
+import { agruparPorFaixa, maximoPositivo, somaRs } from "../../lib/dominio/agregacao";
+import { brl, num } from "../../lib/dominio/formatacao";
+import { mesDe } from "../../lib/dominio/periodo";
+import type { Params } from "../../lib/dominio/parametros";
 
 export const dynamic = "force-dynamic";
 
 export default async function CustoPorFaixa({ searchParams }: { searchParams: Params }) {
-  const { empresa, sensor, modalidade } = await contexto(searchParams);
-  if (sensor === undefined) return <p>Nenhum sensor cadastrado.</p>;
-  const id = encodeURIComponent(sensor);
-  const ref = await buscar<ConsumoAgora>(`/sensores/${id}/consumo-agora`, empresa);
-  const mes = mesDe(ref.ts_referencia);
-  const linhas = await buscar<Custo[]>(
-    `/sensores/${id}/custo?inicio=${mes.inicio}&fim=${mes.fim}&modalidade=${modalidade}`,
-    empresa,
-  );
-  const porFaixa = new Map<string, { kwh: number; rs: number }>();
-  for (const l of linhas) {
-    const atual = porFaixa.get(l.faixa) ?? { kwh: 0, rs: 0 };
-    porFaixa.set(l.faixa, { kwh: atual.kwh + l.kwh, rs: atual.rs + l.custo_rs });
-  }
-  const total = [...porFaixa.values()].reduce((a, b) => a + b.rs, 0);
-  const maximo = Math.max(...[...porFaixa.values()].map((v) => v.rs), 1e-9);
+  const { empresa, sensores, sensor, modalidade } = await contexto(searchParams);
+  if (sensor === undefined) return <Vazio>Nenhum sensor cadastrado para esta empresa.</Vazio>;
+  const mes = mesDe((await consumoAgora(empresa, sensor)).ts_referencia);
+  const faixas = agruparPorFaixa(await custoPorFaixa(empresa, sensor, mes.inicio, mes.fim, modalidade));
+  const maximo = maximoPositivo(faixas.map((f) => f.rs));
   return (
     <>
-      <h1>Custo por faixa horaria, {mes.rotulo}</h1>
-      <p>
-        Modalidade: <a href={`/custo?empresa=${empresa}&sensor=${id}&modalidade=convencional`}>convencional</a>{" "}
-        | <a href={`/custo?empresa=${empresa}&sensor=${id}&modalidade=branca`}>branca</a> (atual: {modalidade})
-      </p>
-      <div className="aviso">
-        Tarifa base Neoenergia PE B3, sem tributos e sem bandeira. Pontos ausentes nao entram na soma, entao o
-        custo e um piso.
-      </div>
-      <div className="cards"><div className="card">Total no mes<b>{brl(total)}</b></div></div>
-      <table>
-        <thead><tr><th>Faixa</th><th className="n">kWh</th><th className="n">Custo</th><th /></tr></thead>
-        <tbody>
-          {[...porFaixa.entries()].map(([faixa, v]) => (
-            <tr key={faixa}>
-              <td>{faixa}</td>
-              <td className="n">{num(v.kwh, 1)}</td>
-              <td className="n">{brl(v.rs)}</td>
-              <td style={{ width: "35%" }}><div className="barra" style={{ width: `${(100 * v.rs) / maximo}%` }} /></td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <Cabecalho titulo="Custo por faixa horária" subtitulo={`Referência: ${mes.rotulo}`} />
+      <SeletorSensor rota="/custo" empresa={empresa} sensor={sensor} modalidade={modalidade} sensores={sensores} />
+      <SeletorModalidade rota="/custo" empresa={empresa} sensor={sensor} modalidade={modalidade} />
+      <Aviso titulo="Como ler">
+        Tarifa base Neoenergia PE B3, sem tributos e sem bandeira. Pontos ausentes não entram na soma, então o
+        custo é um piso.
+      </Aviso>
+      <Cartoes><Cartao rotulo={`Total no mês (${modalidade})`} valor={brl(somaRs(faixas))} /></Cartoes>
+      {faixas.length === 0 ? <Vazio>Sem consumo no período.</Vazio> : (
+        <Tabela legenda="Custo por faixa horária">
+          <thead><tr><th>Faixa</th><th className="n">kWh</th><th className="n">Custo</th><th className="g" /></tr></thead>
+          <tbody>
+            {faixas.map((f) => (
+              <tr key={f.faixa}>
+                <td>{f.faixa}</td>
+                <td className="n">{num(f.kwh, 1)}</td>
+                <td className="n">{brl(f.rs)}</td>
+                <td className="g"><Barra valor={f.rs} maximo={maximo} /></td>
+              </tr>
+            ))}
+          </tbody>
+        </Tabela>
+      )}
     </>
   );
 }
