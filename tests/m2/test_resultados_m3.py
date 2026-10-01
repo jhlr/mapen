@@ -337,6 +337,62 @@ def test_veredito_muda_quando_os_dados_mudam(tmp_path: Path) -> None:
     assert v2["tolerancia_atendida"] is False and v2["dentro_da_tolerancia"] == 2 and "2 de 3" in v2["texto"]
 
 
+def test_veredito_nao_atendido_quando_so_o_alvo_esta_dentro(tmp_path: Path) -> None:
+    so_alvo = economia_json({"a": 15.5, "b": 27.0, "c": 16.0}, alvo_dentro=True)
+    amb = ambiente(gravar(tmp_path / "m3", **{ARQUIVO_ECONOMIA: so_alvo}))
+    v = amb.client.get("/economia", headers=amb.ha).json()["veredito"]
+    assert v["alvo_dentro_da_tolerancia"] is True
+    assert v["tolerancia_atendida"] is False and v["dentro_da_tolerancia"] == 2 and "NAO atendida" in v["texto"]
+
+
+def test_tolerancia_e_inclusiva_na_borda(tmp_path: Path) -> None:
+    # tolerancia 3.0 pp, injetado 15.0: erros exatos de +3.0, -3.0 e 0.0 estao dentro
+    borda = economia_json({"a": 18.0, "b": 12.0, "c": 15.0}, alvo_dentro=True)
+    amb = ambiente(gravar(tmp_path / "m3", **{ARQUIVO_ECONOMIA: borda}))
+    corpo = amb.client.get("/economia", headers=amb.ha).json()
+    assert corpo["veredito"]["tolerancia_atendida"] is True and corpo["veredito"]["dentro_da_tolerancia"] == 3
+    assert [x["dentro_da_tolerancia"] for x in corpo["equipamentos"]] == [True, True, True]
+
+
+@pytest.mark.parametrize("rota,nome,fabrica,coagivel", [
+    ("/alertas", ARQUIVO_ALERTAS, alertas_json, ("limiar_z", "4.0")),
+    ("/economia", ARQUIVO_ECONOMIA, economia_json, ("tolerancia_pp", "3.0")),
+    ("/modelos/resumo", ARQUIVO_RESUMO, resumo_json, ("sensor_id", None)),
+])
+def test_valor_coagivel_nao_e_aceito_esquema_estrito(
+    tmp_path: Path, rota: str, nome: str, fabrica: Any, coagivel: tuple[str, str | None]
+) -> None:
+    dado = fabrica()
+    campo, texto = coagivel
+    if texto is None:  # resumo: contagem inteira como texto
+        dado["dados"]["linhas_minuto"] = "100"
+    else:
+        dado[campo] = texto
+    amb = ambiente(gravar(tmp_path / "m3", **{nome: dado}))
+    assert amb.client.get(rota, headers=amb.ha).status_code == 503
+
+
+def test_nan_em_campo_numerico_comum_e_recusado(tmp_path: Path) -> None:
+    alertas = alertas_json()
+    alertas["alertas"][0]["z"] = float("nan")
+    eco = economia_json()
+    eco["equipamentos"][0]["kwh_antes"] = float("nan")
+    resumo = resumo_json()
+    resumo["mae"]["baseline_sazonal"] = float("nan")
+    amb = ambiente(gravar(tmp_path / "m3", **{ARQUIVO_ALERTAS: alertas, ARQUIVO_ECONOMIA: eco, ARQUIVO_RESUMO: resumo}))
+    for rota in ROTAS:
+        assert amb.client.get(rota, headers=amb.ha).status_code == 503
+
+
+def test_texto_do_veredito_usa_os_numeros_do_artefato(tmp_path: Path) -> None:
+    d = economia_json({"a": 21.0, "b": 19.0, "c": 22.5}, alvo_dentro=True)
+    d["reducao_sintetica"]["fracao_pct"] = 20.0
+    d["tolerancia_pp"] = 2.0
+    amb = ambiente(gravar(tmp_path / "m3", **{ARQUIVO_ECONOMIA: d}))
+    texto = amb.client.get("/economia", headers=amb.ha).json()["veredito"]["texto"]
+    assert "+-2.0 pp" in texto and "sintetica de 20.0%" in texto and "2 de 3" in texto and "recuperou 21.00%" in texto
+
+
 def test_economia_exige_equipamento_alvo_na_lista(tmp_path: Path) -> None:
     d = economia_json()
     d["reducao_sintetica"]["equipamento"] = "zzz"

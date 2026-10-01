@@ -1,4 +1,4 @@
-"""Artefatos JSON do M3 para o dashboard: `alertas.json` e `economia.json`.
+"""Artefatos JSON do M3 para o dashboard: `resumo.json`, `alertas.json` e `economia.json`.
 
 Esquemas documentados em docs/m3_notas.md. Os alertas sao candidatos nao corroborados (sem
 rotulo real); a economia e validacao de metodo com reducao sintetica, nao economia real.
@@ -13,6 +13,7 @@ import pandas as pd
 
 from mapen_modelos.application.detectar_anomalias import STATUS_CANDIDATO, Alerta
 from mapen_modelos.application.executar_m3 import ResultadoM3
+from mapen_modelos.application.resumo_m3 import JanelaResumo, ResumoM3
 
 VERSAO_ESQUEMA = 1
 
@@ -90,6 +91,82 @@ def montar_economia(r: ResultadoM3) -> dict[str, object]:
         "tolerancia_pp": ad.tolerancia_pp,
         "dentro_da_tolerancia": ad.dentro_da_tolerancia,
         "equipamentos": por_eq,
+    }
+
+
+def _janela(j: JanelaResumo) -> dict[str, str]:
+    return {"inicio": _ts(j.inicio), "fim": _ts(j.fim)}
+
+
+def montar_resumo_json(r: ResumoM3) -> dict[str, object]:
+    d, m, s, b = r.dados, r.mae, r.shap, r.benchmark_sintetico
+    return {
+        "versao_esquema": VERSAO_ESQUEMA,
+        "sensor_id": r.sensor_id,
+        "dados": {
+            "fonte": d.fonte,
+            "periodo": _janela(d.periodo),
+            "treino": _janela(d.treino),
+            "reservado": _janela(d.reservado),
+            "equipamentos_no_andar": d.equipamentos_no_andar,
+            "equipamentos_modelados": d.equipamentos_modelados,
+            "equipamentos_sem_carga": list(d.equipamentos_sem_carga),
+            "linhas_minuto": d.linhas_minuto,
+        },
+        "mae": {
+            "unidade": "kW",
+            "horas_teste": m.horas_teste,
+            "baseline_sazonal": round(m.baseline_sazonal_kw, 4),
+            "lightgbm": round(m.lightgbm_kw, 4),
+            "melhora_mediana_pct": round(m.melhora_mediana_pct, 1),
+            "ressalva_nowcast": m.ressalva_nowcast,
+            "por_equipamento": [
+                {
+                    "equipamento": e.equipamento,
+                    "horas_teste": e.horas_teste,
+                    "mae_baseline_kw": round(e.mae_baseline_kw, 4),
+                    "mae_lightgbm_kw": round(e.mae_lightgbm_kw, 4),
+                    "melhora_pct": round(e.melhora_pct, 1),
+                }
+                for e in m.por_equipamento
+            ],
+        },
+        "shap": {
+            "horas_equipamento": s.horas_equipamento,
+            "calendario_pct": round(s.calendario_pct, 1),
+            "historico_pct": round(s.historico_pct, 1),
+            "limiar_feature_dominante_pct": s.limiar_feature_dominante_pct,
+            "por_feature": [{"feature": f.feature, "pct": round(f.pct, 1)} for f in s.por_feature],
+            "por_equipamento": [
+                {
+                    "equipamento": e.equipamento,
+                    "calendario_pct": round(e.calendario_pct, 1),
+                    "historico_pct": round(e.historico_pct, 1),
+                    "feature_dominante": e.feature_dominante,
+                }
+                for e in s.por_equipamento
+            ],
+        },
+        "benchmark_sintetico": {
+            "semente": b.semente,
+            "eventos_por_tipo_por_equipamento": b.eventos_por_tipo_por_equipamento,
+            "limiar_z": b.limiar_z,
+            "detectores": [
+                {
+                    "detector": x.detector,
+                    "por_tipo": [{"tipo": t.tipo, "detectados": t.detectados, "eventos": t.eventos} for t in x.por_tipo],
+                    "total_detectados": x.total_detectados,
+                    "total_eventos": x.total_eventos,
+                    "falso_alarme_horas": x.falso_alarme_horas,
+                    "horas_base": x.horas_base,
+                }
+                for x in b.detectores
+            ],
+        },
+        "baseline_fraca": {
+            "criterio": r.baseline_fraca.criterio,
+            "semanas_completas_treino": r.baseline_fraca.semanas_completas_treino,
+        },
     }
 
 

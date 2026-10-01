@@ -20,13 +20,14 @@ Mesmas quatro camadas de `mapen_aconselhamento` (interface > infrastructure > ap
 | `application/detectar_anomalias.py` | application | `DetectarAnomalias`: alertas z-score e LightGBM com explicacao e D7 |
 | `application/comparar_antes_depois.py` | application | `CompararAntesDepois`: economia normalizada, reducao sintetica e varredura |
 | `application/benchmark_sintetico.py` | application | `BenchmarkSintetico`: injecao, taxa de deteccao e de falso alarme |
-| `application/executar_m3.py` | application | `ExecutarM3`: dono do ciclo completo |
+| `application/executar_m3.py` | application | `ExecutarM3`: dono do ciclo completo, incluindo `resumir()` (resumo para o dashboard) |
+| `application/resumo_m3.py` | application | valor `ResumoM3` (dados, MAE, SHAP/D7, benchmark, baseline fraca) e `montar_resumo`; sem I/O, sem arredondar |
 | `infrastructure/serie_duckdb.py` | infrastructure | leitor de series horarias sobre a tabela `leitura` do M1 |
 | `infrastructure/subconjunto.py` | infrastructure | carga do subconjunto com o carregador do M1 (`carregar_cu_bems`) |
 | `infrastructure/lightgbm_modelo.py` | infrastructure | regressor LightGBM por equipamento |
 | `infrastructure/shap_explicador.py` | infrastructure | valores SHAP (ver "Limites" sobre o pacote `shap`) |
 | `infrastructure/arquivos.py` | infrastructure | gravacao de relatorio e JSON |
-| `interface/relatorio_markdown.py`, `interface/artefatos_json.py`, `interface/cli.py` | interface | relatorio, esquemas JSON e CLI |
+| `interface/relatorio_markdown.py`, `interface/artefatos_json.py`, `interface/cli.py` | interface | relatorio, esquemas JSON (arredondamento de apresentacao) e CLI; `cli.publicar` grava relatorio + `resumo.json`, `alertas.json`, `economia.json` |
 
 Contratos import-linter (`pyproject.toml`, agora com 3 pacotes): camadas do M3; domain/application do M3 sem `duckdb`, `lightgbm`, `shap`, `yaml`, `httpx`, `fastapi`, `starlette`, `mapen_plataforma` nem a infraestrutura/interface do M1; M3 nao depende da plataforma; M1 e M2 nao dependem do M3. Repo real: `Contracts: 9 kept, 0 broken.`
 
@@ -97,13 +98,15 @@ Prova vermelha do import-linter (copia de `src/` e `pyproject.toml` em `/private
 
 ## Esquemas JSON (para o dashboard; gitignored em `data/m3/`)
 
+`resumo.json` e gerado pelo proprio pipeline (`ExecutarM3.resumir` -> `interface.artefatos_json.montar_resumo_json` -> `cli.publicar`); antes era um script descartavel que lia o markdown e uma nova execucao do CLI nao o atualizava. Esquema em `docs/m2_seguranca_notas.md` ("Contrato M3"), validado pelo adaptador da API. MAE com 4 casas e percentuais com 1 casa, como no relatorio. Reexecucao do CLI em 2026-10-01 (cerca de 2 min): `resumo.json`, `alertas.json`, `economia.json` e `relatorio_m3.md` sairam byte a byte iguais aos anteriores (MAE 0.6113 baseline x 0.2051 LightGBM; 7 de 19 equipamentos dentro da tolerancia).
+
 `alertas.json`: `{versao_esquema, sensor_id, periodo{inicio,fim}, limiar_z, aviso, alertas[]}`; cada alerta: `equipamento` (str), `timestamp` (ISO, ingenuo), `tipo` (`zscore` | `lightgbm`), `esperado_kw`, `observado_kw`, `z` (float; no LightGBM e o residuo / desvio fora da amostra das dobras), `janela_baseline{inicio,fim}` (janela de treino), `top_shap` (null no z-score; no LightGBM lista de 3 `{feature, shap}`), `baseline_fraca` (bool), `status` (sempre `candidato_nao_corroborado`).
 
 `economia.json`: `{versao_esquema, sensor_id, natureza: "validacao_de_metodo_sintetica", aviso, periodo_antes, periodo_depois, reducao_sintetica{equipamento, fracao_pct, a_partir_de}, recuperado_pct, tolerancia_pp, dentro_da_tolerancia, equipamentos[]}`; cada equipamento: `equipamento`, `kwh_antes`, `kwh_depois`, `kwh_contrafactual`, `economia_kwh`, `economia_pct` (com a reducao no equipamento alvo), `economia_pct_sem_reducao` (controle), `recuperado_pct_com_reducao_sintetica` (varredura), `reducao_sintetica_aplicada` (bool), `baseline_fraca` (bool). Valores NaN viram null. Nao ha R$: so kWh.
 
 ## Testes
 
-`tests/m3/` (43 testes): unitarios por peca de dominio, guard de vazamento, teste de lacuna (lags e janela NaN no ponto certo; treino nunca recebe alvo NaN), integracao sintetica de semente fixa (benchmark e antes x depois), leitor DuckDB e explicador. Suite completa `gtimeout 900 .venv/bin/pytest -W error -q`: 256 passed (213 anteriores + 43). mypy strict (`src/mapen_modelos`, `tests/m3`, e os demais): `Success: no issues found in 95 source files`.
+`tests/m3/` (43 testes): unitarios por peca de dominio, guard de vazamento, teste de lacuna (lags e janela NaN no ponto certo; treino nunca recebe alvo NaN), integracao sintetica de semente fixa (benchmark e antes x depois), leitor DuckDB e explicador. Suite completa `gtimeout 900 .venv/bin/pytest -W error -q`: ver o fim da secao "Prova de vermelho da API" para a contagem atual. mypy strict (`src/mapen_modelos`, `tests/m3`, e os demais): `Success: no issues found in 95 source files`.
 
 ## Limites e o que NAO esta validado
 
@@ -115,3 +118,57 @@ Prova vermelha do import-linter (copia de `src/` e `pyproject.toml` em `/private
 6. Limiar |z| >= 4 e hiperparametros do LightGBM fixos, nao ajustados em dado rotulado. Sigma do LightGBM vem do desvio dos residuos fora da amostra das dobras.
 7. Um unico andar e 22 semanas de 2018; so predio universitario tropical. Nao generaliza para o piloto.
 8. Timestamps ingenuos; feriados so nacionais (lista do M1). Dias letivos/ferias nao entram.
+
+## Contrato CLI -> API do `resumo.json` (teste de fronteira)
+
+`tests/contratos/test_contrato_m3_resumo.py` roda o ciclo real do M3 numa serie sintetica de semente fixa, grava os artefatos por `cli.publicar` (o mesmo caminho do CLI) e le tudo com `ResultadosM3Json`, o adaptador estrito da plataforma. Fica em `tests/contratos` porque cruza dois pacotes; so os testes importam os dois lados (import-linter continua em 9 contratos mantidos, M3 nao depende da plataforma).
+
+Prova de vermelho (sem git): copia de `src/`, `tests/` e `pyproject.toml` em `/private/tmp/m3red1` com a linha que grava `resumo.json` removida de `cli.publicar` (comportamento antigo). Resultado: `2 failed` (`ResultadosM3Indisponiveis: artefato resumo.json ausente`). No repo: `2 passed`.
+
+## Prova de vermelho da API
+
+Os testes de `tests/m2/test_resultados_m3.py` nunca tinham sido vistos vermelhos. Metodo: para cada grupo de comportamento, uma copia de `src/`, `tests/`, `data/tarifas`, `config` e `pyproject.toml` em `/private/tmp/m3red2/NN` recebe UMA mutacao no codigo de producao (o repo nao foi tocado, sem git stash) e roda o arquivo de testes com `PYTHONPATH` apontando para a copia. Copia sem mutacao: todos passam. O teste da copia dos artefatos reais (`test_artefatos_reais_...`) foi excluido (le `data/m3` por caminho relativo ao repo). Script: nao versionado (scratchpad da sessao).
+
+A primeira rodada achou lacunas (mutantes sobreviventes); foram acrescentados 5 testes (7 casos) e a rodada repetida. Resumo final por grupo (primeiro teste vermelho de cada mutacao):
+
+| Grupo | Mutacao (copia) | Resultado |
+|---|---|---|
+| 401 | `principal_empresa` devolve a empresa A quando a chave nao confere | VERMELHO: `test_sem_chave_ou_chave_errada_e_401` |
+| tenant | outra empresa le alertas da dona | VERMELHO: `test_outra_empresa_nao_ve_503_mesmo_sem_artefato`, `test_outra_empresa_recebe_vazio_nunca_o_dado_da_dona` |
+| tenant | outra empresa le a economia da dona | VERMELHO: `test_vazio_da_outra_empresa_por_rota` |
+| tenant | outra empresa recebe 503 em vez de vazio | VERMELHO: `test_outra_empresa_nao_ve_503_mesmo_sem_artefato` |
+| schema | `extra="ignore"` | VERMELHO: `test_artefato_fora_do_esquema_e_503[...campo_extra]` |
+| schema | `versao_esquema: int` | VERMELHO: `...[_quebrar_versao]` |
+| schema | `natureza: str` | VERMELHO: `test_economia_natureza_fixa_no_esquema` |
+| schema | sem checagem `top_shap` x tipo | VERMELHO: `test_alerta_zscore_com_shap_ou_lightgbm_sem_shap_e_recusado` |
+| schema | alvo da reducao fora da lista aceito | VERMELHO: `test_economia_exige_equipamento_alvo_na_lista` |
+| schema | `strict=False` | rodada 1 VERDE (lacuna: `sensor_id=7` nao e coagivel); novo `test_valor_coagivel_nao_e_aceito_esquema_estrito`: VERMELHO |
+| schema | NaN aceito (`allow_inf_nan=True`) | rodada 1 VERDE (o teste so cobria `tolerancia_pp`); novo `test_nan_em_campo_numerico_comum_e_recusado`: VERMELHO |
+| artefato ausente | ausente vira `None` em vez de 503 | VERMELHO: `test_artefato_ausente_e_503`, `test_resumo_503_se_faltar_o_artefato_de_alertas` |
+| artefato ausente | mensagem do 503 vaza o caminho | VERMELHO: `test_artefato_ausente_e_503` |
+| artefato ausente | link simbolico para fora do diretorio aceito | VERMELHO: `test_sem_path_traversal_link_para_fora_do_diretorio_e_indisponivel` |
+| artefato ausente | handler 503 devolve 500 | VERMELHO (varios testes) |
+| filtros/limites | `ate` inclusivo; `de` exclusivo | VERMELHO: `test_alertas_filtro_de_ate_com_fuso` |
+| filtros/limites | filtros de equipamento e de tipo ignorados | VERMELHO: `test_alertas_filtros_equipamento_e_tipo` |
+| filtros/limites | `de >= ate` aceito | VERMELHO: `test_alertas_data_sem_fuso_e_de_depois_de_ate_sao_422` |
+| filtros/limites | pagina com item a mais; ordem estavel quebrada | VERMELHO: `test_alertas_paginacao_cobre_tudo_sem_repetir` |
+| filtros/limites | 422 ecoa o valor recebido | VERMELHO: `test_alertas_422_nao_ecoa_valor` |
+| filtros/limites | limite maximo, limite minimo e offset negativo | rodada 1 VERDE na rota sozinha (defesa em profundidade: o caso de uso tambem valida); mutando rota e caso de uso juntos: VERMELHO (`test_alertas_limite_fora_de_1_a_500_e_422[100000]`, `[0]`, `test_alertas_offset_negativo_e_422`) |
+| veredito | tolerancia sempre atendida | VERMELHO: `test_economia_veredito_derivado_dos_dados`, `test_veredito_muda_quando_os_dados_mudam` |
+| veredito | so o alvo decide | rodada 1 VERDE (lacuna); novo `test_veredito_nao_atendido_quando_so_o_alvo_esta_dentro`: VERMELHO |
+| veredito | tolerancia exclusiva (`<` em vez de `<=`) | rodada 1 VERDE (lacuna: nada na borda); novo `test_tolerancia_e_inclusiva_na_borda`: VERMELHO |
+| veredito | erro sem subtrair o injetado | VERMELHO: `test_veredito_muda_quando_os_dados_mudam` |
+| veredito | recuperado ausente conta como dentro | VERMELHO: `test_economia_veredito_derivado_dos_dados` |
+| veredito | aviso D7 sempre dispara / nunca dispara | VERMELHO: `test_aviso_d7_derivado_nao_dispara_sem_feature_dominante` / `test_resumo_conteudo` |
+| veredito | baseline fraca ignora os alertas | VERMELHO: `test_resumo_conteudo` |
+| veredito | texto do veredito com a fracao injetada fixa (15.0) | rodada 1 VERDE (a fixture usava 15.0); novo `test_texto_do_veredito_usa_os_numeros_do_artefato`: VERMELHO |
+
+Mutantes equivalentes (sobrevivem por desenho, nao por lacuna), todos de grupos que ficaram provados vermelhos por outra mutacao:
+
+1. Sem cabecalho `Authorization` devolve `'x'` como segredo: `autenticar_empresa` rejeita `'x'`, continua 401.
+2. Remover o filtro de tenant so em `resumo()`: o caso de uso exige `alertas` e `economia` da mesma empresa e devolve vazio do mesmo jeito.
+3. `ConsultarResumoM3` sem exigir alertas/economia: o repositorio ja levanta 503 ao le-los.
+
+Todos os grupos (401, tenant, esquema, artefato ausente, filtros/limites, veredito derivado) provados vermelhos. Nenhum grupo ficou sem prova.
+
+Estado final (2026-10-01): `gtimeout 900 .venv/bin/pytest -W error -q`: 313 passed (304 anteriores + 2 de contrato + 7 casos novos da API); mypy strict em todos os pacotes e em `tests/m1`, `tests/m2`, `tests/m3`, `tests/contratos`: `Success: no issues found in 101 source files`; `lint-imports`: 9 kept, 0 broken.

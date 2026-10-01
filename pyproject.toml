@@ -39,7 +39,7 @@ testpaths = ["tests"]
 
 [tool.mypy]
 strict = true
-files = ["src/mapen_aconselhamento", "src/mapen_plataforma", "src/mapen_modelos", "tests/m1", "tests/m2", "tests/m3"]
+files = ["src/mapen_aconselhamento", "src/mapen_plataforma", "src/mapen_modelos", "tests/m1", "tests/m2", "tests/m3", "tests/contratos"]
 
 [tool.importlinter]
 root_packages = ["mapen_aconselhamento", "mapen_plataforma", "mapen_modelos"]
