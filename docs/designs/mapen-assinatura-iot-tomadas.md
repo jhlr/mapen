@@ -42,6 +42,14 @@ O que precisa ser verificado antes de prometer isso a qualquer cliente:
 - **Conflito estratégico com a Neoenergia:** um produto que ajuda o cliente a cobrar da distribuidora é adversarial a ela. Isso contradiz a hipótese da seção 2.3 de tratar a distribuidora como canal. As duas posições não cabem juntas; o grupo precisa escolher qual contar, e isso afeta o desafio do Projeto 4. Registrado como decisão pendente na seção 7.
 - **Elo com a Fase A:** eventos de tensão/queda agregados de muitos clientes seriam um dado de qualidade de fornecimento por região, que hoje não existe em dado aberto no MAPEN. Hipótese de longo prazo, não promessa.
 
+## 1.2. Esclarecimentos do grupo (sobre a primeira revisão de viabilidade)
+
+1. **Fase:** pré-incubação, pivotando por falta de tração. O critério de sucesso é aprender rápido e barato, não faturar. O piloto da seção 6 já está dimensionado para isso.
+2. **Sensores, não só tomada:** a oferta é uma família de sensores IoT. Tomada inteligente para o que cabe nela; medidor de quadro (ex.: pinça de corrente) para as cargas grandes. Cobertura da conta deixa de ser risco estrutural e vira **escolha de sensor por cliente**. `[?]` levantar custo e certificação do sensor de quadro.
+3. **Assinatura por serviço, não por hardware:** o valor vendido é o aconselhamento contínuo (horário, tarifa, equipamentos caros, otimização), que vai além do que um sensor mostra. Fatura e curva de carga já existentes também alimentam o serviço; o sensor entra onde ele agrega medição por equipamento e controle.
+4. **Prova contra a distribuidora fica no escopo**, por orientação do professor, tratada como módulo próprio com peso jurídico/regulatório (seção 1.1.2). Antes de vender: ler a regra vigente, definir o padrão de evidência e checar com quem entende de direito do consumidor/regulação.
+5. **Capacidade de execução:** o gargalo esperado não é código. É hardware (compra, certificação, instalação), empresas-piloto e decisão do grupo. O risco 9 da seção 5 deve ser lido assim.
+
 ## 2. Por que isso encaixa no que já temos
 
 Em 11/09 o design da Fase D registrou que o maior bloqueio para qualquer produto de eficiência era **acesso a dado**: nenhuma leitura por equipamento/consumidor existe no MAPEN, e a Approach B (desagregação de consumo) só entraria em execução se duas condições se resolvessem: (1) demanda validada e (2) um caminho real de acesso a dado, citando literalmente "hardware IoT próprio" como uma das rotas possíveis.
@@ -121,7 +129,7 @@ Pergunta de unit economics que o piloto precisa responder: **economia mensal med
 6. **LGPD.** Consumo por equipamento e horário revela rotina da casa (quando há alguém, quando dorme). Dado pessoal sensível na prática. Já estava como pendência em 11/09; aqui vira requisito de desenho desde o início.
 7. **Dado ruim de rede doméstica.** Wi-Fi cai, relógio deriva, tomada reinicia. Qualidade do dado é problema de engenharia primeiro, de modelagem depois.
 8. **Dependência de fabricante.** API/nuvem fechada pode mudar ou cobrar. Preferir firmware aberto/MQTT local no piloto.
-9. **Escopo para o semestre.** Hardware + backend + dashboard + modelos é muito para o prazo da disciplina; sem corte, nada fica pronto.
+9. **Gargalo não é código.** Backend, dashboard e modelos o grupo executa rápido. O que limita é hardware (compra, certificação, instalação), empresas-piloto e decisões do grupo.
 
 ## 6. Proposta de piloto (mínimo que gera evidência)
 
