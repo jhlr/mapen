@@ -50,6 +50,13 @@ class ConfigEquipamentos:
         regras = tuple((str(e["padrao"]), _regra(e)) for e in bruto["equipamentos"])
         return cls(regras, _regra(bruto.get("padrao", {})))
 
+    def encontrar(self, equipamento_id: str) -> Regra | None:
+        """Regra que casa explicitamente com o equipamento; None se so o padrao se aplicaria."""
+        for padrao, regra in self.regras:
+            if fnmatchcase(equipamento_id, padrao):
+                return regra
+        return None
+
     def para(self, equipamento_id: str) -> Regra:
         for padrao, regra in self.regras:
             if fnmatchcase(equipamento_id, padrao):

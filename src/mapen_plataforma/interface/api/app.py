@@ -1,50 +1,80 @@
-"""Controladores FastAPI finos: validam, chamam um caso de uso, mapeiam para JSON."""
+"""Controladores FastAPI finos: autenticam, validam, chamam um caso de uso, mapeiam para JSON."""
 
 from dataclasses import dataclass
-from datetime import datetime
 from typing import Annotated
 
-from fastapi import Depends, FastAPI, Header, HTTPException, Request
+from fastapi.exceptions import RequestValidationError
+from fastapi import Depends, FastAPI, Header, HTTPException, Query, Request
 from fastapi.responses import JSONResponse
+from pydantic import AwareDatetime
 
 from mapen_plataforma.application.casos_de_uso import (
+    LIMITE_EVENTOS_MAX,
+    RANKING_N_MAX,
+    AlterarConfiguracao,
     AlterarRegra,
+    AutenticarDispositivo,
+    AutenticarEmpresa,
     Cadastro,
     ConsumoAgoraEHoje,
+    ConsumoHorario,
     CriarRegraDesligamento,
     ListarConsumoECusto,
     ListarEventos,
     ListarRegras,
     NaoEncontrado,
+    ObterConfiguracao,
+    PedidoComando,
     RankingEquipamentos,
     RegistrarLeitura,
     SolicitarDesligamento,
 )
-from mapen_plataforma.application.portas import EmpresaRepo
-from mapen_plataforma.domain.comando import ComandoRele
+from mapen_plataforma.domain.comando import Motivo
+from mapen_plataforma.domain.credenciais import Principal
 from mapen_plataforma.domain.entidades import ErroDominio
 from mapen_plataforma.interface.api import esquemas as e
+
+TAMANHO_MAX_CREDENCIAL = 256
 
 
 @dataclass
 class Servicos:
     """Casos de uso ja montados (a composicao fica em `composicao.py`)."""
 
-    empresas: EmpresaRepo
+    autenticar_empresa: AutenticarEmpresa
+    autenticar_dispositivo: AutenticarDispositivo
     cadastro: Cadastro
     registrar_leitura: RegistrarLeitura
     consumo_agora: ConsumoAgoraEHoje
+    consumo_horario: ConsumoHorario
     custo: ListarConsumoECusto
     ranking: RankingEquipamentos
     criar_regra: CriarRegraDesligamento
     alterar_regra: AlterarRegra
     listar_regras: ListarRegras
+    obter_configuracao: ObterConfiguracao
+    alterar_configuracao: AlterarConfiguracao
     desligar: SolicitarDesligamento
     eventos: ListarEventos
 
 
+def _nao_autenticado() -> HTTPException:
+    return HTTPException(status_code=401, detail="nao autenticado", headers={"WWW-Authenticate": "Bearer"})
+
+
+def _credencial(authorization: str | None) -> str:
+    """Extrai o segredo de `Authorization: Bearer <segredo>`; qualquer defeito e 401 sem detalhe."""
+    if authorization is None:
+        raise _nao_autenticado()
+    esquema, _, segredo = authorization.partition(" ")
+    segredo = segredo.strip()
+    if esquema.lower() != "bearer" or not segredo or len(segredo) > TAMANHO_MAX_CREDENCIAL:
+        raise _nao_autenticado()
+    return segredo
+
+
 def criar_app(servicos: Servicos) -> FastAPI:
-    app = FastAPI(title="MAPEN plataforma", version="0.1.0")
+    app = FastAPI(title="MAPEN plataforma", version="0.2.0")
 
     @app.exception_handler(NaoEncontrado)
     async def _nao_encontrado(_: Request, erro: NaoEncontrado) -> JSONResponse:
@@ -54,90 +84,139 @@ def criar_app(servicos: Servicos) -> FastAPI:
     async def _erro_dominio(_: Request, erro: ErroDominio) -> JSONResponse:
         return JSONResponse(status_code=422, content={"detail": str(erro)})
 
-    def empresa_id(x_empresa_id: Annotated[str, Header()]) -> str:
-        if servicos.empresas.obter(x_empresa_id) is None:
-            raise HTTPException(status_code=403, detail="empresa desconhecida")
-        return x_empresa_id
+    @app.exception_handler(RequestValidationError)
+    async def _validacao(_: Request, erro: RequestValidationError) -> JSONResponse:
+        """422 sem ecoar o valor recebido (pode ser segredo, ou nao serializavel como NaN)."""
+        detalhe = [{"loc": list(x["loc"]), "msg": x["msg"], "type": x["type"]} for x in erro.errors()]
+        return JSONResponse(status_code=422, content={"detail": detalhe})
 
-    Empresa = Annotated[str, Depends(empresa_id)]
+    def principal_empresa(authorization: Annotated[str | None, Header()] = None) -> Principal:
+        principal = servicos.autenticar_empresa.executar(_credencial(authorization))
+        if principal is None:
+            raise _nao_autenticado()
+        return principal
+
+    def principal_dispositivo(sensor_id: str, authorization: Annotated[str | None, Header()] = None) -> Principal:
+        principal = servicos.autenticar_dispositivo.executar(sensor_id, _credencial(authorization))
+        if principal is None:
+            raise _nao_autenticado()
+        return principal
+
+    Autenticado = Annotated[Principal, Depends(principal_empresa)]
+    Dispositivo = Annotated[Principal, Depends(principal_dispositivo)]
 
     @app.get("/unidades")
-    def listar_unidades(emp: Empresa) -> list[e.UnidadeOut]:
-        return [e.UnidadeOut.de(u) for u in servicos.cadastro.listar_unidades(emp)]
+    def listar_unidades(p: Autenticado) -> list[e.UnidadeOut]:
+        return [e.UnidadeOut.de(u) for u in servicos.cadastro.listar_unidades(p.empresa_id)]
 
     @app.post("/unidades", status_code=201)
-    def criar_unidade(corpo: e.UnidadeIn, emp: Empresa) -> e.UnidadeOut:
-        return e.UnidadeOut.de(servicos.cadastro.criar_unidade(emp, corpo.nome))
+    def criar_unidade(corpo: e.UnidadeIn, p: Autenticado) -> e.UnidadeOut:
+        return e.UnidadeOut.de(servicos.cadastro.criar_unidade(p.empresa_id, corpo.nome))
 
     @app.get("/sensores")
-    def listar_sensores(emp: Empresa) -> list[e.SensorOut]:
-        return [e.SensorOut.de(s) for s in servicos.cadastro.listar_sensores(emp)]
+    def listar_sensores(p: Autenticado) -> list[e.SensorOut]:
+        return [e.SensorOut.de(s) for s in servicos.cadastro.listar_sensores(p.empresa_id)]
 
     @app.post("/sensores", status_code=201)
-    def criar_sensor(corpo: e.SensorIn, emp: Empresa) -> e.SensorOut:
-        return e.SensorOut.de(servicos.cadastro.criar_sensor(emp, corpo.unidade_id, corpo.nome, corpo.id))
+    def criar_sensor(corpo: e.SensorIn, p: Autenticado) -> e.SensorCriadoOut:
+        return e.SensorCriadoOut.provisionado(
+            servicos.cadastro.criar_sensor(p.empresa_id, corpo.unidade_id, corpo.nome)
+        )
+
+    @app.post("/sensores/{sensor_id}/credenciais")
+    def rotacionar_credenciais(sensor_id: str, p: Autenticado) -> e.CredenciaisDispositivoOut:
+        return e.CredenciaisDispositivoOut.de(servicos.cadastro.rotacionar_sensor(p.empresa_id, sensor_id))
 
     @app.get("/equipamentos")
-    def listar_equipamentos(emp: Empresa) -> list[e.EquipamentoOut]:
-        return [e.EquipamentoOut.de(x) for x in servicos.cadastro.listar_equipamentos(emp)]
+    def listar_equipamentos(p: Autenticado) -> list[e.EquipamentoOut]:
+        return [e.EquipamentoOut.de(x) for x in servicos.cadastro.listar_equipamentos(p.empresa_id)]
 
     @app.post("/equipamentos", status_code=201)
-    def criar_equipamento(corpo: e.EquipamentoIn, emp: Empresa) -> e.EquipamentoOut:
+    def criar_equipamento(corpo: e.EquipamentoIn, p: Autenticado) -> e.EquipamentoOut:
         return e.EquipamentoOut.de(
-            servicos.cadastro.criar_equipamento(emp, corpo.sensor_id, corpo.nome, corpo.critico)
+            servicos.cadastro.criar_equipamento(p.empresa_id, corpo.sensor_id, corpo.nome, corpo.critico)
         )
 
     @app.get("/regras")
-    def listar_regras(emp: Empresa) -> list[e.RegraOut]:
-        return [e.RegraOut.de(r) for r in servicos.listar_regras.executar(emp)]
+    def listar_regras(p: Autenticado) -> list[e.RegraOut]:
+        return [e.RegraOut.de(r) for r in servicos.listar_regras.executar(p.empresa_id)]
 
     @app.post("/regras", status_code=201)
-    def criar_regra(corpo: e.RegraIn, emp: Empresa) -> e.RegraOut:
-        regra = servicos.criar_regra.executar(
-            emp, corpo.equipamento_id, corpo.cron, corpo.ativo, corpo.autorizado_por
-        )
-        return e.RegraOut.de(regra)
+    def criar_regra(corpo: e.RegraIn, p: Autenticado) -> e.RegraOut:
+        return e.RegraOut.de(servicos.criar_regra.executar(p, corpo.equipamento_id, corpo.cron, corpo.ativo))
 
     @app.patch("/regras/{regra_id}")
-    def alterar_regra(regra_id: str, corpo: e.RegraAtivoIn, emp: Empresa) -> e.RegraAtivoIn:
-        servicos.alterar_regra.executar(emp, regra_id, corpo.ativo)
+    def alterar_regra(regra_id: str, corpo: e.RegraAtivoIn, p: Autenticado) -> e.RegraAtivoIn:
+        servicos.alterar_regra.executar(p.empresa_id, regra_id, corpo.ativo)
         return corpo
 
+    @app.get("/configuracao")
+    def obter_configuracao(p: Autenticado) -> e.ConfiguracaoIO:
+        return e.ConfiguracaoIO.de(servicos.obter_configuracao.executar(p.empresa_id))
+
+    @app.put("/configuracao")
+    def alterar_configuracao(corpo: e.ConfiguracaoIO, p: Autenticado) -> e.ConfiguracaoIO:
+        return e.ConfiguracaoIO.de(
+            servicos.alterar_configuracao.executar(p, corpo.desligamento_remoto_habilitado)
+        )
+
     @app.post("/sensores/{sensor_id}/leituras")
-    def registrar_leituras(sensor_id: str, corpo: e.LeiturasIn, emp: Empresa) -> e.LeiturasOut:
+    def registrar_leituras(sensor_id: str, corpo: e.LeiturasIn, p: Dispositivo) -> e.LeiturasOut:
         lote = [x.para_dominio(sensor_id) for x in corpo.leituras]
-        return e.LeiturasOut(gravadas=servicos.registrar_leitura.executar(emp, sensor_id, lote))
+        return e.LeiturasOut(gravadas=servicos.registrar_leitura.executar(p.empresa_id, sensor_id, lote))
 
     @app.get("/sensores/{sensor_id}/consumo-agora")
-    def consumo_agora(sensor_id: str, emp: Empresa) -> e.ConsumoAgoraOut:
-        return e.ConsumoAgoraOut.de(servicos.consumo_agora.executar(emp, sensor_id))
+    def consumo_agora(sensor_id: str, p: Autenticado) -> e.ConsumoAgoraOut:
+        return e.ConsumoAgoraOut.de(servicos.consumo_agora.executar(p.empresa_id, sensor_id))
 
     @app.get("/sensores/{sensor_id}/custo")
     def custo(
-        sensor_id: str, inicio: datetime, fim: datetime, emp: Empresa, modalidade: str = "branca"
+        sensor_id: str, inicio: AwareDatetime, fim: AwareDatetime, p: Autenticado, modalidade: str = "branca"
     ) -> list[e.CustoOut]:
-        linhas = servicos.custo.executar(emp, sensor_id, inicio, fim, modalidade)
+        linhas = servicos.custo.executar(p.empresa_id, sensor_id, inicio, fim, modalidade)
         return [e.CustoOut.de(x) for x in linhas]
 
     @app.get("/sensores/{sensor_id}/ranking")
     def ranking(
-        sensor_id: str, inicio: datetime, fim: datetime, emp: Empresa, modalidade: str = "branca", n: int = 5
+        sensor_id: str,
+        inicio: AwareDatetime,
+        fim: AwareDatetime,
+        p: Autenticado,
+        modalidade: str = "branca",
+        n: Annotated[int, Query(ge=1, le=RANKING_N_MAX)] = 5,
     ) -> list[e.RankingOut]:
-        linhas = servicos.ranking.executar(emp, sensor_id, inicio, fim, modalidade, n)
+        linhas = servicos.ranking.executar(p.empresa_id, sensor_id, inicio, fim, modalidade, n)
         return [e.RankingOut.de(x) for x in linhas]
 
+    @app.get("/consumo/horario")
+    def consumo_horario(
+        sensor_id: Annotated[str, Query(min_length=1, max_length=128)],
+        inicio: AwareDatetime,
+        fim: AwareDatetime,
+        p: Autenticado,
+        modalidade: str = "branca",
+    ) -> list[e.PontoHorarioOut]:
+        pontos = servicos.consumo_horario.executar(p.empresa_id, sensor_id, inicio, fim, modalidade)
+        return [e.PontoHorarioOut.de(x) for x in pontos]
+
     @app.post("/desligamentos")
-    def desligar(corpo: e.DesligamentoIn, emp: Empresa) -> JSONResponse:
+    def desligar(corpo: e.DesligamentoIn, p: Autenticado) -> JSONResponse:
         c = corpo.comando
-        comando = ComandoRele(c.device_id, c.acao, c.nonce, c.validade, c.assinatura)
-        resultado = servicos.desligar.executar(
-            emp, corpo.equipamento_id, comando, corpo.autorizado_por, corpo.origem, corpo.regra_id
-        )
+        pedido = PedidoComando(c.device_id, c.acao, c.nonce, c.emitido_em, c.validade, c.assinatura)
+        resultado = servicos.desligar.executar(p, corpo.equipamento_id, pedido, corpo.origem, corpo.regra_id)
         saida = e.DesligamentoOut.de(resultado)
-        return JSONResponse(status_code=200 if saida.aceito else 403, content=saida.model_dump())
+        if saida.aceito:
+            status = 200
+        elif resultado.decisao.motivo is Motivo.EQUIPAMENTO_DESCONHECIDO:
+            status = 404
+        else:
+            status = 403
+        return JSONResponse(status_code=status, content=saida.model_dump())
 
     @app.get("/eventos")
-    def listar_eventos(emp: Empresa, limite: int = 100) -> list[e.EventoOut]:
-        return [e.EventoOut.de(x) for x in servicos.eventos.executar(emp, limite)]
+    def listar_eventos(
+        p: Autenticado, limite: Annotated[int, Query(ge=1, le=LIMITE_EVENTOS_MAX)] = 100
+    ) -> list[e.EventoOut]:
+        return [e.EventoOut.de(x) for x in servicos.eventos.executar(p.empresa_id, limite)]
 
     return app

@@ -11,6 +11,7 @@ from mapen_aconselhamento.ingest import ler_leituras
 from mapen_aconselhamento.ranking import pct_ausente_por_equipamento, top_n
 from mapen_aconselhamento.tarifa import Tarifas
 from mapen_plataforma.application.portas import CustoLinha, RankingLinha
+from mapen_plataforma.domain.tempo import para_local_ingenuo
 from mapen_plataforma.infrastructure.banco import BancoDuckDB
 
 
@@ -21,7 +22,19 @@ class CalculadoraM1:
 
     def _leituras(self, sensor_id: str, inicio: datetime, fim: datetime) -> pd.DataFrame:
         with self._banco.trava:
-            return ler_leituras(self._banco.conexao, sensor_id, pd.Timestamp(inicio), pd.Timestamp(fim))
+            return ler_leituras(
+                self._banco.conexao,
+                sensor_id,
+                pd.Timestamp(para_local_ingenuo(inicio, "inicio")),
+                pd.Timestamp(para_local_ingenuo(fim, "fim")),
+            )
+
+    def faixas(self, instantes: list[datetime], modalidade: str) -> list[str]:
+        """Faixa tarifaria de cada instante, pela mesma `Tarifas.faixas` do custo."""
+        if not instantes:
+            return []
+        indice = pd.DatetimeIndex([para_local_ingenuo(t, "hora") for t in instantes])
+        return [str(f) for f in self._tarifas.faixas(indice, modalidade)]
 
     def custo_por_faixa(
         self, sensor_id: str, inicio: datetime, fim: datetime, modalidade: str

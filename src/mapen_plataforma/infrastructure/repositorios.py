@@ -7,7 +7,10 @@ from datetime import UTC, datetime
 
 import pandas as pd
 
-from mapen_plataforma.application.portas import ConsumoEquipamento
+from mapen_plataforma.application.portas import ConsumoEquipamento, ConsumoHora, CredencialDispositivo
+from mapen_plataforma.domain.comando import ConfiguracaoSeguranca
+from mapen_plataforma.domain.credenciais import Principal
+from mapen_plataforma.domain.tempo import de_local_ingenuo, para_local_ingenuo
 from mapen_plataforma.domain.entidades import (
     Empresa,
     Equipamento,
@@ -28,6 +31,11 @@ def _naive_utc(ts: datetime) -> datetime:
 def _aware_utc(valor: object) -> datetime:
     assert isinstance(valor, datetime)
     return valor.replace(tzinfo=UTC)
+
+
+def _hora_local(valor: object) -> datetime:
+    assert isinstance(valor, datetime)
+    return de_local_ingenuo(valor)
 
 
 class EmpresaDuckDB:
@@ -58,7 +66,10 @@ class UnidadeDuckDB:
         return [Unidade(str(a), str(b), str(c)) for a, b, c in linhas]
 
     def obter(self, empresa_id: str, unidade_id: str) -> Unidade | None:
-        return next((u for u in self.listar(empresa_id) if u.id == unidade_id), None)
+        linhas = self._b.consultar(
+            "SELECT id, empresa_id, nome FROM unidade WHERE empresa_id = ? AND id = ?", [empresa_id, unidade_id]
+        )
+        return Unidade(str(linhas[0][0]), str(linhas[0][1]), str(linhas[0][2])) if linhas else None
 
 
 class SensorDuckDB:
@@ -79,7 +90,14 @@ class SensorDuckDB:
         return [Sensor(str(a), str(b), str(c), str(d)) for a, b, c, d in linhas]
 
     def obter(self, empresa_id: str, sensor_id: str) -> Sensor | None:
-        return next((s for s in self.listar(empresa_id) if s.id == sensor_id), None)
+        linhas = self._b.consultar(
+            "SELECT id, empresa_id, unidade_id, nome FROM sensor WHERE empresa_id = ? AND id = ?",
+            [empresa_id, sensor_id],
+        )
+        if not linhas:
+            return None
+        a, b, c, d = linhas[0]
+        return Sensor(str(a), str(b), str(c), str(d))
 
 
 class EquipamentoDuckDB:
@@ -101,7 +119,14 @@ class EquipamentoDuckDB:
         return [Equipamento(str(a), str(b), str(c), str(d), bool(e)) for a, b, c, d, e in linhas]
 
     def obter(self, empresa_id: str, equipamento_id: str) -> Equipamento | None:
-        return next((e for e in self.listar(empresa_id) if e.id == equipamento_id), None)
+        linhas = self._b.consultar(
+            "SELECT id, empresa_id, sensor_id, nome, critico FROM equipamento WHERE empresa_id = ? AND id = ?",
+            [empresa_id, equipamento_id],
+        )
+        if not linhas:
+            return None
+        a, b, c, d, e = linhas[0]
+        return Equipamento(str(a), str(b), str(c), str(d), bool(e))
 
 
 class RegraDuckDB:
@@ -126,17 +151,26 @@ class RegraDuckDB:
             for a, b, c, d, e, f, g in linhas
         ]
 
+    def obter(self, empresa_id: str, regra_id: str) -> RegraDesligamento | None:
+        linhas = self._b.consultar(
+            "SELECT id, empresa_id, equipamento_id, cron, ativo, autorizado_por, criado_em "
+            "FROM regra_desligamento WHERE empresa_id = ? AND id = ?",
+            [empresa_id, regra_id],
+        )
+        if not linhas:
+            return None
+        a, b, c, d, e, f, g = linhas[0]
+        return RegraDesligamento(str(a), str(b), str(c), str(d), bool(e), str(f), _aware_utc(g))
+
     def definir_ativo(self, empresa_id: str, regra_id: str, ativo: bool) -> bool:
-        existe = self._b.consultar(
-            "SELECT 1 FROM regra_desligamento WHERE id = ? AND empresa_id = ?", [regra_id, empresa_id]
-        )
-        if not existe:
-            return False
-        self._b.executar(
-            "UPDATE regra_desligamento SET ativo = ? WHERE id = ? AND empresa_id = ?",
-            [ativo, regra_id, empresa_id],
-        )
-        return True
+        with self._b.trava:
+            if self.obter(empresa_id, regra_id) is None:
+                return False
+            self._b.executar(
+                "UPDATE regra_desligamento SET ativo = ? WHERE id = ? AND empresa_id = ?",
+                [ativo, regra_id, empresa_id],
+            )
+            return True
 
 
 class EventoDuckDB:
@@ -169,18 +203,91 @@ class EventoDuckDB:
 
 
 class NonceDuckDB:
-    """Nonces ja vistos por dispositivo; a chave primaria garante o registro atomico."""
+    """Nonces ja vistos por dispositivo. A chave primaria + ON CONFLICT DO NOTHING decide, atomicamente, quem usou primeiro."""
 
     def __init__(self, banco: BancoDuckDB) -> None:
         self._b = banco
 
-    def registrar(self, device_id: str, nonce: str) -> bool:
+    def registrar(self, device_id: str, nonce: str, expira_em: datetime) -> bool:
         with self._b.trava:
-            ja = self._b.consultar("SELECT 1 FROM nonce WHERE device_id = ? AND nonce = ?", [device_id, nonce])
-            if ja:
-                return False
-            self._b.executar("INSERT INTO nonce VALUES (?, ?)", [device_id, nonce])
-            return True
+            resultado = self._b.conexao.execute(
+                "INSERT INTO nonce (device_id, nonce, expira_em) VALUES (?, ?, ?) ON CONFLICT DO NOTHING",
+                [device_id, nonce, _naive_utc(expira_em)],
+            ).fetchall()
+        return int(str(resultado[0][0])) == 1
+
+    def podar(self, agora: datetime) -> int:
+        with self._b.trava:
+            resultado = self._b.conexao.execute(
+                "DELETE FROM nonce WHERE expira_em < ?", [_naive_utc(agora)]
+            ).fetchall()
+        return int(str(resultado[0][0]))
+
+
+class CredenciaisEmpresaDuckDB:
+    """Chaves de API por empresa e principal; so o hash SHA-256 fica no banco."""
+
+    def __init__(self, banco: BancoDuckDB) -> None:
+        self._b = banco
+
+    def definir(self, empresa_id: str, principal: str, hash_chave: str) -> None:
+        with self._b.trava:
+            self._b.executar(
+                "DELETE FROM credencial_empresa WHERE empresa_id = ? AND principal = ?", [empresa_id, principal]
+            )
+            self._b.executar(
+                "INSERT INTO credencial_empresa (hash_chave, empresa_id, principal) VALUES (?, ?, ?)",
+                [hash_chave, empresa_id, principal],
+            )
+
+    def buscar(self, hash_chave: str) -> Principal | None:
+        linhas = self._b.consultar(
+            "SELECT empresa_id, principal FROM credencial_empresa WHERE hash_chave = ?", [hash_chave]
+        )
+        return Principal(str(linhas[0][0]), str(linhas[0][1])) if linhas else None
+
+
+class CredenciaisDispositivoDuckDB:
+    def __init__(self, banco: BancoDuckDB) -> None:
+        self._b = banco
+
+    def definir(self, credencial: CredencialDispositivo) -> None:
+        with self._b.trava:
+            self._b.executar("DELETE FROM credencial_dispositivo WHERE device_id = ?", [credencial.device_id])
+            self._b.executar(
+                "INSERT INTO credencial_dispositivo (device_id, empresa_id, token_hash, sal) VALUES (?, ?, ?, ?)",
+                [credencial.device_id, credencial.empresa_id, credencial.token_hash, credencial.sal],
+            )
+
+    def obter(self, device_id: str) -> CredencialDispositivo | None:
+        linhas = self._b.consultar(
+            "SELECT device_id, empresa_id, token_hash, sal FROM credencial_dispositivo WHERE device_id = ?",
+            [device_id],
+        )
+        if not linhas:
+            return None
+        a, b, c, d = linhas[0]
+        return CredencialDispositivo(str(a), str(b), str(c), str(d))
+
+
+class ConfiguracaoDuckDB:
+    """Flag por empresa; sem linha, vale o padrao do dominio (desligado)."""
+
+    def __init__(self, banco: BancoDuckDB) -> None:
+        self._b = banco
+
+    def obter(self, empresa_id: str) -> ConfiguracaoSeguranca:
+        linhas = self._b.consultar(
+            "SELECT desligamento_remoto_habilitado FROM configuracao_empresa WHERE empresa_id = ?", [empresa_id]
+        )
+        return ConfiguracaoSeguranca(bool(linhas[0][0])) if linhas else ConfiguracaoSeguranca()
+
+    def definir(self, empresa_id: str, config: ConfiguracaoSeguranca) -> None:
+        with self._b.trava:
+            self._b.executar("DELETE FROM configuracao_empresa WHERE empresa_id = ?", [empresa_id])
+            self._b.executar(
+                "INSERT INTO configuracao_empresa VALUES (?, ?)", [empresa_id, config.desligamento_remoto_habilitado]
+            )
 
 
 class LeituraDuckDB:
@@ -196,7 +303,7 @@ class LeituraDuckDB:
             {
                 "sensor_id": [x.sensor_id for x in leituras],
                 "equipamento_id": [x.equipamento_nome for x in leituras],
-                "ts": pd.to_datetime([x.ts for x in leituras]),
+                "ts": pd.to_datetime([para_local_ingenuo(x.ts, "ts") for x in leituras]),
                 "potencia_w": pd.array([x.potencia_w for x in leituras], dtype="Float64"),
                 "tensao_v": pd.array([x.tensao_v for x in leituras], dtype="Float64"),
                 "kwh": pd.array([x.kwh for x in leituras], dtype="Float64"),
@@ -227,7 +334,7 @@ class LeituraDuckDB:
             "SELECT max(ts) FROM leitura WHERE sensor_id = ? AND NOT ausente", [sensor_id]
         )
         valor = linhas[0][0]
-        return valor if isinstance(valor, datetime) else None
+        return de_local_ingenuo(valor) if isinstance(valor, datetime) else None
 
     def consumo_por_equipamento(
         self, sensor_id: str, inicio: datetime, fim: datetime
@@ -235,13 +342,22 @@ class LeituraDuckDB:
         linhas = self._b.consultar(
             "SELECT equipamento_id, coalesce(sum(kwh), 0) FROM leitura "
             "WHERE sensor_id = ? AND ts >= ? AND ts < ? GROUP BY equipamento_id ORDER BY equipamento_id",
-            [sensor_id, inicio, fim],
+            [sensor_id, para_local_ingenuo(inicio, "inicio"), para_local_ingenuo(fim, "fim")],
         )
         return [ConsumoEquipamento(str(n), float(str(k))) for n, k in linhas]
+
+    def consumo_horario(self, sensor_id: str, inicio: datetime, fim: datetime) -> list[ConsumoHora]:
+        linhas = self._b.consultar(
+            "SELECT date_trunc('hour', ts) AS hora, sum(kwh) FROM leitura "
+            "WHERE sensor_id = ? AND ts >= ? AND ts < ? AND NOT ausente GROUP BY hora "
+            "HAVING sum(kwh) IS NOT NULL ORDER BY hora",
+            [sensor_id, para_local_ingenuo(inicio, "inicio"), para_local_ingenuo(fim, "fim")],
+        )
+        return [ConsumoHora(_hora_local(hora), float(str(kwh))) for hora, kwh in linhas]
 
     def potencia_em(self, sensor_id: str, ts: datetime) -> float:
         linhas = self._b.consultar(
             "SELECT coalesce(sum(potencia_w), 0) FROM leitura WHERE sensor_id = ? AND ts = ?",
-            [sensor_id, ts],
+            [sensor_id, para_local_ingenuo(ts, "ts")],
         )
         return float(str(linhas[0][0]))

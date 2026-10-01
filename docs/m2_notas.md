@@ -35,7 +35,9 @@ Dashboard (a API deve estar no ar):
 
 Variaveis: `MAPEN_API_URL` (padrao http://127.0.0.1:8000), `MAPEN_EMPRESA_ID` (padrao `demo`); `?empresa=outra` na URL troca de empresa. Telas: `/` consumo agora e hoje, `/custo`, `/ranking`, `/cadastro`, `/eventos`.
 
-API (todas exigem o header `X-Empresa-Id`): `GET/POST /unidades`, `/sensores`, `/equipamentos`, `/regras`; `PATCH /regras/{id}`; `POST /sensores/{id}/leituras`; `GET /sensores/{id}/consumo-agora`, `/custo`, `/ranking`; `POST /desligamentos`; `GET /eventos`.
+ATENCAO: este arquivo descreve o M2 original. O header `X-Empresa-Id` foi substituido por `Authorization: Bearer` e o contrato mudou; ver `docs/m2_seguranca_notas.md`.
+
+API (versao original, todas exigiam o header `X-Empresa-Id`): `GET/POST /unidades`, `/sensores`, `/equipamentos`, `/regras`; `PATCH /regras/{id}`; `POST /sensores/{id}/leituras`; `GET /sensores/{id}/consumo-agora`, `/custo`, `/ranking`; `POST /desligamentos`; `GET /eventos`.
 
 ## Resultados
 
