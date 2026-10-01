@@ -6,7 +6,9 @@ import itertools
 import uuid
 from datetime import UTC, datetime, timedelta
 
+from mapen_plataforma.application.portas import CredenciaisDispositivoRepo, DerivadorChave
 from mapen_plataforma.domain.comando import ESTADO_INICIAL, Acao, EstadoRele
+from mapen_plataforma.domain.credenciais import derivar_chave_comando
 
 
 class RelogioSistema:
@@ -43,17 +45,28 @@ class GeradorSequencial:
         return f"{self._prefixo}-{next(self._contador)}"
 
 
-class ChavesEmMemoria:
-    """Chave HMAC por dispositivo. Chaves reais (provisionamento, rotacao) ainda nao existem."""
+class DerivadorHmac:
+    """Chave de comando = HMAC(segredo mestre do servidor, device_id|sal). O segredo nunca vai ao banco."""
 
-    def __init__(self, chaves: dict[str, bytes] | None = None) -> None:
-        self._chaves: dict[str, bytes] = dict(chaves or {})
+    def __init__(self, segredo_mestre: bytes) -> None:
+        if len(segredo_mestre) < 32:
+            raise ValueError("segredo mestre deve ter ao menos 32 bytes")
+        self._segredo = segredo_mestre
 
-    def definir(self, device_id: str, chave: bytes) -> None:
-        self._chaves[device_id] = chave
+    def derivar(self, device_id: str, sal: str) -> bytes:
+        return derivar_chave_comando(self._segredo, device_id, sal)
+
+
+class ChavesDerivadas:
+    """Chave de comando do dispositivo: derivada do sal guardado. Rotacionar o sal invalida a anterior."""
+
+    def __init__(self, credenciais: CredenciaisDispositivoRepo, derivador: DerivadorChave) -> None:
+        self._credenciais = credenciais
+        self._derivador = derivador
 
     def chave(self, device_id: str) -> bytes | None:
-        return self._chaves.get(device_id)
+        credencial = self._credenciais.obter(device_id)
+        return None if credencial is None else self._derivador.derivar(device_id, credencial.sal)
 
 
 class AtuadorSimulado:

@@ -3,30 +3,41 @@
 from __future__ import annotations
 
 import os
+import secrets
 import shutil
+from dataclasses import dataclass
 from pathlib import Path
 
 from fastapi import FastAPI
 
 from mapen_aconselhamento.tarifa import RAIZ
-from mapen_plataforma.application.portas import Atuador, CalculadoraCusto, GeradorId, Relogio
 from mapen_plataforma.application.casos_de_uso import (
+    AlterarConfiguracao,
     AlterarRegra,
+    AutenticarDispositivo,
+    AutenticarEmpresa,
     Cadastro,
     ConsumoAgoraEHoje,
+    ConsumoHorario,
     CriarRegraDesligamento,
+    EmitirCredenciaisDispositivo,
     ListarConsumoECusto,
     ListarEventos,
     ListarRegras,
+    ObterConfiguracao,
+    ProvisionarEmpresa,
     RankingEquipamentos,
     RegistrarLeitura,
     SolicitarDesligamento,
 )
-from mapen_plataforma.domain.comando import ConfiguracaoSeguranca
+from mapen_plataforma.application.portas import Atuador, CalculadoraCusto, DerivadorChave, GeradorId, Relogio
 from mapen_plataforma.infrastructure.banco import BancoDuckDB
 from mapen_plataforma.infrastructure.custo_m1 import CalculadoraM1
-from mapen_plataforma.infrastructure.demo import SENSOR_CU_BEMS, SENSOR_PANTHER, semear_demo
+from mapen_plataforma.infrastructure.demo import EMPRESA_DEMO, EMPRESA_OUTRA, SegredosDemo, semear_demo
 from mapen_plataforma.infrastructure.repositorios import (
+    ConfiguracaoDuckDB,
+    CredenciaisDispositivoDuckDB,
+    CredenciaisEmpresaDuckDB,
     EmpresaDuckDB,
     EquipamentoDuckDB,
     EventoDuckDB,
@@ -38,7 +49,8 @@ from mapen_plataforma.infrastructure.repositorios import (
 )
 from mapen_plataforma.infrastructure.servicos import (
     AtuadorSimulado,
-    ChavesEmMemoria,
+    ChavesDerivadas,
+    DerivadorHmac,
     GeradorUuid,
     RelogioSistema,
 )
@@ -48,54 +60,100 @@ DB_M1: Path = RAIZ / "data" / "mapen_m1.duckdb"
 DB_M2: Path = RAIZ / "data" / "mapen_m2.duckdb"
 
 
+def montar_provisionamento(
+    banco: BancoDuckDB, ids: GeradorId, derivador: DerivadorChave
+) -> tuple[ProvisionarEmpresa, EmitirCredenciaisDispositivo]:
+    """Casos de uso de provisionamento (CLI e demo); eles devolvem os segredos uma unica vez."""
+    return (
+        ProvisionarEmpresa(EmpresaDuckDB(banco), CredenciaisEmpresaDuckDB(banco), ids),
+        EmitirCredenciaisDispositivo(CredenciaisDispositivoDuckDB(banco), derivador),
+    )
+
+
 def montar_servicos(
     banco: BancoDuckDB,
     relogio: Relogio,
     ids: GeradorId,
-    chaves: ChavesEmMemoria,
+    derivador: DerivadorChave,
     atuador: Atuador,
     custo: CalculadoraCusto,
-    config: ConfiguracaoSeguranca,
 ) -> Servicos:
     empresas, unidades = EmpresaDuckDB(banco), UnidadeDuckDB(banco)
     sensores, equipamentos = SensorDuckDB(banco), EquipamentoDuckDB(banco)
     regras, eventos, leituras = RegraDuckDB(banco), EventoDuckDB(banco), LeituraDuckDB(banco)
+    cred_disp, configuracao = CredenciaisDispositivoDuckDB(banco), ConfiguracaoDuckDB(banco)
+    emitir = EmitirCredenciaisDispositivo(cred_disp, derivador)
     return Servicos(
-        empresas=empresas,
-        cadastro=Cadastro(empresas, unidades, sensores, equipamentos, ids),
+        autenticar_empresa=AutenticarEmpresa(CredenciaisEmpresaDuckDB(banco)),
+        autenticar_dispositivo=AutenticarDispositivo(cred_disp),
+        cadastro=Cadastro(empresas, unidades, sensores, equipamentos, emitir, ids),
         registrar_leitura=RegistrarLeitura(sensores, leituras),
         consumo_agora=ConsumoAgoraEHoje(sensores, leituras),
+        consumo_horario=ConsumoHorario(sensores, leituras, custo),
         custo=ListarConsumoECusto(sensores, custo),
         ranking=RankingEquipamentos(sensores, custo),
         criar_regra=CriarRegraDesligamento(equipamentos, regras, relogio, ids),
         alterar_regra=AlterarRegra(regras),
         listar_regras=ListarRegras(regras),
+        obter_configuracao=ObterConfiguracao(configuracao),
+        alterar_configuracao=AlterarConfiguracao(configuracao, eventos, relogio, ids),
         desligar=SolicitarDesligamento(
-            equipamentos, regras, eventos, NonceDuckDB(banco), chaves, atuador, relogio, ids, config
+            equipamentos, regras, eventos, NonceDuckDB(banco), ChavesDerivadas(cred_disp, derivador),
+            configuracao, atuador, relogio, ids,
         ),
         eventos=ListarEventos(eventos),
     )
 
 
-def criar_app_padrao() -> FastAPI:
-    """App de demo (uvicorn --factory).
+def segredo_mestre_do_ambiente() -> bytes:
+    """`MAPEN_SEGREDO_MESTRE` (>= 32 caracteres) ou um segredo aleatorio so desta execucao.
 
-    Banco em `MAPEN_DB` (padrao data/mapen_m2.duckdb), criado como copia do banco do M1 na
-    primeira execucao. `MAPEN_DESLIGAMENTO_REMOTO=1` liga o desligamento (padrao: desligado).
-    `MAPEN_CHAVE_DEMO` define a chave HMAC dos sensores de demo; sem ela todo comando e rejeitado.
+    Sem a variavel, as chaves de comando dos dispositivos deixam de valer quando o processo
+    reinicia (a demo reemite tudo na partida).
     """
-    caminho = Path(os.environ.get("MAPEN_DB", str(DB_M2)))
+    valor = os.environ.get("MAPEN_SEGREDO_MESTRE")
+    return valor.encode() if valor else secrets.token_bytes(32)
+
+
+@dataclass(frozen=True)
+class AppDemo:
+    app: FastAPI
+    segredos: list[SegredosDemo]
+
+
+def montar_app_demo(caminho: Path, segredo_mestre: bytes, chaves_api: dict[str, str] | None = None) -> AppDemo:
+    """App de demo sobre uma copia do banco do M1; reemite as chaves de demo a cada chamada."""
     if not caminho.exists():
         shutil.copy2(DB_M1, caminho)
     banco = BancoDuckDB(caminho)
-    semear_demo(banco)
-    chaves = ChavesEmMemoria()
-    chave_demo = os.environ.get("MAPEN_CHAVE_DEMO")
-    if chave_demo:
-        for sensor in (SENSOR_CU_BEMS, SENSOR_PANTHER):
-            chaves.definir(sensor, chave_demo.encode())
-    config = ConfiguracaoSeguranca(os.environ.get("MAPEN_DESLIGAMENTO_REMOTO") == "1")
+    ids, derivador = GeradorUuid(), DerivadorHmac(segredo_mestre)
+    provisionar, emitir = montar_provisionamento(banco, ids, derivador)
+    segredos = semear_demo(banco, provisionar, emitir, chaves_api)
     servicos = montar_servicos(
-        banco, RelogioSistema(), GeradorUuid(), chaves, AtuadorSimulado(), CalculadoraM1(banco), config
+        banco, RelogioSistema(), ids, derivador, AtuadorSimulado(), CalculadoraM1(banco)
     )
-    return criar_app(servicos)
+    return AppDemo(criar_app(servicos), segredos)
+
+
+def criar_app_padrao() -> FastAPI:
+    """App de demo (uvicorn --factory).
+
+    Banco em `MAPEN_DB` (padrao data/mapen_m2.duckdb). A cada partida as empresas `demo` e `outra`
+    ganham chave de API nova (ou a de `MAPEN_CHAVE_API_DEMO` / `MAPEN_CHAVE_API_OUTRA`, minimo 32
+    caracteres), e cada sensor de demo ganha token e chave de comando novos. Os segredos
+    novos sao impressos uma vez no stdout.
+    """
+    caminho = Path(os.environ.get("MAPEN_DB", str(DB_M2)))
+    fixas = {
+        empresa: valor
+        for empresa, variavel in ((EMPRESA_DEMO, "MAPEN_CHAVE_API_DEMO"), (EMPRESA_OUTRA, "MAPEN_CHAVE_API_OUTRA"))
+        if (valor := os.environ.get(variavel))
+    }
+    demo = montar_app_demo(caminho, segredo_mestre_do_ambiente(), fixas)
+    for s in demo.segredos:
+        print(
+            f"[demo] empresa={s.empresa_id} chave_api={s.chave_api} sensor={s.sensor_id} "
+            f"token_dispositivo={s.dispositivo.token} chave_comando={s.dispositivo.chave_comando}",
+            flush=True,
+        )
+    return demo.app

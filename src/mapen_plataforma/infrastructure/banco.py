@@ -23,7 +23,15 @@ DDL: tuple[str, ...] = (
     "CREATE TABLE IF NOT EXISTS evento (id VARCHAR PRIMARY KEY, ts TIMESTAMP, tipo VARCHAR, "
     "empresa_id VARCHAR, sensor_id VARCHAR, equipamento_id VARCHAR, origem VARCHAR, "
     "regra_id VARCHAR, autorizado_por VARCHAR, payload VARCHAR)",
-    "CREATE TABLE IF NOT EXISTS nonce (device_id VARCHAR, nonce VARCHAR, PRIMARY KEY (device_id, nonce))",
+    "CREATE TABLE IF NOT EXISTS nonce (device_id VARCHAR, nonce VARCHAR, expira_em TIMESTAMP, "
+    "PRIMARY KEY (device_id, nonce))",
+    "ALTER TABLE nonce ADD COLUMN IF NOT EXISTS expira_em TIMESTAMP",
+    "CREATE TABLE IF NOT EXISTS credencial_empresa (hash_chave VARCHAR PRIMARY KEY, empresa_id VARCHAR, "
+    "principal VARCHAR, criado_em TIMESTAMP DEFAULT current_timestamp, UNIQUE (empresa_id, principal))",
+    "CREATE TABLE IF NOT EXISTS credencial_dispositivo (device_id VARCHAR PRIMARY KEY, empresa_id VARCHAR, "
+    "token_hash VARCHAR, sal VARCHAR, atualizado_em TIMESTAMP DEFAULT current_timestamp)",
+    "CREATE TABLE IF NOT EXISTS configuracao_empresa "
+    "(empresa_id VARCHAR PRIMARY KEY, desligamento_remoto_habilitado BOOLEAN)",
 )
 
 

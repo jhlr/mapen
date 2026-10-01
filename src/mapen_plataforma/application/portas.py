@@ -6,7 +6,8 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Protocol
 
-from mapen_plataforma.domain.comando import Acao, EstadoRele
+from mapen_plataforma.domain.comando import Acao, ConfiguracaoSeguranca, EstadoRele
+from mapen_plataforma.domain.credenciais import Principal
 from mapen_plataforma.domain.entidades import (
     Empresa,
     Equipamento,
@@ -27,6 +28,7 @@ class GeradorId(Protocol):
 
 
 class EmpresaRepo(Protocol):
+    def adicionar(self, empresa: Empresa) -> None: ...
     def obter(self, empresa_id: str) -> Empresa | None: ...
 
 
@@ -51,6 +53,7 @@ class EquipamentoRepo(Protocol):
 class RegraRepo(Protocol):
     def adicionar(self, regra: RegraDesligamento) -> None: ...
     def listar(self, empresa_id: str) -> list[RegraDesligamento]: ...
+    def obter(self, empresa_id: str, regra_id: str) -> RegraDesligamento | None: ...
     def definir_ativo(self, empresa_id: str, regra_id: str, ativo: bool) -> bool: ...
 
 
@@ -60,17 +63,62 @@ class EventoRepo(Protocol):
 
 
 class NonceStore(Protocol):
-    def registrar(self, device_id: str, nonce: str) -> bool:
+    def registrar(self, device_id: str, nonce: str, expira_em: datetime) -> bool:
         """Grava o nonce. False se ja existia (repeticao). Atomico."""
         ...
 
+    def podar(self, agora: datetime) -> int:
+        """Apaga nonces cuja janela de uso ja acabou. Devolve quantos."""
+        ...
+
+
+@dataclass(frozen=True)
+class CredencialDispositivo:
+    device_id: str
+    empresa_id: str
+    token_hash: str
+    sal: str
+
+
+class CredenciaisEmpresaRepo(Protocol):
+    def definir(self, empresa_id: str, principal: str, hash_chave: str) -> None:
+        """Uma credencial por (empresa, principal): substitui a anterior."""
+        ...
+
+    def buscar(self, hash_chave: str) -> Principal | None: ...
+
+
+class CredenciaisDispositivoRepo(Protocol):
+    def definir(self, credencial: CredencialDispositivo) -> None: ...
+    def obter(self, device_id: str) -> CredencialDispositivo | None: ...
+
+
+class ConfiguracaoRepo(Protocol):
+    def obter(self, empresa_id: str) -> ConfiguracaoSeguranca: ...
+    def definir(self, empresa_id: str, config: ConfiguracaoSeguranca) -> None: ...
+
 
 class ChavesDispositivo(Protocol):
+    """Chave HMAC de assinatura de comandos de um dispositivo (None se nao provisionado)."""
+
     def chave(self, device_id: str) -> bytes | None: ...
 
 
+class DerivadorChave(Protocol):
+    """Deriva a chave de comando a partir do segredo mestre do servidor e do sal do dispositivo."""
+
+    def derivar(self, device_id: str, sal: str) -> bytes: ...
+
+
+class ErroAtuador(RuntimeError):
+    """O rele nao confirmou o comando."""
+
+
 class Atuador(Protocol):
-    """Aciona o rele. Sem hardware ainda: a unica implementacao e simulada."""
+    """Aciona o rele. Sem hardware ainda: a unica implementacao e simulada.
+
+    Levanta `ErroAtuador` se o comando nao foi aplicado.
+    """
 
     def aplicar(self, device_id: str, equipamento_id: str, acao: Acao) -> None: ...
     def estado(self, device_id: str, equipamento_id: str) -> EstadoRele: ...
@@ -83,6 +131,10 @@ class LeituraRepo(Protocol):
         """Grava sem duplicar (sensor, equipamento, ts) ja existentes. Devolve novas linhas."""
         ...
 
+    def consumo_horario(self, sensor_id: str, inicio: datetime, fim: datetime) -> list[ConsumoHora]:
+        """kWh somado por hora cheia local (so horas com leitura), em ordem."""
+        ...
+
     def ultimo_ts(self, sensor_id: str) -> datetime | None: ...
 
     def consumo_por_equipamento(
@@ -90,6 +142,12 @@ class LeituraRepo(Protocol):
     ) -> list[ConsumoEquipamento]: ...
 
     def potencia_em(self, sensor_id: str, ts: datetime) -> float: ...
+
+
+@dataclass(frozen=True)
+class ConsumoHora:
+    hora: datetime
+    kwh: float
 
 
 @dataclass(frozen=True)
@@ -115,7 +173,9 @@ class RankingLinha:
 
 
 class CalculadoraCusto(Protocol):
-    """Custo e ranking por tarifa; a implementacao reusa o pacote M1."""
+    """Custo, ranking e faixa tarifaria; a implementacao reusa o pacote M1."""
+
+    def faixas(self, instantes: list[datetime], modalidade: str) -> list[str]: ...
 
     def custo_por_faixa(
         self, sensor_id: str, inicio: datetime, fim: datetime, modalidade: str

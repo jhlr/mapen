@@ -3,12 +3,20 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Annotated
 
-from pydantic import BaseModel
+from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, StringConstraints
 
-from mapen_plataforma.application.casos_de_uso import ConsumoAgora, ResultadoDesligamento
+from mapen_plataforma.application.casos_de_uso import (
+    LOTE_LEITURAS_MAX,
+    ConsumoAgora,
+    PontoHorario,
+    ResultadoDesligamento,
+    SensorProvisionado,
+)
 from mapen_plataforma.application.portas import ConsumoEquipamento, CustoLinha, RankingLinha
-from mapen_plataforma.domain.comando import Acao
+from mapen_plataforma.domain.comando import PADRAO_ASSINATURA, Acao, ConfiguracaoSeguranca
+from mapen_plataforma.domain.credenciais import CredenciaisNovas
 from mapen_plataforma.domain.entidades import (
     Equipamento,
     Evento,
@@ -18,9 +26,22 @@ from mapen_plataforma.domain.entidades import (
     Unidade,
 )
 
+Nome = Annotated[str, StringConstraints(min_length=1, max_length=120)]
+IdExterno = Annotated[str, StringConstraints(min_length=1, max_length=128)]
+Origem = Annotated[str, StringConstraints(min_length=1, max_length=64)]
+Cron = Annotated[str, StringConstraints(min_length=9, max_length=100)]
+Assinatura = Annotated[str, StringConstraints(pattern=PADRAO_ASSINATURA.pattern)]
+Finito = Annotated[float, Field(allow_inf_nan=False)]
 
-class UnidadeIn(BaseModel):
-    nome: str
+
+class Entrada(BaseModel):
+    """Corpo de entrada: campo desconhecido (inclusive `autorizado_por`) e erro, nao e ignorado."""
+
+    model_config = ConfigDict(extra="forbid")
+
+
+class UnidadeIn(Entrada):
+    nome: Nome
 
 
 class UnidadeOut(BaseModel):
@@ -32,10 +53,9 @@ class UnidadeOut(BaseModel):
         return cls(id=u.id, nome=u.nome)
 
 
-class SensorIn(BaseModel):
-    unidade_id: str
-    nome: str
-    id: str | None = None
+class SensorIn(Entrada):
+    unidade_id: IdExterno
+    nome: Nome
 
 
 class SensorOut(BaseModel):
@@ -48,10 +68,32 @@ class SensorOut(BaseModel):
         return cls(id=s.id, unidade_id=s.unidade_id, nome=s.nome)
 
 
-class EquipamentoIn(BaseModel):
-    sensor_id: str
-    nome: str
-    critico: bool = False
+class CredenciaisDispositivoOut(BaseModel):
+    """Segredos do dispositivo; aparecem so nesta resposta."""
+
+    token_dispositivo: str
+    chave_comando: str
+
+    @classmethod
+    def de(cls, c: CredenciaisNovas) -> CredenciaisDispositivoOut:
+        return cls(token_dispositivo=c.token, chave_comando=c.chave_comando)
+
+
+class SensorCriadoOut(SensorOut):
+    credenciais: CredenciaisDispositivoOut
+
+    @classmethod
+    def provisionado(cls, p: SensorProvisionado) -> SensorCriadoOut:
+        return cls(
+            id=p.sensor.id, unidade_id=p.sensor.unidade_id, nome=p.sensor.nome,
+            credenciais=CredenciaisDispositivoOut.de(p.credenciais),
+        )
+
+
+class EquipamentoIn(Entrada):
+    sensor_id: IdExterno
+    nome: Nome
+    critico: bool
 
 
 class EquipamentoOut(BaseModel):
@@ -65,14 +107,13 @@ class EquipamentoOut(BaseModel):
         return cls(id=e.id, sensor_id=e.sensor_id, nome=e.nome, critico=e.critico)
 
 
-class RegraIn(BaseModel):
-    equipamento_id: str
-    cron: str
+class RegraIn(Entrada):
+    equipamento_id: IdExterno
+    cron: Cron
     ativo: bool = True
-    autorizado_por: str
 
 
-class RegraAtivoIn(BaseModel):
+class RegraAtivoIn(Entrada):
     ativo: bool
 
 
@@ -92,20 +133,20 @@ class RegraOut(BaseModel):
         )
 
 
-class LeituraIn(BaseModel):
-    equipamento: str
-    ts: datetime
-    potencia_w: float | None = None
-    tensao_v: float | None = None
-    kwh: float | None = None
+class LeituraIn(Entrada):
+    equipamento: Nome
+    ts: AwareDatetime
+    potencia_w: Finito | None = None
+    tensao_v: Finito | None = None
+    kwh: Finito | None = None
     ausente: bool = False
 
     def para_dominio(self, sensor_id: str) -> Leitura:
         return Leitura(sensor_id, self.equipamento, self.ts, self.potencia_w, self.tensao_v, self.kwh, self.ausente)
 
 
-class LeiturasIn(BaseModel):
-    leituras: list[LeituraIn]
+class LeiturasIn(Entrada):
+    leituras: Annotated[list[LeituraIn], Field(max_length=LOTE_LEITURAS_MAX)]
 
 
 class LeiturasOut(BaseModel):
@@ -158,20 +199,38 @@ class RankingOut(BaseModel):
         return cls(equipamento=r.equipamento_nome, kwh=r.kwh, custo_rs=r.custo_rs, pct_ausente=r.pct_ausente)
 
 
-class ComandoIn(BaseModel):
-    device_id: str
+class ComandoIn(Entrada):
+    device_id: IdExterno
     acao: Acao
-    nonce: str
-    validade: datetime
-    assinatura: str
+    nonce: Annotated[str, StringConstraints(min_length=1, max_length=128)]
+    emitido_em: AwareDatetime
+    validade: AwareDatetime
+    assinatura: Assinatura
 
 
-class DesligamentoIn(BaseModel):
-    equipamento_id: str
+class DesligamentoIn(Entrada):
+    equipamento_id: IdExterno
     comando: ComandoIn
-    autorizado_por: str | None = None
-    origem: str = "api"
-    regra_id: str | None = None
+    origem: Origem = "api"
+    regra_id: IdExterno | None = None
+
+
+class ConfiguracaoIO(Entrada):
+    desligamento_remoto_habilitado: bool
+
+    @classmethod
+    def de(cls, c: ConfiguracaoSeguranca) -> ConfiguracaoIO:
+        return cls(desligamento_remoto_habilitado=c.desligamento_remoto_habilitado)
+
+
+class PontoHorarioOut(BaseModel):
+    hora: datetime
+    kw: float
+    faixa: str
+
+    @classmethod
+    def de(cls, p: PontoHorario) -> PontoHorarioOut:
+        return cls(hora=p.hora, kw=p.kw, faixa=p.faixa)
 
 
 class DesligamentoOut(BaseModel):

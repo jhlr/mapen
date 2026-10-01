@@ -43,7 +43,7 @@ class Equipamento:
     empresa_id: str
     sensor_id: str
     nome: str
-    critico: bool = False
+    critico: bool
 
 
 @dataclass(frozen=True)
@@ -55,6 +55,10 @@ class Leitura:
     tensao_v: float | None
     kwh: float | None
     ausente: bool = False
+
+    def __post_init__(self) -> None:
+        if self.ts.tzinfo is None:
+            raise ErroDominio("ts da leitura deve ter fuso horario")
 
 
 _CRON = re.compile(r"^\s*\S+(\s+\S+){4}\s*$")
@@ -80,7 +84,9 @@ class RegraDesligamento:
 class TipoEvento(enum.StrEnum):
     DESLIGAMENTO_EXECUTADO = "desligamento_executado"
     RELIGAMENTO_EXECUTADO = "religamento_executado"
+    COMANDO_RECEBIDO = "comando_recebido"
     COMANDO_REJEITADO = "comando_rejeitado"
+    CONFIGURACAO_ALTERADA = "configuracao_alterada"
     QUEDA_ENERGIA = "queda_energia"
     FALHA_CONEXAO = "falha_conexao"
 
