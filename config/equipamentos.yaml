@@ -1,14 +1,21 @@
 # Equipment classes for the advisory demo (M1). Matching is by glob on equipamento_id,
-# first match wins. `flexivel` and `fracao_movivel` are SCENARIO ASSUMPTIONS for the
+# first match wins. `flexivel` and `fracao_movivel*` are SCENARIO ASSUMPTIONS for the
 # method demonstration, not measurements: fracao_movivel is the share of the kWh in the
 # expensive band that the scenario assumes can be moved to the cheap band.
 # Lighting and plugs are never flexible here; `critico: true` blocks any remote cut.
+#
+# fracao_movivel source (docs/m1_premissas.md, section 2): 10-25% range from US office-building
+# studies, NOT validated for Brazil, tropical climate or split units; validate with a pilot
+# measurement. central 0.18 = Ruud 1990 (via LBNL 2006); high 0.25 = Keeney and Braun 1997
+# (via LBNL 2006); low 0.10 = "modest" field floor. Every value must be finite, 0 < f <= 1.
 equipamentos:
-  - padrao: "*_AC*"
+  - padrao: "*_AC[0-9]*"
     classe: ar_condicionado
     flexivel: true
     critico: false
-    fracao_movivel: 0.2
+    fracao_movivel: 0.18
+    fracao_movivel_baixa: 0.10
+    fracao_movivel_alta: 0.25
   - padrao: "*_Light"
     classe: iluminacao
     flexivel: false

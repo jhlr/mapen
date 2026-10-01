@@ -19,10 +19,11 @@ dependencies = [
     "scikit-learn",
     "shap",
     "pyyaml",
+    "python-dateutil",
 ]
 
 [project.optional-dependencies]
-dev = ["pytest", "mypy", "pandas-stubs", "types-PyYAML"]
+dev = ["pytest", "mypy", "pandas-stubs", "types-PyYAML", "types-python-dateutil"]
 
 [tool.setuptools]
 py-modules = []

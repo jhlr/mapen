@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+from pathlib import Path
+
 import pandas as pd
 import pytest
 
-from mapen_aconselhamento.recomenda import ConfigEquipamentos, Regra, recomendar
+from mapen_aconselhamento.recomenda import ALTA, BAIXA, ConfigEquipamentos, Regra, recomendar
 from mapen_aconselhamento.tarifa import Tarifas
 
 
@@ -38,8 +40,38 @@ def test_sem_economia_quando_origem_ja_e_a_mais_barata() -> None:
     assert recomendar(custos, Tarifas.carregar(), _config()) == []
 
 
-def test_config_yaml_marca_ac_flexivel_e_iluminacao_nao() -> None:
+def test_config_yaml_valores_sourced() -> None:
     config = ConfigEquipamentos.carregar()
-    assert config.para("z2_AC3").flexivel
-    assert not config.para("z2_Light").flexivel
-    assert not config.para("z2_Plug").flexivel
+    ac = config.para("z2_AC3")
+    assert ac.flexivel and not ac.critico
+    assert ac.fracao_movivel == pytest.approx(0.18)  # central, docs/m1_premissas.md
+    assert ac.fracao(BAIXA) == pytest.approx(0.10)
+    assert ac.fracao(ALTA) == pytest.approx(0.25)
+    for ident in ("z2_Light", "z2_Plug"):
+        regra = config.para(ident)
+        assert not regra.flexivel and not regra.critico and regra.fracao_movivel == 0.0
+
+
+def test_glob_ac_nao_casa_ids_como_access() -> None:
+    config = ConfigEquipamentos.carregar()
+    assert not config.para("z1_ACCESS").flexivel
+    assert not config.para("z1_AC").flexivel
+    assert config.para("z1_AC12").flexivel
+
+
+@pytest.mark.parametrize("valor", ["0", "-0.1", "1.5", ".nan", ".inf", "abc"])
+def test_fracao_movivel_invalida_e_rejeitada_no_carregamento(tmp_path: Path, valor: str) -> None:
+    yaml_ruim = tmp_path / "e.yaml"
+    yaml_ruim.write_text(
+        f'equipamentos:\n  - padrao: "*_AC[0-9]*"\n    flexivel: true\n    fracao_movivel: {valor}\n',
+        encoding="utf-8",
+    )
+    with pytest.raises(ValueError, match="fracao_movivel"):
+        ConfigEquipamentos.carregar(yaml_ruim)
+
+
+def test_regra_flexivel_sem_fracao_e_rejeitada(tmp_path: Path) -> None:
+    yaml_ruim = tmp_path / "e.yaml"
+    yaml_ruim.write_text('equipamentos:\n  - padrao: "AC*"\n    flexivel: true\n', encoding="utf-8")
+    with pytest.raises(ValueError, match="exige fracao_movivel"):
+        ConfigEquipamentos.carregar(yaml_ruim)

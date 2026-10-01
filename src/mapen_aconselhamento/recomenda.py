@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from fnmatch import fnmatchcase
 from pathlib import Path
@@ -13,6 +14,11 @@ from mapen_aconselhamento.tarifa import BRANCA, FAIXAS_BRANCA, FORA_PONTA, RAIZ,
 
 YAML_PADRAO: Path = RAIZ / "config" / "equipamentos.yaml"
 
+BAIXA = "baixa"
+CENTRAL = "central"
+ALTA = "alta"
+CENARIOS: tuple[str, str, str] = (BAIXA, CENTRAL, ALTA)
+
 
 @dataclass(frozen=True)
 class Regra:
@@ -20,6 +26,17 @@ class Regra:
     flexivel: bool
     critico: bool
     fracao_movivel: float
+    faixa_fracao: tuple[float, float] | None = None
+
+    def fracao(self, cenario: str) -> float:
+        """Fracao movivel do cenario: central, ou baixa/alta da faixa sourced (central se sem faixa)."""
+        if cenario == CENTRAL or self.faixa_fracao is None:
+            return self.fracao_movivel
+        if cenario == BAIXA:
+            return self.faixa_fracao[0]
+        if cenario == ALTA:
+            return self.faixa_fracao[1]
+        raise ValueError(f"cenario desconhecido: {cenario!r}")
 
 
 @dataclass(frozen=True)
@@ -40,12 +57,42 @@ class ConfigEquipamentos:
         return self.padrao
 
 
+def _fracao(entrada: dict[str, object], chave: str, equipamento: str) -> float | None:
+    """Le uma fracao movivel da config; valida finita e 0 < f <= 1. None se ausente."""
+    if chave not in entrada:
+        return None
+    try:
+        valor = float(str(entrada[chave]))
+    except ValueError:
+        valor = math.nan
+    if not math.isfinite(valor) or not 0.0 < valor <= 1.0:
+        raise ValueError(
+            f"{chave} de {equipamento!r} deve ser finita e 0 < f <= 1, veio {entrada[chave]!r}"
+        )
+    return valor
+
+
 def _regra(entrada: dict[str, object]) -> Regra:
+    nome = str(entrada.get("padrao", "padrao"))
+    flexivel = bool(entrada.get("flexivel", False))
+    central = _fracao(entrada, "fracao_movivel", nome)
+    baixa = _fracao(entrada, "fracao_movivel_baixa", nome)
+    alta = _fracao(entrada, "fracao_movivel_alta", nome)
+    if flexivel and central is None:
+        raise ValueError(f"regra flexivel {nome!r} exige fracao_movivel")
+    if central is None:
+        central = 0.0
+    faixa: tuple[float, float] | None = None
+    if baixa is not None or alta is not None:
+        faixa = (baixa if baixa is not None else central, alta if alta is not None else central)
+        if not faixa[0] <= central <= faixa[1]:
+            raise ValueError(f"regra {nome!r}: exige baixa <= central <= alta, veio {faixa[0]}, {central}, {faixa[1]}")
     return Regra(
         classe=str(entrada.get("classe", "desconhecida")),
-        flexivel=bool(entrada.get("flexivel", False)),
+        flexivel=flexivel,
         critico=bool(entrada.get("critico", False)),
-        fracao_movivel=float(str(entrada.get("fracao_movivel", 0.0))),
+        fracao_movivel=central,
+        faixa_fracao=faixa,
     )
 
 
@@ -56,6 +103,7 @@ class Recomendacao:
     faixa_destino: str
     kwh_movido: float
     economia_rs: float
+    fracao_movivel: float
 
 
 def recomendar(
@@ -63,11 +111,13 @@ def recomendar(
     tarifas: Tarifas,
     config: ConfigEquipamentos,
     faixa_destino: str = FORA_PONTA,
+    cenario: str = CENTRAL,
 ) -> list[Recomendacao]:
     """Economia de mover kWh da faixa A para a faixa B = kWh x (preco A - preco B).
 
     So considera equipamento marcado `flexivel` (e nao `critico`) em config. O kWh movido e
-    kWh da faixa A x `fracao_movivel` (hipotese de cenario da config). Ordenado por economia.
+    kWh da faixa A x fracao movivel do `cenario` (baixa/central/alta; hipotese da config, nao
+    medicao). Ordenado por economia.
     """
     preco_destino = tarifas.preco_posto(BRANCA, faixa_destino)
     saida: list[Recomendacao] = []
@@ -84,8 +134,9 @@ def recomendar(
         diferenca = tarifas.preco_posto(BRANCA, faixa) - preco_destino
         if diferenca <= 0:
             continue
-        movido = kwh * regra.fracao_movivel
+        fracao = regra.fracao(cenario)
+        movido = kwh * fracao
         if movido <= 0:
             continue
-        saida.append(Recomendacao(equipamento, faixa, faixa_destino, movido, movido * diferenca))
+        saida.append(Recomendacao(equipamento, faixa, faixa_destino, movido, movido * diferenca, fracao))
     return sorted(saida, key=lambda r: r.economia_rs, reverse=True)

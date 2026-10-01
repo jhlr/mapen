@@ -4,7 +4,7 @@ import pandas as pd
 import pytest
 
 from mapen_aconselhamento.custo import custo_por_faixa, custo_total
-from mapen_aconselhamento.ranking import top_n
+from mapen_aconselhamento.ranking import pct_ausente_por_equipamento, top_n
 from mapen_aconselhamento.tarifa import BRANCA, CONVENCIONAL, Tarifas
 
 
@@ -48,6 +48,17 @@ def test_top_n_ordena_por_custo() -> None:
             "custo_rs": [1.0, 5.0, 2.0, 1.0],
         }
     )
-    top = top_n(custos, 2)
+    ausencia = pd.Series({"a": 0.0, "b": 12.5, "c": 0.0})
+    top = top_n(custos, ausencia, 2)
     assert list(top["equipamento_id"]) == ["b", "c"]
     assert list(top["custo_rs"]) == [6.0, 2.0]
+    assert list(top["pct_ausente"]) == [12.5, 0.0]
+
+
+def test_pct_ausente_por_equipamento() -> None:
+    leituras = pd.DataFrame(
+        {"equipamento_id": ["a", "a", "a", "a", "b"], "ausente": [True, False, False, False, False]}
+    )
+    pct = pct_ausente_por_equipamento(leituras)
+    assert pct["a"] == pytest.approx(25.0)
+    assert pct["b"] == pytest.approx(0.0)
