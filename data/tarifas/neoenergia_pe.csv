@@ -1,0 +1,5 @@
+grupo,subgrupo,modalidade,posto,tusd_rs_kwh,te_rs_kwh,tarifa_rs_kwh,vigencia_inicio,vigencia_fim,fonte
+B,B3,convencional,unico,0.53521,0.26365,0.79886,2026-04-29,2027-04-28,docs/regulacao/tarifas_neoenergia_pe.md (REH 3.583/2026; tabela Grupo B da Neoenergia PE; sem tributos e sem bandeira)
+B,B3,branca,ponta,1.19391,0.43088,1.62479,2026-04-29,2027-04-28,docs/regulacao/tarifas_neoenergia_pe.md (REH 3.583/2026; tabela Grupo B da Neoenergia PE; sem tributos e sem bandeira)
+B,B3,branca,intermediario,0.80496,0.24845,1.05341,2026-04-29,2027-04-28,docs/regulacao/tarifas_neoenergia_pe.md (REH 3.583/2026; tabela Grupo B da Neoenergia PE; sem tributos e sem bandeira)
+B,B3,branca,fora_ponta,0.41602,0.24845,0.66447,2026-04-29,2027-04-28,docs/regulacao/tarifas_neoenergia_pe.md (REH 3.583/2026; tabela Grupo B da Neoenergia PE; sem tributos e sem bandeira)

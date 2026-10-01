@@ -17,10 +17,23 @@ dependencies = [
     "xgboost",
     "lightgbm",
     "scikit-learn",
+    "shap",
+    "pyyaml",
 ]
 
 [project.optional-dependencies]
-dev = ["pytest"]
+dev = ["pytest", "mypy", "pandas-stubs", "types-PyYAML"]
 
 [tool.setuptools]
 py-modules = []
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["mapen_aconselhamento*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.mypy]
+strict = true
+files = ["src/mapen_aconselhamento"]
