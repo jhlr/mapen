@@ -1,0 +1,14 @@
+:root { color-scheme: light dark; --borda: #8884; --barra: #3b82f6; }
+body { font-family: system-ui, sans-serif; margin: 0; }
+nav { display: flex; gap: 1rem; padding: 0.75rem 1rem; border-bottom: 1px solid var(--borda); flex-wrap: wrap; }
+nav a { text-decoration: none; font-weight: 600; }
+main { padding: 1rem; max-width: 960px; margin: 0 auto; }
+table { border-collapse: collapse; width: 100%; margin: 0.5rem 0 1.5rem; }
+th, td { text-align: left; padding: 0.3rem 0.5rem; border-bottom: 1px solid var(--borda); font-size: 0.9rem; }
+td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
+.cards { display: flex; gap: 1rem; flex-wrap: wrap; margin: 1rem 0; }
+.card { border: 1px solid var(--borda); border-radius: 8px; padding: 0.75rem 1rem; min-width: 10rem; }
+.card b { display: block; font-size: 1.4rem; }
+.barra { background: var(--barra); height: 0.9rem; border-radius: 3px; min-width: 1px; }
+.aviso { border-left: 4px solid #d97706; padding: 0.4rem 0.8rem; margin: 1rem 0; font-size: 0.9rem; }
+.rej { color: #dc2626; font-weight: 600; }

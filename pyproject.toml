@@ -20,21 +20,43 @@ dependencies = [
     "shap",
     "pyyaml",
     "python-dateutil",
+    "fastapi",
+    "uvicorn",
 ]
 
 [project.optional-dependencies]
-dev = ["pytest", "mypy", "pandas-stubs", "types-PyYAML", "types-python-dateutil"]
+dev = ["pytest", "mypy", "pandas-stubs", "types-PyYAML", "types-python-dateutil", "httpx", "import-linter"]
 
 [tool.setuptools]
 py-modules = []
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["mapen_aconselhamento*"]
+include = ["mapen_aconselhamento*", "mapen_plataforma*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 
 [tool.mypy]
 strict = true
-files = ["src/mapen_aconselhamento"]
+files = ["src/mapen_aconselhamento", "src/mapen_plataforma", "tests/m2"]
+
+[tool.importlinter]
+root_package = "mapen_plataforma"
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "Camadas: interface > infrastructure > application > domain"
+type = "layers"
+layers = [
+    "mapen_plataforma.interface",
+    "mapen_plataforma.infrastructure",
+    "mapen_plataforma.application",
+    "mapen_plataforma.domain",
+]
+
+[[tool.importlinter.contracts]]
+name = "Dominio e aplicacao sem I/O nem framework"
+type = "forbidden"
+source_modules = ["mapen_plataforma.domain", "mapen_plataforma.application"]
+forbidden_modules = ["fastapi", "starlette", "pydantic", "duckdb", "pandas", "numpy", "httpx", "mapen_aconselhamento"]
