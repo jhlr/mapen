@@ -10,22 +10,24 @@ import { serieHoraria } from "../../lib/servicos/serieHoraria";
 export const dynamic = "force-dynamic";
 
 export default async function ConsumoPorHora({ searchParams }: { searchParams: Params }) {
-  const { empresa, sensores, sensor, modalidade } = await contexto(searchParams);
+  const { sensores, sensor, modalidade } = await contexto(searchParams);
   if (sensor === undefined) return <Vazio>Nenhum sensor cadastrado para esta empresa.</Vazio>;
   const dias = diasDe((await searchParams).dias);
-  const diaRef = (await consumoAgora(empresa, sensor)).ts_referencia.slice(0, 10);
-  const serie = await serieHoraria(empresa, sensor, diaRef, dias, modalidade);
+  const diaRef = (await consumoAgora(sensor)).ts_referencia.slice(0, 10);
+  const serie = await serieHoraria(sensor, diaRef, dias, modalidade);
   const faixas = serie.pontos.map((p) => p.faixa);
   return (
     <>
       <Cabecalho titulo="Consumo por hora" subtitulo={rotuloPeriodoDias(diaRef, dias)} />
-      <SeletorSensor rota="/horario" empresa={empresa} sensor={sensor} modalidade={modalidade} dias={dias} sensores={sensores} />
-      <SeletorPeriodo rota="/horario" empresa={empresa} sensor={sensor} modalidade={modalidade} dias={dias} />
-      <SeletorModalidade rota="/horario" empresa={empresa} sensor={sensor} modalidade={modalidade} dias={dias} />
+      <SeletorSensor rota="/horario" sensor={sensor} modalidade={modalidade} dias={dias} sensores={sensores} />
+      <SeletorPeriodo rota="/horario" sensor={sensor} modalidade={modalidade} dias={dias} />
+      <SeletorModalidade rota="/horario" sensor={sensor} modalidade={modalidade} dias={dias} />
       <Aviso titulo="Como ler">
-        Soma de todos os equipamentos do sensor. A API não tem endpoint de série temporal: o dashboard consulta o
-        custo em janelas de 1 hora ({serie.consultas} consultas), então kWh na hora equivale a kW médio. Horas sem
-        leitura entram como 0 kW. O fundo colorido mostra a faixa tarifária ({modalidade}) informada pela API.
+        Soma de todos os equipamentos do sensor, em kW médio por hora (horário de Recife), vinda de uma única
+        chamada a /consumo/horario. O fundo colorido é a faixa tarifária ({modalidade}) informada pela API; a
+        faixa ponta tem hachura. {serie.horasAusentes === 0
+          ? "Todas as horas do período têm leitura."
+          : `${serie.horasAusentes} hora(s) do período sem leitura: aparecem como 0 kW no gráfico hora a hora e ficam fora da média por hora do dia.`}
       </Aviso>
       <LegendaFaixas faixas={faixas} />
       <Secao titulo="Média por hora do dia">

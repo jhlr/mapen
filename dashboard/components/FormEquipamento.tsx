@@ -5,11 +5,10 @@ import { acaoCriarEquipamento } from "../actions/cadastro";
 import type { Sensor } from "../lib/api";
 import { Campo, Resultado } from "./Campo";
 
-export function FormEquipamento({ empresa, sensores }: { empresa: string; sensores: Sensor[] }) {
+export function FormEquipamento({ sensores }: { sensores: Sensor[] }) {
   const [estado, enviar, pendente] = useActionState(acaoCriarEquipamento, null);
   return (
     <form action={enviar} className="form">
-      <input type="hidden" name="empresa" value={empresa} />
       <Campo rotulo="Sensor">
         <select name="sensor_id" required defaultValue={estado?.valores.sensor_id}>
           {sensores.map((s) => <option key={s.id} value={s.id}>{s.nome}</option>)}

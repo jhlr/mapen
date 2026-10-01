@@ -8,15 +8,20 @@ const texto = (f: FormData, k: string): string => String(f.get(k) ?? "").trim();
 /** Ecoa os campos de texto/checkbox enviados, para repovoar o form quando a API recusa. */
 const eco = (f: FormData): Record<string, string> =>
   Object.fromEntries([...f.entries()].filter(([k, v]) => typeof v === "string" && !k.startsWith("$")).map(([k, v]) => [k, String(v)]));
+const recusa = (f: FormData, status: number, erro: string): EstadoForm => ({
+  ok: false,
+  mensagem: status === 401 ? `Chave de API ausente ou recusada (HTTP 401): ${erro}` : `A API recusou (HTTP ${status}): ${erro}`,
+  valores: eco(f),
+});
 
 export async function acaoCriarEquipamento(_: EstadoForm, f: FormData): Promise<EstadoForm> {
-  const empresa = texto(f, "empresa");
-  const r = await criarEquipamento(empresa, {
+  // critico sempre vai explicito (true ou false): a API nao tem padrao e falha fechada.
+  const r = await criarEquipamento({
     sensor_id: texto(f, "sensor_id"),
     nome: texto(f, "nome"),
     critico: f.get("critico") === "on",
   });
-  if (!r.ok) return { ok: false, mensagem: `A API recusou (HTTP ${r.status}): ${r.erro}`, valores: eco(f) };
+  if (!r.ok) return recusa(f, r.status, r.erro);
   revalidatePath("/cadastro");
   return {
     ok: true,
@@ -26,14 +31,12 @@ export async function acaoCriarEquipamento(_: EstadoForm, f: FormData): Promise<
 }
 
 export async function acaoCriarRegra(_: EstadoForm, f: FormData): Promise<EstadoForm> {
-  const empresa = texto(f, "empresa");
-  const r = await criarRegra(empresa, {
+  const r = await criarRegra({
     equipamento_id: texto(f, "equipamento_id"),
     cron: texto(f, "cron"),
     ativo: f.get("ativo") === "on",
-    autorizado_por: texto(f, "autorizado_por"),
   });
-  if (!r.ok) return { ok: false, mensagem: `A API recusou (HTTP ${r.status}): ${r.erro}`, valores: eco(f) };
+  if (!r.ok) return recusa(f, r.status, r.erro);
   revalidatePath("/cadastro");
   return {
     ok: true,
@@ -43,8 +46,8 @@ export async function acaoCriarRegra(_: EstadoForm, f: FormData): Promise<Estado
 }
 
 export async function acaoAlterarRegra(_: EstadoForm, f: FormData): Promise<EstadoForm> {
-  const r = await alterarRegra(texto(f, "empresa"), texto(f, "regra_id"), f.get("ativo") === "true");
-  if (!r.ok) return { ok: false, mensagem: `A API recusou (HTTP ${r.status}): ${r.erro}`, valores: eco(f) };
+  const r = await alterarRegra(texto(f, "regra_id"), f.get("ativo") === "true");
+  if (!r.ok) return recusa(f, r.status, r.erro);
   revalidatePath("/cadastro");
   return { ok: true, mensagem: r.dados.ativo ? "Regra ativada." : "Regra desativada.", valores: {} };
 }

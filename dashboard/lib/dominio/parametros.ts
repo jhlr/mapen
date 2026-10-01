@@ -8,7 +8,7 @@ export const MODALIDADES = ["branca", "convencional"] as const;
 export type Modalidade = (typeof MODALIDADES)[number];
 export const ehModalidade = (v: string | undefined): v is Modalidade => MODALIDADES.some((m) => m === v);
 
-/** Querystring que preserva empresa (e, se houver, sensor/modalidade). */
+/** Querystring com os parametros definidos (sensor, modalidade, dias). */
 export function consulta(partes: Record<string, string | number | undefined>): string {
   const q = new URLSearchParams();
   for (const [k, v] of Object.entries(partes)) if (v !== undefined) q.set(k, String(v));
@@ -16,8 +16,8 @@ export function consulta(partes: Record<string, string | number | undefined>): s
   return s === "" ? "" : `?${s}`;
 }
 
-export const PERIODOS_DIAS = [1, 3, 7] as const;
-/** Limite de 7 dias: a serie horaria custa 24 consultas por dia. */
+export const PERIODOS_DIAS = [1, 3, 7, 31] as const;
+/** Limite de 31 dias: o maximo que /consumo/horario aceita. */
 export function diasDe(valor: string | string[] | undefined): number {
   const n = Number(primeiro(valor));
   return PERIODOS_DIAS.find((d) => d === n) ?? 7;

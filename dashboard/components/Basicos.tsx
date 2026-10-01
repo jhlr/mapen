@@ -41,10 +41,14 @@ export function Barra({ valor, maximo }: { valor: number; maximo: number }) {
   );
 }
 
-export function Tabela({ legenda, children }: { legenda: string; children: ReactNode }) {
+/**
+ * `empilhar`: em tela estreita cada linha vira um cartao (cada td precisa de data-label). Sem isso, a
+ * tabela rola dentro do proprio contêiner, nunca a pagina.
+ */
+export function Tabela({ legenda, empilhar = false, children }: { legenda: string; empilhar?: boolean; children: ReactNode }) {
   return (
     <div className="rolagem">
-      <table>
+      <table className={empilhar ? "empilha" : undefined}>
         <caption>{legenda}</caption>
         {children}
       </table>

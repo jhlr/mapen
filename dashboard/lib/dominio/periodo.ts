@@ -1,8 +1,12 @@
 import { rotuloMes } from "./formatacao";
+import { comFuso, somarDias } from "./fuso";
 
 export type Mes = { inicio: string; fim: string; rotulo: string };
 
-/** Mes (dia 1 ate o dia 1 do mes seguinte) que contem o timestamp de referencia. */
+/**
+ * Mes (dia 1 ate o dia 1 do mes seguinte) que contem o timestamp de referencia, com offset de Recife.
+ * `ts` vem da API com fuso (ts_referencia), entao os 10 primeiros caracteres sao o dia local.
+ */
 export function mesDe(ts: string): Mes {
   const ano = Number(ts.slice(0, 4));
   const mes = Number(ts.slice(5, 7));
@@ -10,18 +14,14 @@ export function mesDe(ts: string): Mes {
   const proxAno = mes === 12 ? ano + 1 : ano;
   const proxMes = mes === 12 ? 1 : mes + 1;
   return {
-    inicio: `${ano}-${dois(mes)}-01T00:00:00`,
-    fim: `${proxAno}-${dois(proxMes)}-01T00:00:00`,
+    inicio: comFuso(`${ano}-${dois(mes)}-01T00:00:00`),
+    fim: comFuso(`${proxAno}-${dois(proxMes)}-01T00:00:00`),
     rotulo: rotuloMes(ano, mes),
   };
 }
 
 /** "de 25/08/2018 a 31/08/2018 (7 dias)" para o periodo que termina em diaRef (AAAA-MM-DD). */
 export function rotuloPeriodoDias(diaRef: string, dias: number): string {
-  const [a, m, d] = diaRef.split("-").map(Number);
-  const ini = new Date(Date.UTC(a ?? 1970, (m ?? 1) - 1, (d ?? 1) - (dias - 1)));
-  const br = (x: Date): string =>
-    `${String(x.getUTCDate()).padStart(2, "0")}/${String(x.getUTCMonth() + 1).padStart(2, "0")}/${x.getUTCFullYear()}`;
-  const fim = new Date(Date.UTC(a ?? 1970, (m ?? 1) - 1, d ?? 1));
-  return dias === 1 ? `Dia ${br(fim)}` : `${br(ini)} a ${br(fim)} (${dias} dias)`;
+  const br = (x: string): string => `${x.slice(8, 10)}/${x.slice(5, 7)}/${x.slice(0, 4)}`;
+  return dias === 1 ? `Dia ${br(diaRef)}` : `${br(somarDias(diaRef, -(dias - 1)))} a ${br(diaRef)} (${dias} dias)`;
 }

@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 const ITENS = [
   { href: "/", rotulo: "Consumo" },
@@ -13,23 +14,31 @@ const ITENS = [
   { href: "/eventos", rotulo: "Eventos" },
 ];
 
+/** Em tela larga os itens ficam em linha; abaixo de 900 px viram um menu que abre e fecha (botao de 44 px). */
 export function Navegacao() {
   const caminho = usePathname();
-  const empresa = useSearchParams().get("empresa");
-  const sufixo = empresa === null ? "" : `?empresa=${encodeURIComponent(empresa)}`;
+  const [aberto, setAberto] = useState(false);
   return (
-    <nav aria-label="Principal">
+    <nav aria-label="Principal" data-aberto={aberto}>
       <span className="marca">MAPEN</span>
-      <ul>
+      <button
+        type="button"
+        className="menu-botao"
+        aria-expanded={aberto}
+        aria-controls="menu-itens"
+        onClick={() => setAberto((a) => !a)}
+      >
+        {aberto ? "Fechar" : "Menu"}
+      </button>
+      <ul id="menu-itens">
         {ITENS.map((i) => (
           <li key={i.href}>
-            <Link href={`${i.href}${sufixo}`} aria-current={caminho === i.href ? "page" : undefined}>
+            <Link href={i.href} aria-current={caminho === i.href ? "page" : undefined} onClick={() => setAberto(false)}>
               {i.rotulo}
             </Link>
           </li>
         ))}
       </ul>
-      {empresa !== null && <span className="empresa">empresa: {empresa}</span>}
     </nav>
   );
 }
