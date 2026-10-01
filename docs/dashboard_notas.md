@@ -61,3 +61,16 @@ A assinatura HMAC foi calculada no navegador de teste com a chave de comando imp
 ## Histórico (primeira versão)
 
 Mapa de camadas e decisões de design da primeira versão continuam valendo: pages só compõem; `lib/api/cliente.ts` é o único `fetch`; `lib/dominio` tem funções puras; Server Actions chamam `lib/api`. O serviço `lib/servicos/serieHoraria.ts` agora faz uma só chamada. Itens antigos obsoletos: inferência do modo remoto por eventos, `X-Empresa-Id`, `?empresa=`, 24 consultas por dia, largura mínima de 560 px nos gráficos, contraste baixo no escuro.
+
+## Telas do M3: Modelos, Alertas, Economia (2026-10-01)
+
+Camadas: `lib/api/{tipos,leituras}.ts` (`resumoModelos`, `listarAlertas`, `economiaM3`, só via `ler`), `lib/dominio/resultadosM3.ts` (funções puras: barras do MAE, aviso D7, filtros da URL e conversão para parâmetros da API, veredito da economia), `components/ResultadosM3.tsx`, páginas `app/{modelos,alertas,economia}/page.tsx` só compõem. Itens novos na navegação. Verificado contra a API real (cópia do banco e de `data/m3` em diretório temporário; API e dashboard parados no fim, `pgrep` sem uvicorn nem next).
+
+1. Verificação: `npm run build` (TypeScript strict) sem erro; `scrollWidth == innerWidth` nas 3 telas em 375, 768 e 1280, claro e escuro. Capturas olhadas em 1280 (claro) e 375 (escuro); 768 só medido, sem captura.
+2. Modelos: dados, MAE geral e por equipamento (barras HTML fluidas), faixa "Nowcast, não previsão" com o texto da API, SHAP calendário contra lag/janelas, aviso D7 derivado de `aviso_d7.disparado`, benchmark rotulado "sintético" e baseline fraca. Nenhum número é fixo no código.
+3. Alertas: filtros por GET (equipamento, tipo, de/até), 25 por página com links Anterior/Próxima, esperado e observado em barras, z ou top 3 SHAP e o rótulo "candidato, nao corroborado" vindo da API. Os filtros foram conferidos contra o exemplo do contrato (z1_Light, LightGBM, 05/11 17:00: 7,27 contra 3,38 kW).
+4. Economia: banner de método (não é economia real) e veredito montados com `valida_metodo_nao_economia_real` e `veredito.*`; tabela antes/depois com injetado, recuperado, faixa, erro e "dentro/fora" em texto (nunca só cor). Com os dados atuais mostra 7 de 19 dentro, tolerância não atendida.
+5. Contraste: calculado a partir dos tokens (selos, banner, SHAP, texto suave): mínimo 5,49 no claro e 6,44 no escuro (>= 4.5). Não medido no DOM renderizado.
+6. Estados: 401 (chave errada) mostra a tela de chave recusada nas 3 rotas; API fora do ar mostra `error.tsx`. Sem dados mostra "não estão disponíveis" (`disponivel: false`, não exercitado com outra empresa).
+
+Limites: sem gráfico do entorno do alerta (a API não expõe a série por equipamento; `/consumo/horario` é do sensor inteiro); o `resumo.json` não é gerado pelo CLI do M3 (ver `m2_seguranca_notas.md`), então a tela Modelos pode mostrar números antigos; textos vindos da API (rótulo, veredito) saem sem acento; screenshots da tela de Alertas em 768 e 1280 escuro não foram inspecionados; `Carregando dados...` pode ficar visível em aba oculta do navegador de teste (requestAnimationFrame pausado).
