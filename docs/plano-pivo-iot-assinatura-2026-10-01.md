@@ -28,7 +28,7 @@ Ordem de entrega decidida: **serviço primeiro, sensor depois**. O aconselhament
 | **C. Datasets** | (1) datasets públicos de consumo por equipamento para prototipar modelos (a levantar; **licença e adequação ao Brasil a verificar**); (2) curva sintética com tarifa horária; (3) tarifas vigentes da Neoenergia PE (resolução ANEEL) | a definir | S a M |
 | **D. Modelos de ML** | Baseline de consumo esperado por equipamento/hora (regressão, resíduo = anomalia), detecção de ociosidade, recomendação de janela; validação temporal sem vazamento; explicação por SHAP | a definir | M |
 | **E. Dashboard** | Next.js sobre a base da frente B; telas da seção 3 | a definir | M |
-| **F. Hardware** | Piloto com sensores comerciais abertos (tomada + medidor de quadro; modelos, preço, certificação e corrente máxima a levantar). Hardware próprio (ESP32 + sensor) fica como **trilha de exploração**, sem compromisso de entrega | a definir | M a L |
+| **F. Hardware** | Piloto com sensores comerciais abertos (tomada + medidor de quadro; modelos, preço, certificação e corrente máxima a levantar). **Hardware próprio com energia autônoma** (decisão do grupo, 2026-10-01): placa com RTC, memória local e supercapacitor/bateria, para registrar horário e oscilações de carga independente de conexão e de rede elétrica. É requisito do produto, não exploração: sem ele, queda de energia e queda de Wi-Fi não se distinguem. Sensores comerciais ficam como atalho de M1/M2 | a definir | M a L |
 | **G. Referências (artigos)** | Revisão dos artigos já existentes (desagregação de carga, detecção de anomalia em consumo, resposta à demanda, M&V) como base de método e baseline de comparação. **Não inclui escrever artigo novo** | a definir | S |
 | **H. Regulatório e LGPD** | Leitura da regra ANEEL vigente de ressarcimento por dano elétrico, modalidades tarifárias, LGPD do consumo por equipamento (revela rotina), parecer sobre valor probatório | a definir | S a M |
 | **I. Validação de demanda** | Nomear empresas-piloto (contatos via professor), entrevistas "pagaria? quanto?", critério de sinal fraco/forte do design de 11/09 | a definir | S |
@@ -76,7 +76,7 @@ Entidades: `empresa`, `unidade`, `sensor` (tipo: tomada/quadro; modelo; carga mo
 3. **Contatos para o piloto:** o professor indica 1 ou 2 empresas?
 4. **Forma de cobrança:** mensalidade fixa por sensor/unidade, faixa de consumo ou parte da economia?
 5. **Neoenergia:** canal/parceira (hipótese de 2.3 do design) ou contraparte adversarial pela prova de dano? As duas posições não cabem juntas, e isso afeta o Projeto 4.
-6. **Hardware próprio:** em que condição a trilha F deixa de ser exploração e vira entrega (critério de gate: custo, certificação, tempo)?
+6. **Hardware próprio:** qual autonomia mínima de registro sem rede elétrica o produto precisa (minutos/horas), supercapacitor ou bateria de lítio (segurança), e quem do grupo domina eletrônica embarcada e certificação Anatel/Inmetro?
 7. **Quais datasets públicos** o grupo já conhece e podem entrar na frente C, e quais artigos pré-existentes entram em G.
 8. **Parecer jurídico:** quem tem acesso a uma pessoa que entenda de regulação do consumidor?
 9. **Fase A (redflags de perda):** segue como trilha acadêmica separada, como proposto, ou é absorvida na nova narrativa?
