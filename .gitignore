@@ -13,6 +13,8 @@ mlflow.db
 models/
 data/*
 !data/tarifas/
+data/tarifas/*
+!data/tarifas/neoenergia_pe.csv
 data.zip
 
 # graphify (índice regenerável)
