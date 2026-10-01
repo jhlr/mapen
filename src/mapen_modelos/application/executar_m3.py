@@ -13,6 +13,7 @@ from mapen_modelos.application.comparar_antes_depois import (
     ResultadoAntesDepois,
 )
 from mapen_modelos.application.detectar_anomalias import DetectarAnomalias, ResultadoDeteccao
+from mapen_modelos.application.resumo_m3 import FonteDados, ResumoM3, montar_resumo
 from mapen_modelos.application.portas import Explicador, LeitorSeries, TreinadorModelo
 from mapen_modelos.application.treinar_e_avaliar import ConfigAvaliacao, ResultadoTreino, TreinarEAvaliar
 
@@ -65,3 +66,7 @@ class ExecutarM3:
             p.sensor_id, treino, p.fim_treino, p.meio_do_teste, p.fim_teste, p.fracao_reducao
         )
         return ResultadoM3(p, config, treino, deteccao, benchmark, antes_depois, controle, varredura)
+
+    def resumir(self, resultado: ResultadoM3, fonte: FonteDados) -> ResumoM3:
+        """Resumo do ciclo para o dashboard; o `ExecutarM3` e o dono de tudo que o M3 publica."""
+        return montar_resumo(resultado, fonte)

@@ -9,14 +9,15 @@ from pathlib import Path
 import pandas as pd
 
 from mapen_aconselhamento.infrastructure.caminhos import RAIZ
-from mapen_modelos.application.executar_m3 import ExecutarM3, ParametrosM3
+from mapen_modelos.application.executar_m3 import ExecutarM3, ParametrosM3, ResultadoM3
+from mapen_modelos.application.resumo_m3 import FonteDados
 from mapen_modelos.application.treinar_e_avaliar import ConfigAvaliacao
 from mapen_modelos.infrastructure.arquivos import escrever_texto
 from mapen_modelos.infrastructure.lightgbm_modelo import TreinadorLightGBM
 from mapen_modelos.infrastructure.serie_duckdb import SeriesHorariasDuckDB
 from mapen_modelos.infrastructure.shap_explicador import ExplicadorShap
 from mapen_modelos.infrastructure.subconjunto import CSV_PADRAO, DUCKDB_PADRAO, SENSOR_PADRAO, abrir_subconjunto
-from mapen_modelos.interface.artefatos_json import montar_alertas, montar_economia, serializar
+from mapen_modelos.interface.artefatos_json import montar_alertas, montar_economia, montar_resumo_json, serializar
 from mapen_modelos.interface.relatorio_markdown import renderizar_relatorio
 
 # 22 semanas exatas a partir de domingo 2018-07-01: 18 de treino/walk-forward, 4 reservadas.
@@ -24,6 +25,14 @@ INICIO_PADRAO = "2018-07-01"
 FIM_TREINO_PADRAO = "2018-11-04"
 FIM_TESTE_PADRAO = "2018-12-02"
 MEIO_TESTE_PADRAO = "2018-11-18"
+
+
+def publicar(m3: ExecutarM3, resultado: ResultadoM3, fonte: FonteDados, saida: Path) -> None:
+    """Grava tudo que o M3 publica: relatorio markdown e os tres JSON lidos pela API."""
+    escrever_texto(saida / "relatorio_m3.md", renderizar_relatorio(resultado, fonte.linhas_minuto))
+    escrever_texto(saida / "resumo.json", serializar(montar_resumo_json(m3.resumir(resultado, fonte))))
+    escrever_texto(saida / "alertas.json", serializar(montar_alertas(resultado)))
+    escrever_texto(saida / "economia.json", serializar(montar_economia(resultado)))
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -58,12 +67,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     con = abrir_subconjunto(args.duckdb, args.csv, p.sensor_id, p.inicio, p.fim_teste)
     linha = con.execute("SELECT count(*) FROM leitura WHERE sensor_id = ?", [p.sensor_id]).fetchone()
     minutos = int(linha[0]) if linha is not None else 0
-    resultado = ExecutarM3(SeriesHorariasDuckDB(con), TreinadorLightGBM(), ExplicadorShap()).executar(
-        p, ConfigAvaliacao()
-    )
-    escrever_texto(args.saida / "relatorio_m3.md", renderizar_relatorio(resultado, minutos))
-    escrever_texto(args.saida / "alertas.json", serializar(montar_alertas(resultado)))
-    escrever_texto(args.saida / "economia.json", serializar(montar_economia(resultado)))
+    m3 = ExecutarM3(SeriesHorariasDuckDB(con), TreinadorLightGBM(), ExplicadorShap())
+    resultado = m3.executar(p, ConfigAvaliacao())
+    fonte = FonteDados(f"CU-BEMS (dado real), {p.sensor_id.removeprefix('cu_bems_')}", minutos)
+    publicar(m3, resultado, fonte, args.saida)
     print(args.saida)
     return 0
 
