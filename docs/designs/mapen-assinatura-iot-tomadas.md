@@ -1,7 +1,7 @@
 # MAPEN — assinatura mensal de tomadas inteligentes (IoT) + dashboard próprio
 
 **Data:** 2026-09-30
-**Status:** RASCUNHO v2 para revisão da Natália (nada aqui está decidido). A seção 1.1 incorpora o retorno do professor e prevalece sobre o resto onde houver conflito.
+**Status:** RASCUNHO v3 (superado em hardware, demanda e segurança por `docs/plano-pivo-iot-assinatura-2026-10-01.md` e `docs/specs/spec-pivo-iot-assinatura-2026-10-01.md`) para revisão da Natália (nada aqui está decidido). A seção 1.1 incorpora o retorno do professor e prevalece sobre o resto onde houver conflito.
 **Origem:** sugestão do professor — pivotar para uma assinatura mensal de um sistema IoT de tomadas inteligentes, com dashboard próprio de gerenciamento e otimização.
 **Docs de base:** `contexto_mapen.md`, `designs/mapen-negocio-ou-nao.md` (03/09), `designs/eficiencia-energetica-pf-pj.md` (11/09), `modelos_negocio_eficiencia_energetica.md` (17/09), `oportunidades_negocio_energia.md`, `crisp_dm.md`, `modelagem_redflags.md`.
 
@@ -141,7 +141,7 @@ Pergunta de unit economics que o piloto precisa responder: **economia mensal med
 ## 7. Perguntas para a Natália decidir
 
 1. **Segmento inicial:** PJ (direção do professor). Qual porte e setor? (afeta preço, tarifa aplicável e tipo de equipamento.)
-2. **Hardware:** usar tomada comercial no piloto (recomendação) ou desenhar a nossa?
+2. **Hardware:** decidido em 2026-10-01: hardware próprio com energia autônoma é requisito (registro independente de rede e conexão); tomada comercial fica como atalho. Ver plano, seção 6.
 3. **Escopo do MVP:** registro com horário + custo por tarifa horária + ranking de equipamentos + desligamento remoto/agendado (núcleo definido pelo professor). Entra ou não a prova de queda/dano já no MVP, ou só como fase 2?
 4. **Fase A:** manter como trilha acadêmica separada (recomendação) ou absorver na nova narrativa?
 5. **Neoenergia:** canal/parceira (seção 2.3) ou contraparte adversarial (prova de dano, seção 1.1.2)? Não dá para vender as duas coisas ao mesmo tempo.

@@ -31,17 +31,17 @@ Ordem de entrega decidida: **serviço primeiro, sensor depois**. O aconselhament
 | **F. Hardware** | Piloto com sensores comerciais abertos (tomada + medidor de quadro; modelos, preço, certificação e corrente máxima a levantar). **Hardware próprio com energia autônoma** (decisão do grupo, 2026-10-01): placa com RTC, memória local e supercapacitor/bateria, para registrar horário e oscilações de carga independente de conexão e de rede elétrica. É requisito do produto, não exploração: sem ele, queda de energia e queda de Wi-Fi não se distinguem. Sensores comerciais ficam como atalho de M1/M2 | a definir | M a L |
 | **G. Referências (artigos)** | Revisão dos artigos já existentes (desagregação de carga, detecção de anomalia em consumo, resposta à demanda, M&V) como base de método e baseline de comparação. **Não inclui escrever artigo novo** | a definir | S |
 | **H. Regulatório e LGPD** | Leitura da regra ANEEL vigente de ressarcimento por dano elétrico, modalidades tarifárias, LGPD do consumo por equipamento (revela rotina), parecer sobre valor probatório | a definir | S a M |
-| **I. Validação de demanda** | Nomear empresas-piloto (contatos via professor), entrevistas "pagaria? quanto?", critério de sinal fraco/forte do design de 11/09 | a definir | S |
+| **I. Dados reais iniciais** | Escolher o dataset público de M1 e montar o ambiente de coleta do próprio grupo (bancada, casa, laboratório) para o sensor, com período e equipamentos definidos. A validação de mercado do professor segue como premissa aceita | a definir | S |
 
 ### Marcos
 
-1. **M0, preparação:** cotação de 3 a 5 sensores, 1 a 2 contatos de empresa, tarifa vigente levantada. (Frentes C, F, H, I.)
+1. **M0, preparação:** cotação de 3 a 5 sensores e BOM do hardware próprio, tarifa vigente, segmento-alvo, unit economics de uma página, datasets com licença, regra ANEEL lida, pedido de componentes de prazo longo. (Frentes C, F, H, I.)
 2. **M1, serviço sem sensor:** fatura/curva de uma empresa → custo por horário → ranking e recomendação em DuckDB e um gráfico. (A, B, C.)
 3. **M2, sensor no piloto:** 1 sensor → ingestão → DuckDB → gráfico, depois piloto em 1 empresa com tomada e, se couber, medidor de quadro. Inclui desligamento remoto com regra explícita do cliente. (B, D, E, F.)
-4. **M3, economia medida:** relatório antes × depois com a pergunta "pagaria? quanto?". (D, E, I.)
+4. **M3, economia medida:** relatório antes × depois sobre dado real do ambiente do grupo, com baseline e explicação de cada alerta. (D, E, I.)
 5. **M4, prova de queda/dano:** só após o piloto e depois do parecer da frente H. M1 a M3 apenas registram tensão e eventos com carimbo de tempo local, para não perder dado.
 
-Caminho crítico: **hardware (F) e empresa-piloto (I)**. As frentes de código não bloqueiam o plano.
+Caminho crítico: **hardware (F) e dados reais iniciais (I)**. As frentes de código não bloqueiam o plano.
 
 ## 5. Estrutura mínima proposta (MVP)
 
@@ -53,7 +53,9 @@ Entidades: `empresa`, `unidade`, `sensor` (tipo: tomada/quadro; modelo; carga mo
 2. **A prova contra distribuidora fica no escopo, mas depois do piloto** e sem prometê-la a cliente antes do parecer da frente H. Foi conselho do professor manter no escopo.
 3. **Não reportar precisão/recall inventados.** Sem rótulo real, o critério é nº de alertas corroborados pelo cliente (mesma regra do `crisp_dm.md`).
 4. **Sem número de economia ou preço antes de medição ou cotação.** Campos `[?]` permanecem assim até haver fonte.
-5. **Contexto:** o grupo está em pré-incubação e pivotando por falta de tração; o plano otimiza para aprender rápido e barato, não para faturar.
+5. **Validação de mercado aceita como premissa** (decisão do grupo, 2026-10-01): a avaliação do professor basta como ponto de partida. O que o plano exige agora é dado real inicial, não entrevistas nem gate de empresas.
+6. **Hardware próprio segue como requisito** (decisão do grupo), mas o primeiro uso é no ambiente do próprio grupo (bancada, casa, laboratório) e só com desligamento remoto **desativado** (recomendação apenas) até os critérios de segurança do M2 passarem. Instalação em terceiros depende de checklist de segurança elétrica e do caminho de certificação mapeado no M0.
+7. **Contexto:** o grupo está em pré-incubação e pivotando por falta de tração; o plano otimiza para aprender rápido e barato, não para faturar.
 
 ## 7. Infraestrutura existente que o plano reaproveita
 
@@ -73,7 +75,7 @@ Entidades: `empresa`, `unidade`, `sensor` (tipo: tomada/quadro; modelo; carga mo
 
 1. **Donos de cada frente** (seção 4), e quantas pessoas existem no grupo.
 2. **Que tipo de empresa e equipamento** o professor tem em mente? Define sensor, tarifa e o que é "carga grande" demais para tomada.
-3. **Contatos para o piloto:** o professor indica 1 ou 2 empresas?
+3. **Dados reais iniciais:** que ambiente do grupo serve de bancada (casa, laboratório) e que equipamentos medir?
 4. **Forma de cobrança:** mensalidade fixa por sensor/unidade, faixa de consumo ou parte da economia?
 5. **Neoenergia:** canal/parceira (hipótese de 2.3 do design) ou contraparte adversarial pela prova de dano? As duas posições não cabem juntas, e isso afeta o Projeto 4.
 6. **Hardware próprio:** qual autonomia mínima de registro sem rede elétrica o produto precisa (minutos/horas), supercapacitor ou bateria de lítio (segurança), e quem do grupo domina eletrônica embarcada e certificação Anatel/Inmetro?
@@ -83,7 +85,7 @@ Entidades: `empresa`, `unidade`, `sensor` (tipo: tomada/quadro; modelo; carga mo
 
 ## 9. Esforço estimado (ordem de grandeza)
 
-S a M para cada frente de software (A, B, C, D, E); M a L para hardware (F), porque compra, certificação e instalação não dependem da velocidade de código; S para G, H e I, mas H e I dependem de terceiros (jurídico, empresas). O total é decidido pelo caminho crítico (hardware e empresa-piloto), não pela soma das frentes de código.
+S a M para cada frente de software (A, B, C, D, E); M a L para hardware (F), porque compra, certificação e instalação não dependem da velocidade de código; S para G, H e I, mas H depende de terceiros (jurídico). O total é decidido pelo caminho crítico (hardware e empresa-piloto), não pela soma das frentes de código.
 
 ## 10. O que este plano deliberadamente NÃO resolve
 
