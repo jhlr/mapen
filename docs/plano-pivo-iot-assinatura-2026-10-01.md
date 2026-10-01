@@ -78,7 +78,7 @@ Entidades: `empresa`, `unidade`, `sensor` (tipo: tomada/quadro; modelo; carga mo
 3. **Dados reais iniciais:** que ambiente do grupo serve de bancada (casa, laboratório) e que equipamentos medir?
 4. **Forma de cobrança:** mensalidade fixa por sensor/unidade, faixa de consumo ou parte da economia?
 5. **Neoenergia:** canal/parceira (hipótese de 2.3 do design) ou contraparte adversarial pela prova de dano? As duas posições não cabem juntas, e isso afeta o Projeto 4.
-6. **Hardware próprio:** qual autonomia mínima de registro sem rede elétrica o produto precisa (minutos/horas), supercapacitor ou bateria de lítio (segurança), e quem do grupo domina eletrônica embarcada e certificação Anatel/Inmetro?
+6. **Hardware próprio:** proposta em avaliação: last gasp (salvar o início da queda em milissegundos) + RTC vivo por horas/dias, com supercapacitor em vez de lítio. Falta validar em bancada e definir quem do grupo domina eletrônica embarcada e certificação Anatel/Inmetro.
 7. **Quais datasets públicos** o grupo já conhece e podem entrar na frente C, e quais artigos pré-existentes entram em G.
 8. **Parecer jurídico:** quem tem acesso a uma pessoa que entenda de regulação do consumidor?
 9. **Fase A (redflags de perda):** segue como trilha acadêmica separada, como proposto, ou é absorvida na nova narrativa?
