@@ -11,7 +11,8 @@ mlflow.db
 
 # modelos / dados derivados (regeráveis)
 models/
-data/
+data/*
+!data/tarifas/
 data.zip
 
 # graphify (índice regenerável)
