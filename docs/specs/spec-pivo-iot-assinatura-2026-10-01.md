@@ -69,14 +69,14 @@ Todo marco seguinte depende de fatos que hoje estão como `[?]` nos docs: preço
 | Arquivo novo | Conteúdo |
 |---|---|
 | `docs/hardware/candidatos.md` | Tabela com ≥3 modelos de tomada e ≥1 medidor de quadro (pinça de corrente) como **referência e atalho**: preço em R$ com data e link, corrente/tensão máxima, protocolo (MQTT/API local/nuvem), firmware aberto (sim/não), memória local e bateria (sim/não), certificação Anatel/Inmetro (sim/não/não encontrado), link da fonte |
-| `docs/hardware/proprio_bom.md` | Viabilidade do hardware próprio com energia autônoma: lista de materiais (microcontrolador com Wi-Fi, CI de medição de energia, relógio RTC, memória flash, supercapacitor ou bateria), custo unitário cotado com link, autonomia mínima N de registro sem rede elétrica (N derivado da menor queda relevante pela regra ANEEL lida neste marco; o valor entra aqui com a fonte), circuito dedicado de detecção de falta de tensão, riscos de segurança elétrica e de bateria (comparar supercapacitor × lítio), caminho de certificação Anatel/Inmetro |
+| `docs/hardware/proprio_bom.md` | Viabilidade do hardware próprio com energia autônoma: lista de materiais (microcontrolador com Wi-Fi, CI de medição de energia, relógio RTC, memória flash, supercapacitor ou bateria), custo unitário cotado com link, dois requisitos separados: (a) **last gasp**: tempo N para detectar a falta de tensão e gravar o início da queda em memória não volátil, com margem (estimativa de ordem de grandeza: salvar no ESP32 leva menos de 50 ms, fonte Zbotic; validar em bancada); (b) **autonomia do RTC**: tempo que o relógio permanece vivo sem rede, para calcular a duração da queda na volta da energia (meta em horas/dias, a fixar com a bateria/supercapacitor escolhidos). Supercapacitor preferido ao lítio por segurança; circuito dedicado de detecção de falta de tensão, riscos de segurança elétrica e de bateria (comparar supercapacitor × lítio), caminho de certificação Anatel/Inmetro |
 | `docs/regulacao/tarifas_neoenergia_pe.md` | Modalidades (convencional, branca, verde/azul) com faixas horárias e valores vigentes, citando número e data da resolução ANEEL |
 | `docs/regulacao/ressarcimento_dano_eletrico.md` | Texto vigente da regra ANEEL (artigos e prazos citados), padrão de evidência exigido, quem tem ônus da prova. Inclui nota LGPD sobre consumo por equipamento |
 | `docs/datasets_publicos.md` | Para cada dataset candidato (no mínimo BDG2 e CU-BEMS): URL, licença com texto citado, tamanho, granularidade, adequação ao uso comercial. Decide qual alimenta M1 |
 | `docs/referencias.md` | Cada artigo pré-existente indicado pelo grupo: citação, resumo em 3 linhas, o que reaproveitamos |
 | `docs/dados_reais_iniciais.md` | De onde vem o primeiro dado real: dataset público escolhido (M1) e ambiente do próprio grupo para o sensor (bancada, casa, laboratório), com período e equipamentos medidos |
 | `docs/unit_economics.md` | Modelo de uma página: custo unitário do hardware (do `proprio_bom.md`), nuvem e suporte por sensor/mês, preço-piso para cobrir custo, economia mensal que o cliente precisa ter para a assinatura fazer sentido. Entradas sem fonte ficam `[?]`, nunca estimadas |
-| `docs/segmento.md` | Segmento-alvo decidido: média tensão com tarifa horária ou PME de baixa tensão (convencional ou branca), com a fonte de quanto desse segmento tem tarifa diferenciada por horário. Se o segmento escolhido está na convencional, registrar que mudar horário não economiza e o valor vem de outro lado (equipamento, ociosidade, demanda) |
+| `docs/segmento.md` | Segmento-alvo proposto: **comércio e serviços de baixa tensão (B3) com consumo ≥ 1 MWh/mês**, apoiado na proposta da ANEEL de nov/2025 de migrar automaticamente esses consumidores para a tarifa branca (≈2,5 milhões, implementação prevista até o fim de 2026; hoje ~0,1% das unidades aderiu por conta própria). **Antes de usar, conferir se a proposta foi aprovada e com que regras.** O doc registra a decisão final: média tensão com tarifa horária ou PME de baixa tensão (convencional ou branca), com a fonte de quanto desse segmento tem tarifa diferenciada por horário. Se o segmento escolhido está na convencional, registrar que mudar horário não economiza e o valor vem de outro lado (equipamento, ociosidade, demanda) |
 | `docs/regulacao/responsabilidade.md` | Rascunho dos pontos a cobrir em termo de uso: responsabilidade por desligamento remoto, equipamentos críticos, seguro, LGPD |
 
 Dataset de partida proposto (a confirmar neste marco): **CU-BEMS** (consumo por zona, ar-condicionado, iluminação e tomadas num prédio de escritórios em Bangkok, 2018-2019) para ranking por equipamento; **Building Data Genome Project 2** (3.053 medidores em 1.636 prédios não residenciais, 2016-2017, horário) para custo por faixa horária e benchmark de prédio inteiro. Limitação a registrar: ambos são estrangeiros; aplicar tarifa brasileira a curva estrangeira demonstra o método, não o comportamento de carga no Brasil.
@@ -202,7 +202,7 @@ Nenhum código de ingestão de sensor, API ou dashboard.
 
 1. 1 sensor real grava leituras em `leitura` com o mesmo schema do M1.
 2. Desconexão induzida de 10 min (Wi-Fi desligado, energia ligada): o dispositivo guarda as amostras localmente e, na volta, 100% do intervalo aparece em `leitura` com horário do dispositivo, e gera 1 `evento` de falha de conexão.
-2b. Corte da energia da rede: o dispositivo continua registrando com horário do RTC por **pelo menos N minutos** (N definido no M0 em `proprio_bom.md`, com fonte). Na volta o intervalo aparece em `leitura` e gera 1 `evento` de queda. Se a autonomia medida for menor que N, o critério falha.
+2b. Corte da energia da rede: o dispositivo grava o início da queda dentro do tempo N do last gasp (N definido no M0) e o RTC mantém a hora pelo tempo exigido em `proprio_bom.md`. Na volta, o `evento` de queda traz início e duração calculada pelo RTC. Se o início não foi gravado ou o RTC perdeu a hora, o critério falha. Testar com cortes de 1 min, 10 min e o maior tempo que o RTC deve suportar.
 3. Comando de relé para equipamento `critico = true` é rejeitado e registrado, 100% das vezes em teste.
 4. Comando de desligamento sem `autorizado_por` é rejeitado.
 5. Todo desligamento executado gera 1 `evento` com `origem` e `regra_id`.
@@ -302,6 +302,14 @@ Permite ao cliente organizar o registro de um evento elétrico para apoiar um pe
 ## Current State
 
 `evento` e `leitura` de M2 já guardam tensão e queda com carimbo de tempo do dispositivo. Nada de integridade de log, relatório de evento ou parecer jurídico.
+
+## Prazos da regra de ressarcimento (REN 1000/2021, a confirmar no texto oficial no M0)
+
+- Pedido em até **5 anos** da data provável do dano.
+- Pedido em até **90 dias**: rito simplificado, a distribuidora não pode exigir certos documentos.
+- Verificação pela distribuidora em **10 dias**; **1 dia útil** se o equipamento guarda alimento perecível ou medicamento.
+- Fontes: [REN 1000/2021 (ANEEL)](https://www2.aneel.gov.br/cedoc/ren20211000.html), [Brasil Energia](https://brasilenergia.com.br/energia/ressarcimento-de-danos-na-resolucao-1-000-da-aneel-e-suas-excecoes-pontos-de-atencao), [ARSESP](http://www.arsesp.sp.gov.br/Documentosgerais/Cartilha_Ressarcimento_de_Danos_Eletricos.pdf).
+- Implicação: o relatório de evento deve poder sair em até 90 dias do evento e, para perecíveis, o registro precisa estar disponível no dia seguinte.
 
 ## Proposed Change
 
