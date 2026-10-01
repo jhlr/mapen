@@ -7,7 +7,7 @@ from pathlib import Path
 import pandas as pd
 from fastapi.testclient import TestClient
 
-from mapen_aconselhamento.tarifa import Tarifas
+from mapen_aconselhamento.infrastructure.tarifa_csv import carregar_tarifas
 from mapen_plataforma.application.casos_de_uso import EmitirCredenciaisDispositivo, ProvisionarEmpresa
 from mapen_plataforma.application.portas import Atuador
 from mapen_plataforma.domain.comando import Acao, ConfiguracaoSeguranca, assinar
@@ -122,7 +122,7 @@ def montar(habilitado: bool = True, caminho: str | Path = ":memory:", atuador: A
     relogio = RelogioFixo(AGORA)
     usado = atuador or AtuadorSimulado()
     servicos = montar_servicos(
-        banco, relogio, GeradorSequencial("srv"), derivador, usado, CalculadoraM1(banco, Tarifas.carregar())
+        banco, relogio, GeradorSequencial("srv"), derivador, usado, CalculadoraM1(banco, carregar_tarifas())
     )
     amb = Ambiente(
         TestClient(criar_app(servicos)), banco, relogio, usado, servicos, provisionar, emitir,

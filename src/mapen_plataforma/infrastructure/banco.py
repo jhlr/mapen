@@ -8,7 +8,7 @@ from pathlib import Path
 
 import duckdb
 
-from mapen_aconselhamento.ingest import DDL_LEITURA
+from mapen_aconselhamento.infrastructure.duckdb_leituras import DDL_LEITURA
 
 DDL: tuple[str, ...] = (
     DDL_LEITURA,

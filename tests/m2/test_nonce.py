@@ -10,7 +10,7 @@ from typing import Any
 from fastapi.testclient import TestClient
 
 from ambiente import AGORA, SEGREDO_MESTRE, Ambiente, montar
-from mapen_aconselhamento.tarifa import Tarifas
+from mapen_aconselhamento.infrastructure.tarifa_csv import carregar_tarifas
 from mapen_plataforma.infrastructure.banco import BancoDuckDB
 from mapen_plataforma.infrastructure.custo_m1 import CalculadoraM1
 from mapen_plataforma.infrastructure.repositorios import NonceDuckDB
@@ -40,7 +40,7 @@ def test_nonce_sobrevive_ao_reinicio_com_banco_em_arquivo(tmp_path: Path) -> Non
     banco = BancoDuckDB(caminho)
     servicos = montar_servicos(
         banco, amb.relogio, GeradorSequencial("novo"), DerivadorHmac(SEGREDO_MESTRE), AtuadorSimulado(),
-        CalculadoraM1(banco, Tarifas.carregar()),
+        CalculadoraM1(banco, carregar_tarifas()),
     )
     novo = TestClient(criar_app(servicos))
     corpo = {"equipamento_id": "eq-ac", "comando": amb.comando(nonce="persistente")}

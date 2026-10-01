@@ -6,10 +6,11 @@ from datetime import datetime
 
 import pandas as pd
 
-from mapen_aconselhamento.custo import custo_por_faixa
-from mapen_aconselhamento.ingest import ler_leituras
-from mapen_aconselhamento.ranking import pct_ausente_por_equipamento, top_n
-from mapen_aconselhamento.tarifa import Tarifas
+from mapen_aconselhamento.domain.custo import custo_por_faixa
+from mapen_aconselhamento.domain.ranking import pct_ausente_por_equipamento, top_n
+from mapen_aconselhamento.domain.tarifa import Tarifas
+from mapen_aconselhamento.infrastructure.duckdb_leituras import ler_leituras
+from mapen_aconselhamento.infrastructure.tarifa_csv import carregar_tarifas
 from mapen_plataforma.application.portas import CustoLinha, RankingLinha
 from mapen_plataforma.domain.tempo import para_local_ingenuo
 from mapen_plataforma.infrastructure.banco import BancoDuckDB
@@ -18,7 +19,7 @@ from mapen_plataforma.infrastructure.banco import BancoDuckDB
 class CalculadoraM1:
     def __init__(self, banco: BancoDuckDB, tarifas: Tarifas | None = None) -> None:
         self._banco = banco
-        self._tarifas = tarifas or Tarifas.carregar()
+        self._tarifas = tarifas or carregar_tarifas()
 
     def _leituras(self, sensor_id: str, inicio: datetime, fim: datetime) -> pd.DataFrame:
         with self._banco.trava:

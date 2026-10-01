@@ -10,7 +10,7 @@ from pathlib import Path
 
 from fastapi import FastAPI
 
-from mapen_aconselhamento.tarifa import RAIZ
+from mapen_aconselhamento.infrastructure.caminhos import RAIZ
 from mapen_plataforma.application.casos_de_uso import (
     AlterarConfiguracao,
     AlterarRegra,

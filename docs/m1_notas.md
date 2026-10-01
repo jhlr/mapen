@@ -67,3 +67,66 @@ Todos os 7 atendidos: (1) `pip install -e .` e `import mapen_aconselhamento` ok;
 ## Guard de lag (recriado em 2026-10-01)
 
 `src/mapen_aconselhamento/features.py::adicionar_lags` calcula o lag depois de reindexar ao calendario completo. Teste: `tests/test_features.py`. Prova de vermelho (sem git): trocando `adicionar_lags` por um shift posicional ingenuo, `test_lag_nao_pula_a_lacuna` falha com `AssertionError` (o ingenuo devolve 2.0 em t4 onde o lag correto e NaN); com a implementacao real, 57 testes passam e mypy strict esta limpo.
+
+## Refatoracao em camadas (2026-10-01)
+
+`src/mapen_aconselhamento/` agora segue as mesmas quatro camadas de `src/mapen_plataforma/` (interface > infrastructure > application > domain, dependencias so para dentro). Comportamento inalterado. Os nomes de modulo das secoes acima (ingest, tarifa, custo, ranking, recomenda, relatorio) sao os de antes da refatoracao; o mapa abaixo mostra onde cada um foi parar.
+
+### Mapa de camadas (arquivo -> camada)
+
+| Arquivo | Camada | Dono de |
+|---|---|---|
+| `domain/tarifa.py` | domain | postos horarios, feriados, preco, vigencia (`Tarifas.de_tabela`) |
+| `domain/calendario.py` | domain | reindexacao ao calendario completo, regras de timestamps duplicados |
+| `domain/custo.py` | domain | custo por equipamento e faixa |
+| `domain/ranking.py` | domain | top-N e % ausente |
+| `domain/equipamentos.py` | domain | `Regra`, `ConfigEquipamentos.de_dict` (validacao), cenarios |
+| `domain/recomendacao.py` | domain | economia de mover carga entre faixas |
+| `domain/features.py` | domain | features de lag sobre calendario completo |
+| `application/portas.py` | application | porta `RepositorioLeituras` |
+| `application/relatorio_mensal.py` | application | caso de uso `GerarRelatorioMensal` e o resultado `RelatorioMensal` |
+| `infrastructure/duckdb_leituras.py` | infrastructure | DDL, insercao, consultas, adaptador `LeiturasDuckDB` |
+| `infrastructure/cu_bems.py`, `bdg2.py` | infrastructure | carregadores CU-BEMS e BDG2 |
+| `infrastructure/tarifa_csv.py` | infrastructure | leitor do CSV de tarifas (`carregar_tarifas`) |
+| `infrastructure/equipamentos_yaml.py` | infrastructure | leitor do YAML (`carregar_config_equipamentos`) |
+| `infrastructure/relatorio_arquivo.py` | infrastructure | gravacao do relatorio em disco |
+| `infrastructure/caminhos.py` | infrastructure | `RAIZ` e caminhos padrao (antes em `tarifa.py`/`recomenda.py`) |
+| `interface/relatorio_markdown.py` | interface | texto do relatorio, ressalvas, `descrever_valores` |
+| `interface/cli.py` | interface | entrada de linha de comando (`python -m mapen_aconselhamento.interface.cli`) |
+
+Mudancas de forma, nao de regra: `Tarifas.carregar` virou `infrastructure.tarifa_csv.carregar_tarifas` (leitura do CSV) + `Tarifas.de_tabela` (regras); `ConfigEquipamentos.carregar` virou `carregar_config_equipamentos` + `ConfigEquipamentos.de_dict`; `gerar_relatorio` virou `GerarRelatorioMensal.executar` + `renderizar_relatorio`; `Tarifas.descricao_valores` (texto) foi para a interface como `descrever_valores`. `src/mapen_plataforma` so teve os imports atualizados (`infrastructure/{banco,custo_m1,demo}.py`, `interface/api/composicao.py`).
+
+### Contratos import-linter (`pyproject.toml`, `root_packages` com os dois pacotes)
+
+1. M1 camadas (layers) e M2 camadas (layers).
+2. M1 domain/application nao importam `duckdb`, `yaml`, `httpx`, `fastapi`, `starlette` nem `mapen_plataforma`. Pandas e permitido (calculo puro sobre DataFrame). Acesso a relogio nao e coberto pelo import-linter (so imports).
+3. M1 inteiro nao importa `mapen_plataforma`.
+4. M2 domain/application sem I/O nem framework (ja existia).
+
+Prova de que o contrato morde: copia do `src/` e do `pyproject.toml` em `/private/tmp/mapen_red` (fora do repo, sem git) com dois modulos violadores (`domain/ruim_io.py` importando `duckdb` e `infrastructure.caminhos`; `application/ruim_camada.py` importando `interface.relatorio_markdown`). Saida real do `lint-imports`:
+
+```
+M1 camadas: interface > infrastructure > application > domain BROKEN
+M1 dominio e aplicacao sem I/O, banco, YAML nem a plataforma BROKEN
+M1 nao depende da plataforma KEPT
+M2 camadas ... KEPT
+M2 dominio e aplicacao sem I/O nem framework KEPT
+Contracts: 3 kept, 2 broken.
+- mapen_aconselhamento.domain.ruim_io -> mapen_aconselhamento.infrastructure.caminhos (l.2)
+- mapen_aconselhamento.application.ruim_camada -> mapen_aconselhamento.interface.relatorio_markdown (l.1)
+- mapen_aconselhamento.domain.ruim_io -> duckdb (l.1)
+```
+
+No repo real: `Contracts: 5 kept, 0 broken.`
+
+### Antes e depois
+
+| Item | Antes | Depois |
+|---|---|---|
+| pytest `-W error` | 213 passed | 213 passed |
+| Testes M1 | `tests/test_*.py` (6 arquivos) | `tests/m1/{domain,infrastructure,interface}/` (7 arquivos; `test_ingest.py` dividido em `domain/test_calendario.py` e `infrastructure/test_cu_bems_duckdb.py`); mesmas asserções, so imports e chamadas dos leitores/caso de uso mudaram |
+| mypy strict | `src` dos dois pacotes + `tests/m2` | + `tests/m1`: `Success: no issues found in 62 source files` |
+| import-linter | 2 contratos (so plataforma) | 5 contratos, 2 pacotes |
+| Relatorio real CU-BEMS andar 2, 2018-08 | `data/relatorios/cu_bems_2018Floor2_2018-08.md` | regenerado via CLI em `/private/tmp`, `diff` vazio (a linha "Dados" exige `--fonte-dados`; o texto do relatorio antigo era um argumento do chamador) |
+
+Em `test_features.py`, `np.isnan` virou `pd.isna` em duas asserções para o mypy aceitar o escalar de `.loc`; semantica igual.

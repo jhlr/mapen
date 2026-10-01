@@ -3,18 +3,32 @@ from __future__ import annotations
 import zipfile
 from pathlib import Path
 
+import duckdb
 import pandas as pd
 import pytest
 
-from mapen_aconselhamento.ingest import BDG2_ELETRICIDADE, carregar_bdg2, carregar_cu_bems, conectar
-from mapen_aconselhamento.recomenda import ConfigEquipamentos
-from mapen_aconselhamento.relatorio import DISCLAIMER, escrever_relatorio, gerar_relatorio
-from mapen_aconselhamento.tarifa import RAIZ, Tarifas
+from mapen_aconselhamento.application.relatorio_mensal import GerarRelatorioMensal
+from mapen_aconselhamento.domain.equipamentos import ConfigEquipamentos
+from mapen_aconselhamento.domain.tarifa import Tarifas
+from mapen_aconselhamento.infrastructure.bdg2 import BDG2_ELETRICIDADE, carregar_bdg2
+from mapen_aconselhamento.infrastructure.caminhos import RAIZ
+from mapen_aconselhamento.infrastructure.cu_bems import carregar_cu_bems
+from mapen_aconselhamento.infrastructure.duckdb_leituras import LeiturasDuckDB, conectar
+from mapen_aconselhamento.infrastructure.equipamentos_yaml import carregar_config_equipamentos
+from mapen_aconselhamento.infrastructure.relatorio_arquivo import escrever_relatorio
+from mapen_aconselhamento.infrastructure.tarifa_csv import carregar_tarifas
+from mapen_aconselhamento.interface.relatorio_markdown import DISCLAIMER, renderizar_relatorio
 
 CSV = RAIZ / "data" / "publicos" / "cu_bems" / "2018Floor2.csv"
 
 PONTA, INTERM, FORA, CONV = 1.62479, 1.05341, 0.66447, 0.79886
 MINUTOS_OUT_2026 = 31 * 24 * 60
+
+
+def gerar_relatorio(
+    con: duckdb.DuckDBPyConnection, sensor_id: str, mes: str, tarifas: Tarifas, config: ConfigEquipamentos
+) -> str:
+    return renderizar_relatorio(GerarRelatorioMensal(LeiturasDuckDB(con)).executar(sensor_id, mes, tarifas, config))
 
 
 def _csv_sintetico(destino: Path) -> Path:
@@ -44,7 +58,7 @@ def test_sintetico_ate_relatorio_numeros_exatos(tmp_path: Path) -> None:
     assert linhas == 3 * MINUTOS_OUT_2026  # calendario completo, lacuna vira linha ausente
     assert con.execute("SELECT count(*) FROM leitura WHERE ausente").fetchone() == (180,)
 
-    texto = gerar_relatorio(con, "sint", "2026-10", Tarifas.carregar(), ConfigEquipamentos.carregar())
+    texto = gerar_relatorio(con, "sint", "2026-10", carregar_tarifas(), carregar_config_equipamentos())
 
     # AC1: 2 kW; 60 min ausentes (sabado, fora de ponta) = 2 kWh a menos.
     # 22 dias uteis em out/2026 - feriado 12/out (segunda) = 21 dias com ponta (3 h) e interm. (2 h).
@@ -114,7 +128,7 @@ def test_amostra_real_cu_bems_ate_relatorio(tmp_path: Path) -> None:
     assert por_equipamento == (esperado_pontos, esperado_pontos)  # calendario completo
 
     texto = gerar_relatorio(
-        con, "cu_bems_2018Floor2", "2018-08", Tarifas.carregar(), ConfigEquipamentos.carregar()
+        con, "cu_bems_2018Floor2", "2018-08", carregar_tarifas(), carregar_config_equipamentos()
     )
     assert DISCLAIMER in texto
     assert "Top 5" in texto

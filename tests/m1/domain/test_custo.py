@@ -3,9 +3,10 @@ from __future__ import annotations
 import pandas as pd
 import pytest
 
-from mapen_aconselhamento.custo import custo_por_faixa, custo_total
-from mapen_aconselhamento.ranking import pct_ausente_por_equipamento, top_n
-from mapen_aconselhamento.tarifa import BRANCA, CONVENCIONAL, Tarifas
+from mapen_aconselhamento.domain.custo import custo_por_faixa, custo_total
+from mapen_aconselhamento.domain.ranking import pct_ausente_por_equipamento, top_n
+from mapen_aconselhamento.domain.tarifa import BRANCA, CONVENCIONAL, Tarifas
+from mapen_aconselhamento.infrastructure.tarifa_csv import carregar_tarifas
 
 
 def _fixture_24h() -> pd.DataFrame:
@@ -16,7 +17,7 @@ def _fixture_24h() -> pd.DataFrame:
 
 def test_custo_convencional_fixture_24h() -> None:
     # Manual: 48 kWh x 0,79886 = 38,34528
-    custos = custo_por_faixa(_fixture_24h(), Tarifas.carregar(), CONVENCIONAL)
+    custos = custo_por_faixa(_fixture_24h(), carregar_tarifas(), CONVENCIONAL)
     assert custo_total(custos) == pytest.approx(38.35, abs=0.01)
 
 
@@ -24,7 +25,7 @@ def test_custo_branca_fixture_24h() -> None:
     # Manual: ponta 3 h x 2 kWh x 1,62479 = 9,74874
     #         intermediario 2 h x 2 x 1,05341 = 4,21364
     #         fora de ponta 19 h x 2 x 0,66447 = 25,24986 -> total 39,21224
-    custos = custo_por_faixa(_fixture_24h(), Tarifas.carregar(), BRANCA)
+    custos = custo_por_faixa(_fixture_24h(), carregar_tarifas(), BRANCA)
     assert custo_total(custos) == pytest.approx(39.21, abs=0.01)
     por_faixa = custos.set_index("faixa")["kwh"]
     assert por_faixa["ponta"] == pytest.approx(6.0)
@@ -35,7 +36,7 @@ def test_custo_branca_fixture_24h() -> None:
 def test_pontos_ausentes_nao_entram_no_custo() -> None:
     leituras = _fixture_24h()
     leituras.loc[10:11, "kwh"] = float("nan")
-    custos = custo_por_faixa(leituras, Tarifas.carregar(), CONVENCIONAL)
+    custos = custo_por_faixa(leituras, carregar_tarifas(), CONVENCIONAL)
     assert custo_total(custos) == pytest.approx(44 * 0.79886)
 
 
