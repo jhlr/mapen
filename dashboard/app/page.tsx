@@ -9,14 +9,14 @@ import type { Params } from "../lib/dominio/parametros";
 export const dynamic = "force-dynamic";
 
 export default async function Consumo({ searchParams }: { searchParams: Params }) {
-  const { empresa, sensores, sensor } = await contexto(searchParams);
+  const { sensores, sensor } = await contexto(searchParams);
   if (sensor === undefined) return <Vazio>Nenhum sensor cadastrado para esta empresa.</Vazio>;
-  const c = await consumoAgora(empresa, sensor);
+  const c = await consumoAgora(sensor);
   const maximo = maximoPositivo(c.por_equipamento.map((x) => x.kwh));
   return (
     <>
       <Cabecalho titulo="Consumo agora e hoje" subtitulo={`Última leitura: ${dataHora(c.ts_referencia)}`} />
-      <SeletorSensor rota="/" empresa={empresa} sensor={sensor} sensores={sensores} />
+      <SeletorSensor rota="/" sensor={sensor} sensores={sensores} />
       <Aviso titulo="Dado de demonstração (histórico)">
         &quot;Agora&quot; é a última leitura do sensor e &quot;hoje&quot; é o dia dessa leitura.
       </Aviso>
@@ -29,8 +29,8 @@ export default async function Consumo({ searchParams }: { searchParams: Params }
         <tbody>
           {c.por_equipamento.map((x) => (
             <tr key={x.equipamento}>
-              <td>{x.equipamento}</td>
-              <td className="n">{num(x.kwh, 2)}</td>
+              <td data-label="Equipamento">{x.equipamento}</td>
+              <td className="n" data-label="kWh no dia">{num(x.kwh, 2)}</td>
               <td className="g"><Barra valor={x.kwh} maximo={maximo} /></td>
             </tr>
           ))}

@@ -1,37 +1,29 @@
 import { Aviso, Cabecalho } from "../../components/Basicos";
+import { ControleRemoto } from "../../components/ControleRemoto";
 import { PainelDesligamento } from "../../components/PainelDesligamento";
-import { listarEquipamentos, listarEventos, listarRegras } from "../../lib/api";
-import { empresaDe } from "../../lib/contexto";
-import type { Params } from "../../lib/dominio/parametros";
-import { inferirModo } from "../../lib/dominio/seguranca";
+import { listarEquipamentos, listarRegras, obterConfiguracao } from "../../lib/api";
 
 export const dynamic = "force-dynamic";
 
-export default async function Desligamento({ searchParams }: { searchParams: Params }) {
-  const empresa = await empresaDe(searchParams);
-  const [equipamentos, regras, eventos] = await Promise.all([
-    listarEquipamentos(empresa), listarRegras(empresa), listarEventos(empresa, 50),
-  ]);
-  const modo = inferirModo(eventos);
+export default async function Desligamento() {
+  const [equipamentos, regras, config] = await Promise.all([listarEquipamentos(), listarRegras(), obterConfiguracao()]);
+  const habilitado = config.desligamento_remoto_habilitado;
   return (
     <>
       <Cabecalho titulo="Solicitar desligamento" subtitulo="Envia um comando assinado para a API; toda tentativa gera um evento." />
-      {modo === "recomendacao" && (
+      {habilitado ? (
+        <Aviso tom="atencao" titulo="Desligamento remoto habilitado">
+          desligamento_remoto_habilitado = verdadeiro: comandos de desligar assinados e válidos são aceitos para
+          equipamentos não críticos.
+        </Aviso>
+      ) : (
         <Aviso tom="atencao" titulo="Modo só recomendação: desligamento remoto desativado">
-          A API recusou o último pedido de desligamento por estar com desligamento_remoto_habilitado = falso.
-          Pedidos de desligar são registrados e rejeitados; nada chega ao relé.
+          desligamento_remoto_habilitado = falso: pedidos de desligar são registrados e rejeitados; nada chega ao relé.
         </Aviso>
       )}
-      {modo === "habilitado" && (
-        <Aviso titulo="Desligamento remoto habilitado">Já houve desligamento executado por esta empresa.</Aviso>
-      )}
-      {modo === "desconhecido" && (
-        <Aviso tom="atencao" titulo="Estado do desligamento remoto desconhecido">
-          A API não expõe a configuração desligamento_remoto_habilitado (padrão: falso, só recomendação). O estado
-          aparece aqui após o primeiro pedido, a partir da resposta.
-        </Aviso>
-      )}
-      <PainelDesligamento empresa={empresa} equipamentos={equipamentos} regras={regras} />
+      <ControleRemoto habilitado={habilitado} />
+      <h2>Comando assinado</h2>
+      <PainelDesligamento equipamentos={equipamentos} regras={regras} />
     </>
   );
 }

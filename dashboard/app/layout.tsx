@@ -1,4 +1,4 @@
-import { Suspense, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { Navegacao } from "../components/Navegacao";
 import "./globals.css";
 
@@ -9,9 +9,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   return (
     <html lang="pt-BR">
       <body>
-        <Suspense fallback={<nav aria-label="Principal"><span className="marca">MAPEN</span></nav>}>
-          <Navegacao />
-        </Suspense>
+        <Navegacao />
         <main>{children}</main>
       </body>
     </html>
