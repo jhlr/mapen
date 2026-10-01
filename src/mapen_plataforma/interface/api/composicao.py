@@ -30,10 +30,19 @@ from mapen_plataforma.application.casos_de_uso import (
     RegistrarLeitura,
     SolicitarDesligamento,
 )
-from mapen_plataforma.application.portas import Atuador, CalculadoraCusto, DerivadorChave, GeradorId, Relogio
+from mapen_plataforma.application.portas import (
+    Atuador,
+    CalculadoraCusto,
+    DerivadorChave,
+    GeradorId,
+    Relogio,
+    ResultadosM3Repositorio,
+)
+from mapen_plataforma.application.resultados_m3 import ConsultarEconomiaM3, ConsultarResumoM3, ListarAlertasM3
 from mapen_plataforma.infrastructure.banco import BancoDuckDB
 from mapen_plataforma.infrastructure.custo_m1 import CalculadoraM1
 from mapen_plataforma.infrastructure.demo import EMPRESA_DEMO, EMPRESA_OUTRA, SegredosDemo, semear_demo
+from mapen_plataforma.infrastructure.resultados_m3_json import ResultadosM3Json
 from mapen_plataforma.infrastructure.repositorios import (
     ConfiguracaoDuckDB,
     CredenciaisDispositivoDuckDB,
@@ -58,6 +67,7 @@ from mapen_plataforma.interface.api.app import Servicos, criar_app
 
 DB_M1: Path = RAIZ / "data" / "mapen_m1.duckdb"
 DB_M2: Path = RAIZ / "data" / "mapen_m2.duckdb"
+DIR_M3: Path = RAIZ / "data" / "m3"
 
 
 def montar_provisionamento(
@@ -77,6 +87,7 @@ def montar_servicos(
     derivador: DerivadorChave,
     atuador: Atuador,
     custo: CalculadoraCusto,
+    resultados_m3: ResultadosM3Repositorio,
 ) -> Servicos:
     empresas, unidades = EmpresaDuckDB(banco), UnidadeDuckDB(banco)
     sensores, equipamentos = SensorDuckDB(banco), EquipamentoDuckDB(banco)
@@ -102,6 +113,9 @@ def montar_servicos(
             configuracao, atuador, relogio, ids,
         ),
         eventos=ListarEventos(eventos),
+        resumo_m3=ConsultarResumoM3(resultados_m3),
+        alertas_m3=ListarAlertasM3(resultados_m3),
+        economia_m3=ConsultarEconomiaM3(resultados_m3),
     )
 
 
@@ -121,8 +135,16 @@ class AppDemo:
     segredos: list[SegredosDemo]
 
 
-def montar_app_demo(caminho: Path, segredo_mestre: bytes, chaves_api: dict[str, str] | None = None) -> AppDemo:
-    """App de demo sobre uma copia do banco do M1; reemite as chaves de demo a cada chamada."""
+def montar_app_demo(
+    caminho: Path,
+    segredo_mestre: bytes,
+    chaves_api: dict[str, str] | None = None,
+    dir_m3: Path = DIR_M3,
+) -> AppDemo:
+    """App de demo sobre uma copia do banco do M1; reemite as chaves de demo a cada chamada.
+
+    Os resultados do M3 (`dir_m3`) so aparecem para a empresa demo.
+    """
     if not caminho.exists():
         shutil.copy2(DB_M1, caminho)
     banco = BancoDuckDB(caminho)
@@ -130,7 +152,8 @@ def montar_app_demo(caminho: Path, segredo_mestre: bytes, chaves_api: dict[str, 
     provisionar, emitir = montar_provisionamento(banco, ids, derivador)
     segredos = semear_demo(banco, provisionar, emitir, chaves_api)
     servicos = montar_servicos(
-        banco, RelogioSistema(), ids, derivador, AtuadorSimulado(), CalculadoraM1(banco)
+        banco, RelogioSistema(), ids, derivador, AtuadorSimulado(), CalculadoraM1(banco),
+        ResultadosM3Json(dir_m3, EMPRESA_DEMO),
     )
     return AppDemo(criar_app(servicos), segredos)
 
@@ -138,7 +161,7 @@ def montar_app_demo(caminho: Path, segredo_mestre: bytes, chaves_api: dict[str, 
 def criar_app_padrao() -> FastAPI:
     """App de demo (uvicorn --factory).
 
-    Banco em `MAPEN_DB` (padrao data/mapen_m2.duckdb). A cada partida as empresas `demo` e `outra`
+    Banco em `MAPEN_DB` (padrao data/mapen_m2.duckdb); resultados do M3 em `MAPEN_M3_DIR` (padrao data/m3). A cada partida as empresas `demo` e `outra`
     ganham chave de API nova (ou a de `MAPEN_CHAVE_API_DEMO` / `MAPEN_CHAVE_API_OUTRA`, minimo 32
     caracteres), e cada sensor de demo ganha token e chave de comando novos. Os segredos
     novos sao impressos uma vez no stdout.
@@ -149,7 +172,8 @@ def criar_app_padrao() -> FastAPI:
         for empresa, variavel in ((EMPRESA_DEMO, "MAPEN_CHAVE_API_DEMO"), (EMPRESA_OUTRA, "MAPEN_CHAVE_API_OUTRA"))
         if (valor := os.environ.get(variavel))
     }
-    demo = montar_app_demo(caminho, segredo_mestre_do_ambiente(), fixas)
+    dir_m3 = Path(os.environ.get("MAPEN_M3_DIR", str(DIR_M3)))
+    demo = montar_app_demo(caminho, segredo_mestre_do_ambiente(), fixas, dir_m3)
     for s in demo.segredos:
         print(
             f"[demo] empresa={s.empresa_id} chave_api={s.chave_api} sensor={s.sensor_id} "

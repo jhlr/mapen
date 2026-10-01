@@ -17,6 +17,7 @@ from mapen_plataforma.domain.entidades import (
     Sensor,
     Unidade,
 )
+from mapen_plataforma.domain.resultados_m3 import AlertasM3, EconomiaM3, ResumoM3
 
 
 class Relogio(Protocol):
@@ -185,3 +186,20 @@ class CalculadoraCusto(Protocol):
         self, sensor_id: str, inicio: datetime, fim: datetime, modalidade: str, n: int
     ) -> list[RankingLinha]: ...
 
+
+
+class ResultadosM3Indisponiveis(RuntimeError):
+    """O artefato do M3 que a empresa tem direito de ver esta ausente, ilegivel ou fora do esquema."""
+
+
+class ResultadosM3Repositorio(Protocol):
+    """Resultados offline do M3 (modelos, alertas, antes x depois).
+
+    Devolve `None` quando a empresa nao tem resultados (artefatos do demo pertencem so a empresa
+    demo: outra empresa recebe vazio, nunca os dados dela). Levanta `ResultadosM3Indisponiveis`
+    quando a empresa teria direito mas o artefato nao pode ser lido.
+    """
+
+    def resumo(self, empresa_id: str) -> ResumoM3 | None: ...
+    def alertas(self, empresa_id: str) -> AlertasM3 | None: ...
+    def economia(self, empresa_id: str) -> EconomiaM3 | None: ...

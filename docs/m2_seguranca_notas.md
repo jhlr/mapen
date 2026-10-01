@@ -131,3 +131,82 @@ Toda data de entrada e saida tem fuso (`2018-08-01T00:00:00-03:00`; `+` vai como
 - `validade - emitido_em` <= 60 s; `emitido_em` ate 5 s no futuro; `validade` ate 5 s no passado.
 - Status: 200 aceito; 404 `equipamento_desconhecido`; 403 qualquer outro motivo. Motivos: `comando_malformado`, `dispositivo_divergente`, `assinatura_invalida`, `ttl_excessivo`, `emissao_futura`, `validade_vencida`, `nonce_repetido`, `regra_invalida`, `equipamento_critico`, `sem_autorizacao`, `desligamento_remoto_desabilitado`, `falha_atuador`.
 - Cada pedido gera dois eventos: `comando_recebido` (intencao) e o resultado (`desligamento_executado`, `religamento_executado`, `comando_rejeitado` ou `falha_conexao`), ligados por `payload.intencao_id`.
+
+## Contrato M3
+
+Camada nova em `mapen_plataforma`: `domain/resultados_m3.py` (tipos, filtro, veredito, aviso D7), `application/resultados_m3.py` (`ConsultarResumoM3`, `ListarAlertasM3`, `ConsultarEconomiaM3`) e a porta `ResultadosM3Repositorio` em `application/portas.py`, `infrastructure/resultados_m3_json.py` (adaptador sobre `data/m3/*.json`), `interface/api/{app,esquemas,composicao}.py`. Import-linter: 9 contratos mantidos. Todos os numeros abaixo vem de chamadas reais a uma API em background com a chave de demo.
+
+### Regras comuns
+
+- Autenticacao: `Authorization: Bearer <chave_api>`; sem chave ou chave errada: `401`.
+- Tenant: os artefatos do M3 sao da empresa demo (`EMPRESA_DEMO`). Outra empresa recebe `200` com `"disponivel": false` e listas vazias, nunca o dado da demo, e nunca `503` (nao revela se o artefato existe).
+- Artefatos: `MAPEN_M3_DIR` (padrao `data/m3`) com `resumo.json`, `alertas.json`, `economia.json` (nomes fixos, nunca vem da requisicao; link simbolico que escapa do diretorio e recusado). Esquema estrito (campo extra, tipo errado, NaN, `versao_esquema != 1`, `natureza` diferente de `validacao_de_metodo_sintetica`, `top_shap` em alerta z-score ou ausente em alerta LightGBM): recusa o arquivo inteiro. Artefato ausente, ilegivel ou invalido para a empresa dona: `503 {"detail": "resultados do M3 indisponiveis: artefato alertas.json ausente"}` (so o nome do arquivo, nunca caminho nem conteudo).
+- Datas: instantes com fuso, como no resto da API (`2018-11-05T17:00:00-03:00`). Os artefatos guardam hora local ingenua; o adaptador converte para `America/Recife`.
+- Somente leitura: `POST` nessas rotas e `405`.
+
+### `GET /modelos/resumo`
+
+Sem parametros. Campos: `disponivel`, `rotulo`, `sensor_id`, `dados` (fonte, periodo, treino, reservado, `equipamentos_no_andar`, `equipamentos_modelados`, `equipamentos_sem_carga`, `linhas_minuto`), `mae` (`baseline_sazonal_kw`, `lightgbm_kw`, `horas_teste`, `melhora_mediana_pct`, `equipamentos_total`, `equipamentos_lightgbm_melhor`, `ressalva_nowcast`, `por_equipamento[]`), `shap` (`calendario_pct`, `historico_pct`, `por_feature[]`, `por_equipamento[]`, `aviso_d7`), `benchmark_sintetico` (`sintetico: true`, `rotulo` "SINTETICO...", `detectores[]` com taxas por tipo, total e falso alarme) e `baseline_fraca` (`criterio`, `semanas_completas_treino`, `equipamentos[]`). `aviso_d7.disparado` e derivado: a maior feature agregada passa do limiar (50%). `baseline_fraca.equipamentos` e a uniao dos marcados em `economia.json` e `alertas.json`.
+
+Resposta real (abreviada):
+
+```json
+{"disponivel": true, "sensor_id": "cu_bems_2018Floor2",
+ "dados": {"equipamentos_no_andar": 24, "equipamentos_modelados": 19, "linhas_minuto": 5322240,
+           "equipamentos_sem_carga": ["z2_AC11","z2_AC12","z2_AC13","z2_AC14","z4_Plug"]},
+ "mae": {"baseline_sazonal_kw": 0.6113, "lightgbm_kw": 0.2051, "horas_teste": 31763,
+         "melhora_mediana_pct": 67.6, "equipamentos_total": 19, "equipamentos_lightgbm_melhor": 19},
+ "shap": {"calendario_pct": 14.9, "historico_pct": 85.1,
+          "aviso_d7": {"disparado": true, "feature": "kw_lag1", "pct": 59.5, "limiar_pct": 50.0,
+                       "equipamentos_com_dominante": 12}},
+ "benchmark_sintetico": {"sintetico": true, "detectores": [{"detector": "zscore", "total_detectados": 84,
+                         "total_eventos": 114, "falso_alarme_horas": 114, "horas_base": 9145}]},
+ "baseline_fraca": {"semanas_completas_treino": 18, "equipamentos": []}}
+```
+
+### `GET /alertas`
+
+Query: `equipamento` (1..128), `tipo` (`zscore` ou `lightgbm`), `de` (inclusivo) e `ate` (exclusivo) com fuso (`+` vai como `%2B`; `de >= ate` e `422`), `limite` 1..500 (padrao 100), `offset` >= 0. Ordem estavel: instante, equipamento, tipo. Resposta: `disponivel`, `rotulo`, `aviso`, `limiar_z`, `periodo`, `total` (apos filtros), `limite`, `offset`, `proximo_offset` (`null` na ultima pagina), `itens[]`. Cada item: `equipamento`, `timestamp`, `tipo`, `rotulo` = `"candidato, nao corroborado"`, `baseline_fraca` e `explicacao` (`z`, `esperado_kw`, `observado_kw`, `janela_baseline`, `top_shap` = 3 features no LightGBM, `null` no z-score).
+
+`GET /alertas?limite=2&tipo=lightgbm&equipamento=z1_Light&de=2018-11-05T00:00:00%2B00:00` (real, total 21):
+
+```json
+{"disponivel": true, "rotulo": "candidato, nao corroborado", "limiar_z": 4.0, "total": 21, "limite": 2,
+ "offset": 0, "proximo_offset": 2,
+ "itens": [{"equipamento": "z1_Light", "timestamp": "2018-11-05T17:00:00-03:00", "tipo": "lightgbm",
+            "rotulo": "candidato, nao corroborado", "baseline_fraca": false,
+            "explicacao": {"z": -6.146339582931916, "esperado_kw": 7.274438967263248,
+                           "observado_kw": 3.379166666666665,
+                           "janela_baseline": {"inicio": "2018-07-01T00:00:00-03:00", "fim": "2018-11-04T00:00:00-03:00"},
+                           "top_shap": [{"feature": "kw_lag1", "shap": 3.9836835668818145},
+                                        {"feature": "dia_semana", "shap": 0.33049464292685427},
+                                        {"feature": "hora", "shap": -0.1250357914626631}]}}]}
+```
+
+(Sem filtros: 214 alertas, 160 z-score e 54 LightGBM.)
+
+### `GET /economia`
+
+Sem parametros. Sempre `valida_metodo_nao_economia_real: true`: reducao sintetica conhecida em dado real, nao e economia real. Campos: `disponivel`, `natureza`, `aviso`, `periodo_antes`, `periodo_depois`, `reducao_sintetica` (`equipamento`, `fracao_pct`, `a_partir_de`), `veredito` e `equipamentos[]` (`equipamento`, `injetado_pct`, `recuperado_pct`, `erro_pp`, `tolerancia_pp`, `dentro_da_tolerancia`, `economia_pct_sem_reducao`, `baseline_fraca`). `dentro_da_tolerancia` = `|recuperado - injetado| <= tolerancia_pp` (recuperado ausente conta como fora). O veredito e calculado a cada chamada: `tolerancia_atendida` so e verdadeiro se o alvo e todos os equipamentos estao dentro; `erro_abs_mediano_pp`/`erro_abs_maximo_pp` vem da mesma lista; `texto` e montado com esses numeros.
+
+Resposta real (veredito e uma linha de equipamento):
+
+```json
+{"disponivel": true, "valida_metodo_nao_economia_real": true, "natureza": "validacao_de_metodo_sintetica",
+ "reducao_sintetica": {"equipamento": "z1_Light", "fracao_pct": 15.0, "a_partir_de": "2018-11-18T00:00:00-03:00"},
+ "veredito": {"tolerancia_atendida": false, "equipamentos": 19, "dentro_da_tolerancia": 7,
+              "alvo_equipamento": "z1_Light", "alvo_injetado_pct": 15.0, "alvo_recuperado_pct": 27.177215305529216,
+              "alvo_dentro_da_tolerancia": false, "erro_abs_mediano_pp": 6.713548607862357,
+              "erro_abs_maximo_pp": 18.90075896112483,
+              "texto": "Tolerancia de +-3.0 pp NAO atendida em dado real: 7 de 19 equipamentos recuperam a reducao sintetica de 15.0% dentro da tolerancia; o alvo z1_Light recuperou 27.18%. Valida o metodo, nao e economia real."},
+ "equipamentos": [{"equipamento": "z1_Light", "injetado_pct": 15.0, "recuperado_pct": 27.177215305529216,
+                   "erro_pp": 12.177215305529216, "tolerancia_pp": 3.0, "dentro_da_tolerancia": false,
+                   "economia_pct_sem_reducao": 14.326135653563776, "baseline_fraca": false}]}
+```
+
+### Limites desta rodada
+
+1. `resumo.json` nao e gerado pelo CLI do M3 (so `alertas.json`, `economia.json` e o relatorio em markdown). Foi gerado uma vez a partir das tabelas de `data/m3/relatorio_m3.md` por um script descartavel; o proximo `mapen_modelos.interface.cli` nao o recria nem o atualiza. Falta um emissor de `resumo.json` em `mapen_modelos/interface/artefatos_json.py` (o M3 ficou intocado). Se as metricas mudarem e o `resumo.json` nao, a API mostra o numero velho.
+2. Nenhum cache: cada requisicao le e valida os JSON (80 KB de alertas).
+3. `dashboard/` nao foi alterado.
+4. Os testes novos (`tests/m2/test_resultados_m3.py`, 48) nao foram vistos vermelhos contra uma implementacao quebrada.
