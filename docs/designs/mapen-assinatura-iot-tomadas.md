@@ -25,7 +25,7 @@ Três esclarecimentos que mudam o desenho. Onde conflitam com o texto abaixo, **
 
 ### 1.1.1. Preço da energia por horário (o coração do aconselhamento)
 
-- Empresas atendidas em média tensão (grupo A) costumam ter tarifa com **ponta e fora de ponta** e demanda contratada; baixa tensão tem opção de **tarifa branca**. `[?]` confirmar modalidades e valores da Neoenergia PE (fonte: resolução tarifária ANEEL vigente) antes de qualquer cálculo em R$.
+- Empresas atendidas em média tensão (grupo A) costumam ter tarifa com **ponta e fora de ponta** e demanda contratada; baixa tensão tem opção de **tarifa branca**. Valores da Neoenergia PE levantados em `docs/regulacao/tarifas_neoenergia_pe.md` (tabelas da REH 3.583/2026). A migração automática de baixa tensão ≥ 1 MWh/mês para a Tarifa Branca ainda é só proposta (Consulta Pública 46/2025); ver `docs/segmento.md`.
 - O serviço vira: (a) curva de consumo por equipamento × tarifa por horário = custo real de cada equipamento; (b) lista dos equipamentos mais caros; (c) recomendação "mover/desligar X do horário Y economiza R$ Z/mês"; (d) agendamento/desligamento automático via tomada para o que for flexível.
 - Isso é o modelo **Best Time** + **Zero Waste** + **Smart Investment** juntos, e passam a ser o núcleo. Energy Health e Energy Intensity seguem no roadmap.
 - Limite: a tomada só controla o que cabe nela. Carga de potência alta ligada no quadro (motor, ar de maior capacidade, chuveiro) exige contator/medidor de quadro, não tomada. `[?]` perguntar ao professor que tipo de empresa e equipamento ele tem em mente.
@@ -35,7 +35,7 @@ Três esclarecimentos que mudam o desenho. Onde conflitam com o texto abaixo, **
 O que a tomada pode registrar: tensão e potência por amostra, momentos de sumiço e retorno de energia, sobretensão/subtensão.
 
 O que precisa ser verificado antes de prometer isso a qualquer cliente:
-- **Regra vigente de ressarcimento por dano elétrico** (ANEEL, REN 1000/2021 pelo que lembro, com prazo para o consumidor pedir e prazo para a distribuidora responder). `[?]` ler o texto atual; os prazos e o ônus da prova mudam o valor da evidência.
+- **Regra vigente de ressarcimento por dano elétrico** (ANEEL, REN 1000/2021: 5 anos para pedir, rito simplificado em até 90 dias, verificação em 10 dias ou 1 dia útil para perecíveis/medicamento; fontes na spec, M4). Ler o texto oficial no M0; ônus da prova ainda a confirmar.
 - **Valor probatório:** medição de tomada comercial não é medidor calibrado. Pode servir como indício e para organizar o pedido, mas a distribuidora tem os próprios registros e pode contestar. Precisa de: relógio sincronizado (NTP), registro que não possa ser editado depois (hash/assinatura dos blocos de log), calibração conhecida do sensor de tensão.
 - **Queda × Wi-Fi caído:** na queda de energia o roteador também cai. Tomada offline não prova queda. Solução técnica: guardar dado localmente na tomada (ou bateria/supercapacitor para um último pacote) e enviar ao voltar, com o carimbo do próprio dispositivo.
 - **Dano ao aparelho:** o log mostra o evento elétrico, não que o aparelho queimou por causa dele. Prova de dano continua exigindo laudo.
