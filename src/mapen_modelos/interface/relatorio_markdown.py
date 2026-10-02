@@ -121,6 +121,8 @@ def _secao_alertas(r: ResultadoM3) -> list[str]:
         "",
         f"Periodo {d.inicio:%Y-%m-%d} a {d.fim:%Y-%m-%d}, limiar |z| >= {d.limiar}. "
         f"Alertas de z-score: {len(z)}; de LightGBM: {len(m)}; sobre {d.horas_avaliadas} horas-equipamento. "
+        "O z-score usa o seasonal-naive-168 (mesma hora da semana passada) como esperado e a escala dos residuos "
+        "por hora da semana, refeita a cada semana so com residuos anteriores e fora de alertas passados. "
         "Nao ha rotulo: nenhuma precisao ou recall e reportada. Nenhum alerta foi corroborado pelo cliente (0).",
         "",
         f"### Maiores alertas de z-score (ate {MAX_ALERTAS_LISTADOS})",
@@ -172,7 +174,7 @@ def _secao_benchmark(r: ResultadoM3) -> list[str]:
         "",
         "| Detector | Pico | Elevacao fora de horario | Ligado continuo | Total | Falso alarme (horas) |",
         "|---|---|---|---|---|---|",
-        _linha_taxa("z-score sazonal", b.taxas[TIPO_ZSCORE]),
+        _linha_taxa("z-score (seasonal-naive-168)", b.taxas[TIPO_ZSCORE]),
         _linha_taxa("LightGBM (residuo)", b.taxas[TIPO_LIGHTGBM]),
         "",
     ]

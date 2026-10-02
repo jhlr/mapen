@@ -10,7 +10,7 @@ import pandas as pd
 from mapen_modelos.application.portas import Explicador, LeitorSeries
 from mapen_modelos.application.treinar_e_avaliar import ResultadoTreino
 from mapen_modelos.domain.anomalia import LIMIAR_Z_PADRAO, decidir_anomalia
-from mapen_modelos.domain.baseline import esperado_em, zscore
+from mapen_modelos.domain.baseline_naive import zscore_naive168
 from mapen_modelos.domain.explica import ChecagemD7, ContribuicaoFeature, checar_d7, top_features
 from mapen_modelos.domain.features import ALVO, DEFASAGENS, FEATURES, montar_features
 
@@ -58,8 +58,8 @@ class DetectarAnomalias:
         fim: pd.Timestamp,
         limiar: float = LIMIAR_Z_PADRAO,
     ) -> ResultadoDeteccao:
-        """Le [inicio - aquecimento, fim) (o aquecimento so alimenta lags) e detecta em [inicio, fim)."""
-        series = self._leitor.ler_series_horarias(sensor_id, inicio - AQUECIMENTO, fim)
+        """Le [inicio do treino, fim) (o historico alimenta lags e a escala) e detecta em [inicio, fim)."""
+        series = self._leitor.ler_series_horarias(sensor_id, treino.inicio, fim)
         return self.detectar_em(series, treino, inicio, fim, limiar, explicar=True)
 
     def detectar_em(
@@ -71,7 +71,11 @@ class DetectarAnomalias:
         limiar: float,
         explicar: bool,
     ) -> ResultadoDeteccao:
-        """Detecta sobre series ja carregadas (com aquecimento antes de `inicio`)."""
+        """Detecta sobre series ja carregadas, com o historico do treino antes de `inicio`.
+
+        z-score: residuo contra o seasonal-naive-168, escala refeita a cada semana do periodo.
+        LightGBM: residuo do modelo final (nowcast de 1 passo) sobre `sigma_residuo`.
+        """
         resultado = ResultadoDeteccao(inicio, fim, limiar)
         todo_shap: list[np.ndarray] = []
         for equipamento, modelo in treino.modelos.items():
@@ -79,16 +83,14 @@ class DetectarAnomalias:
             quadro = montar_features(serie, pd.Timestamp(series.index.min()), fim)
             janela = quadro[quadro.index >= inicio]
             observado = janela[ALVO]
-            base = modelo.baseline
-            z_base = zscore(base, observado)
-            flag_base = decidir_anomalia(z_base.to_numpy(), limiar)
-            esperado_base = esperado_em(base, pd.DatetimeIndex(janela.index))
+            base = zscore_naive168(serie, inicio, fim, limiar)
+            flag_base = decidir_anomalia(base.z, limiar)
             for i in np.flatnonzero(flag_base).tolist():
                 resultado.alertas.append(
                     Alerta(
-                        equipamento, pd.Timestamp(janela.index[i]), TIPO_ZSCORE, float(esperado_base[i]),
-                        float(observado.iloc[i]), float(z_base.iloc[i]), base.janela_inicio, base.janela_fim,
-                        base.fraca,
+                        equipamento, pd.Timestamp(base.indice[i]), TIPO_ZSCORE, float(base.esperado[i]),
+                        float(observado.iloc[i]), float(base.z[i]), base.janela_inicio,
+                        pd.Timestamp(base.janela_fim[i]), bool(base.fraca[i]),
                     )
                 )
             x = janela[list(FEATURES)]
@@ -112,8 +114,8 @@ class DetectarAnomalias:
                 resultado.alertas.append(
                     Alerta(
                         equipamento, pd.Timestamp(janela.index[i]), TIPO_LIGHTGBM, float(previsto[i]),
-                        float(observado.iloc[i]), float(z_mod[i]), base.janela_inicio, base.janela_fim,
-                        base.fraca, top,
+                        float(observado.iloc[i]), float(z_mod[i]), modelo.baseline.janela_inicio,
+                        modelo.baseline.janela_fim, modelo.baseline.fraca, top,
                     )
                 )
         if explicar and todo_shap:

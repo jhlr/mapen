@@ -67,10 +67,15 @@ class BenchmarkSintetico:
         semente: int,
         por_tipo: int,
     ) -> ResultadoBenchmark:
-        series = self._leitor.ler_series_horarias(sensor_id, inicio - AQUECIMENTO, fim)
+        series = self._leitor.ler_series_horarias(sensor_id, treino.inicio, fim)
         taxas = {TIPO_ZSCORE: TaxasDetector(), TIPO_LIGHTGBM: TaxasDetector()}
         equipamentos = list(treino.modelos)
-        injetada, eventos_por_eq = injetar_no_periodo(series, equipamentos, inicio, semente, por_tipo)
+        # A injecao e a escala dos eventos (P95) saem so do aquecimento antes de `inicio`, como no
+        # benchmark original; o historico completo do treino so alimenta a escala do z-score.
+        recorte = series.loc[series.index >= inicio - AQUECIMENTO, equipamentos]
+        injetada_recorte, eventos_por_eq = injetar_no_periodo(recorte, equipamentos, inicio, semente, por_tipo)
+        injetada = series.copy()
+        injetada.loc[injetada_recorte.index, equipamentos] = injetada_recorte
         resultado = self._detector.detectar_em(injetada, treino, inicio, fim, limiar, explicar=False)
         indice_det = pd.DatetimeIndex(series.index[series.index >= inicio])
         for eq in equipamentos:
