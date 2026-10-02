@@ -34,7 +34,7 @@ from mapen_simulador.application.portas import ProvedorChaves
 from mapen_simulador.domain.dispositivo import ConfigDispositivo
 from mapen_simulador.domain.erros import ErroSimulador
 from mapen_simulador.domain.relatorio import RelatorioSimulacao
-from mapen_simulador.infrastructure.api_http import EnvioComandoHttp, EnvioLeiturasHttp
+from mapen_simulador.infrastructure.api_http import EnvioComandoHttp, EnvioEventosHttp, EnvioLeiturasHttp
 from mapen_simulador.infrastructure.cenario_json import CenarioRelativo, ler_cenario
 from mapen_simulador.infrastructure.chaves import ChaveDerivada, ChaveFixa
 from mapen_simulador.infrastructure.nonces import NonceUuid
@@ -128,9 +128,11 @@ def _simular(args: argparse.Namespace) -> int:
     )
     con = conectar(args.db)
     with httpx.Client(base_url=args.url, timeout=30.0) as client:
+        token = _exigir_env("MAPEN_SIM_TOKEN")
         caso = SimularSensor(
             FonteSerieM1(LeiturasDuckDB(con), args.fonte_sensor),
-            EnvioLeiturasHttp(client, args.sensor_id, _exigir_env("MAPEN_SIM_TOKEN")),
+            EnvioLeiturasHttp(client, args.sensor_id, token),
+            EnvioEventosHttp(client, args.sensor_id, token),
         )
         print(_json(caso.executar(pedido)))
     return 0

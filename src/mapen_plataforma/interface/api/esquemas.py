@@ -3,15 +3,17 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, Literal
 
 from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, StringConstraints
 
 from mapen_plataforma.application.casos_de_uso import (
+    LOTE_EVENTOS_MAX,
     LOTE_LEITURAS_MAX,
     ConsumoAgora,
     PontoHorario,
     ResultadoDesligamento,
+    ResultadoEventosDispositivo,
     SensorProvisionado,
 )
 from mapen_plataforma.application.portas import ConsumoEquipamento, CustoLinha, RankingLinha
@@ -26,9 +28,11 @@ from mapen_plataforma.domain.credenciais import CredenciaisNovas
 from mapen_plataforma.domain.entidades import (
     Equipamento,
     Evento,
+    EventoDispositivo,
     Leitura,
     RegraDesligamento,
     Sensor,
+    TipoEvento,
     Unidade,
 )
 from mapen_plataforma.domain.resultados_m3 import (
@@ -177,6 +181,35 @@ class LeiturasIn(Entrada):
 
 class LeiturasOut(BaseModel):
     gravadas: int
+
+
+TipoEventoDispositivo = Literal["ultimo_suspiro", "queda_energia", "falha_conexao"]
+
+
+class EventoDispositivoIn(Entrada):
+    """Evento medido pelo RTC do dispositivo. `fim` e `duracao_s` ausentes = o RTC nao sobreviveu a queda."""
+
+    tipo: TipoEventoDispositivo
+    inicio: AwareDatetime
+    fim: AwareDatetime | None = None
+    duracao_s: Annotated[float, Field(allow_inf_nan=False, ge=0)] | None = None
+    bateria_esgotada: bool = False
+
+    def para_dominio(self) -> EventoDispositivo:
+        return EventoDispositivo(TipoEvento(self.tipo), self.inicio, self.fim, self.duracao_s, self.bateria_esgotada)
+
+
+class EventosDispositivoIn(Entrada):
+    eventos: Annotated[list[EventoDispositivoIn], Field(max_length=LOTE_EVENTOS_MAX)]
+
+
+class EventosDispositivoOut(BaseModel):
+    gravados: int
+    duplicados: int
+
+    @classmethod
+    def de(cls, r: ResultadoEventosDispositivo) -> EventosDispositivoOut:
+        return cls(gravados=r.gravados, duplicados=r.duplicados)
 
 
 class ConsumoEquipamentoOut(BaseModel):

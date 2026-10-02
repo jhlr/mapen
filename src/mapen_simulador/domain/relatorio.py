@@ -28,6 +28,8 @@ class RelatorioSimulacao:
     eventos: tuple[EventoDispositivo, ...]
     lacunas: tuple[Lacuna, ...]
     lotes_confirmados: tuple[str, ...]
+    eventos_confirmados: int = 0
+    eventos_nao_confirmados: int = 0
 
 
 def calcular_lacunas(instantes: list[datetime], passo: timedelta) -> tuple[Lacuna, ...]:

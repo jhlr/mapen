@@ -1,5 +1,6 @@
 import { Cabecalho, Tabela, Vazio } from "../../components/Basicos";
 import { listarEquipamentos, listarEventos } from "../../lib/api";
+import { detalheDispositivo } from "../../lib/dominio/eventos";
 import { dataHora } from "../../lib/dominio/formatacao";
 import { explicarMotivo } from "../../lib/dominio/seguranca";
 
@@ -11,6 +12,7 @@ const TIPOS: Record<string, string> = {
   comando_recebido: "Comando recebido",
   comando_rejeitado: "Comando rejeitado",
   configuracao_alterada: "Configuração alterada",
+  ultimo_suspiro: "Último suspiro (início da queda)",
   queda_energia: "Queda de energia",
   falha_conexao: "Falha de conexão",
 };
@@ -34,7 +36,7 @@ export default async function Eventos() {
                   <td data-label="Equipamento">{e.equipamento_id === null ? "-" : (nomes.get(e.equipamento_id) ?? e.equipamento_id)}</td>
                   <td data-label="Origem">{e.origem}</td>
                   <td data-label="Autorizado por">{e.autorizado_por ?? "-"}</td>
-                  <td className="det" data-label="Detalhe">{motivo !== undefined ? explicarMotivo(motivo) : Object.entries(e.payload).map(([k, v]) => `${k}: ${v}`).join(", ")}</td>
+                  <td className="det" data-label="Detalhe">{motivo !== undefined ? explicarMotivo(motivo) : detalheDispositivo(e) ?? Object.entries(e.payload).map(([k, v]) => `${k}: ${v}`).join(", ")}</td>
                 </tr>
               );
             })}

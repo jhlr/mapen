@@ -74,3 +74,7 @@ Camadas: `lib/api/{tipos,leituras}.ts` (`resumoModelos`, `listarAlertas`, `econo
 6. Estados: 401 (chave errada) mostra a tela de chave recusada nas 3 rotas; API fora do ar mostra `error.tsx`. Sem dados mostra "não estão disponíveis" (`disponivel: false`, não exercitado com outra empresa).
 
 Limites: sem gráfico do entorno do alerta (a API não expõe a série por equipamento; `/consumo/horario` é do sensor inteiro); o `resumo.json` não é gerado pelo CLI do M3 (ver `m2_seguranca_notas.md`), então a tela Modelos pode mostrar números antigos; textos vindos da API (rótulo, veredito) saem sem acento; screenshots da tela de Alertas em 768 e 1280 escuro não foram inspecionados; `Carregando dados...` pode ficar visível em aba oculta do navegador de teste (requestAnimationFrame pausado).
+
+## Eventos do dispositivo na tela Eventos (2026-10-02)
+
+A tela Eventos mostra `ultimo_suspiro`, `queda_energia` e `falha_conexao` enviados pelo dispositivo (`lib/dominio/eventos.ts`, funcoes puras): duracao pelo relogio do dispositivo (ou "duracao desconhecida: o relogio do dispositivo nao sobreviveu"), bateria esgotada sim/nao e quando a plataforma recebeu. Verificado com a API real: quatro eventos postados com o token do dispositivo de demo (um reenvio devolveu `duplicados: 1`), screenshot em 1280 px, `tsc --noEmit` limpo.

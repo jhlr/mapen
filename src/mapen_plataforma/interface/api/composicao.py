@@ -27,6 +27,7 @@ from mapen_plataforma.application.casos_de_uso import (
     ObterConfiguracao,
     ProvisionarEmpresa,
     RankingEquipamentos,
+    RegistrarEventosDispositivo,
     RegistrarLeitura,
     SolicitarDesligamento,
 )
@@ -104,6 +105,7 @@ def montar_servicos(
         autenticar_dispositivo=AutenticarDispositivo(cred_disp),
         cadastro=Cadastro(empresas, unidades, sensores, equipamentos, emitir, ids),
         registrar_leitura=RegistrarLeitura(sensores, leituras),
+        registrar_eventos_dispositivo=RegistrarEventosDispositivo(sensores, eventos, relogio),
         consumo_agora=ConsumoAgoraEHoje(sensores, leituras),
         consumo_horario=ConsumoHorario(sensores, leituras, custo),
         custo=ListarConsumoECusto(sensores, custo),

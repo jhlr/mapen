@@ -185,6 +185,16 @@ class EventoDuckDB:
              json.dumps(evento.payload, sort_keys=True)],
         )
 
+    def adicionar_se_novo(self, evento: Evento) -> bool:
+        with self._b.trava:
+            resultado = self._b.conexao.execute(
+                "INSERT INTO evento VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT DO NOTHING",
+                [evento.id, _naive_utc(evento.ts), evento.tipo.value, evento.empresa_id, evento.sensor_id,
+                 evento.equipamento_id, evento.origem, evento.regra_id, evento.autorizado_por,
+                 json.dumps(evento.payload, sort_keys=True)],
+            ).fetchall()
+        return int(str(resultado[0][0])) == 1
+
     def listar(self, empresa_id: str, limite: int) -> list[Evento]:
         linhas = self._b.consultar(
             "SELECT id, ts, tipo, empresa_id, sensor_id, equipamento_id, origem, regra_id, "

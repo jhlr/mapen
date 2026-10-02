@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from collections.abc import Sequence
 from datetime import datetime, timedelta
 from typing import Protocol
 
 from mapen_plataforma.domain.comando import ComandoRele
 from mapen_simulador.domain.amostras import LoteLeituras
 from mapen_simulador.domain.carga import SerieCarga
+from mapen_simulador.domain.eventos import EventoDispositivo
 
 
 class Relogio(Protocol):
@@ -30,6 +32,12 @@ class FonteSerie(Protocol):
 class EnvioLeituras(Protocol):
     def enviar(self, lote: LoteLeituras) -> bool:
         """True so se o servidor confirmou o lote (so entao o dispositivo o apaga do buffer)."""
+        ...
+
+
+class EnvioEventos(Protocol):
+    def enviar(self, eventos: Sequence[EventoDispositivo]) -> bool:
+        """True so se o servidor confirmou os eventos (so entao o dispositivo os apaga da memoria)."""
         ...
 
 
