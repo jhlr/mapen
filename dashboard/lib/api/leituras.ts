@@ -1,5 +1,5 @@
 import { ler } from "./cliente";
-import type { ConsumoAgora, Configuracao, Custo, Economia, Equipamento, Evento, FiltroAlertas, PaginaAlertas, PontoHorario, Ranking, Regra, ResumoModelos, Sensor } from "./tipos";
+import type { ConsumoAgora, Configuracao, Custo, Economia, Equipamento, Evento, FiltroAlertas, PaginaAlertas, PontoHorario, Previsao, Ranking, Regra, ResumoModelos, Sensor } from "./tipos";
 
 const id = encodeURIComponent;
 /** `+` do offset (-03:00 nao tem, mas +HH:MM teria) precisa ir como %2B: encodeURIComponent cuida. */
@@ -33,3 +33,4 @@ const consultaAlertas = (f: FiltroAlertas): string => {
 export const resumoModelos = (): Promise<ResumoModelos> => ler("/modelos/resumo");
 export const listarAlertas = (filtro: FiltroAlertas): Promise<PaginaAlertas> => ler(`/alertas?${consultaAlertas(filtro)}`);
 export const economiaM3 = (): Promise<Economia> => ler("/economia");
+export const previsaoModelos = (): Promise<Previsao> => ler("/modelos/previsao");

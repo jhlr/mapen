@@ -1,5 +1,5 @@
 // View-model das telas do M3 (Modelos, Alertas, Economia): funcoes puras, sem fetch nem React.
-import type { Alerta, Economia, EconomiaEquipamento, MaeEquipamento, ResumoModelos } from "../api/tipos";
+import type { Alerta, Economia, MaeEquipamento, MetodoEconomia, Previsao, ResumoModelos } from "../api/tipos";
 import { num, pct } from "./formatacao";
 import { primeiro } from "./parametros";
 
@@ -14,6 +14,10 @@ export const nomeTipo = (t: string): string => NOMES_TIPO[t] ?? t;
 export const TIPOS_ALERTA = ["zscore", "lightgbm"] as const;
 
 const NOMES_FEATURE: Record<string, string> = {
+  hora_semana: "hora da semana",
+  kw_media24_d24: "média das 24 h (deslocada 24 h)",
+  kw_desvio24_d24: "desvio das 24 h (deslocado 24 h)",
+  kw_lag48: "kW 48 h antes (lag 48)",
   hora: "hora do dia",
   dia_semana: "dia da semana",
   feriado: "feriado",
@@ -142,32 +146,96 @@ export function faixaDeItens(total: number, offset: number, qtd: number): string
 }
 
 // ---------- Economia ----------
-export type LinhaEconomia = EconomiaEquipamento & { alvo: boolean; fora: boolean; banda: string; larguraInjetado: number; larguraRecuperado: number };
+const NOMES_METODO: Record<string, string> = {
+  baseline_normalizado: "Baseline normalizado",
+  diferenca_em_diferencas_grupo_controle: "Grupo-controle (diferença em diferenças)",
+};
+const NOMES_METODO_CURTOS: Record<string, string> = {
+  baseline_normalizado: "Baseline",
+  diferenca_em_diferencas_grupo_controle: "Grupo-controle",
+};
+export const nomeMetodo = (m: MetodoEconomia): string => NOMES_METODO[m.metodo] ?? m.rotulo;
+export const nomeMetodoCurto = (metodo: string): string => NOMES_METODO_CURTOS[metodo] ?? metodo;
 
+export type CelulaMetodo = { metodo: string; recuperado: number | null; erro_pp: number | null; fora: boolean; controles: string[]; banda: string };
+export type LinhaEconomia = { equipamento: string; alvo: boolean; fraca: boolean; injetado_pct: number; celulas: CelulaMetodo[] };
+
+/** Uma linha por equipamento com o resultado de cada metodo lado a lado (a ordem segue `e.metodos`). */
 export function linhasEconomia(e: Economia): LinhaEconomia[] {
   const alvo = e.reducao_sintetica?.equipamento;
-  const maximo = Math.max(0, ...e.equipamentos.flatMap((l) => [l.injetado_pct, l.recuperado_pct ?? 0]));
-  return e.equipamentos.map((l) => ({
-    ...l,
+  const base = e.metodos[0]?.equipamentos ?? [];
+  const porMetodo = e.metodos.map((m) => new Map(m.equipamentos.map((x) => [x.equipamento, x])));
+  return base.map((l) => ({
+    equipamento: l.equipamento,
     alvo: l.equipamento === alvo,
-    fora: !l.dentro_da_tolerancia,
-    banda: `${pct(l.injetado_pct - l.tolerancia_pp)} a ${pct(l.injetado_pct + l.tolerancia_pp)}`,
-    larguraInjetado: largura(l.injetado_pct, maximo),
-    larguraRecuperado: largura(l.recuperado_pct ?? 0, maximo),
+    fraca: l.baseline_fraca,
+    injetado_pct: l.injetado_pct,
+    celulas: e.metodos.map((m, i) => {
+      const x = porMetodo[i]?.get(l.equipamento) ?? l;
+      return {
+        metodo: m.metodo,
+        recuperado: x.recuperado_pct,
+        erro_pp: x.erro_pp,
+        fora: !x.dentro_da_tolerancia,
+        controles: x.controles,
+        banda: `${pct(x.injetado_pct - x.tolerancia_pp)} a ${pct(x.injetado_pct + x.tolerancia_pp)}`,
+      };
+    }),
   }));
 }
 
-export type VereditoEconomia = { atendida: boolean; titulo: string; detalhe: string };
+export type ResumoMetodo = { metodo: string; nome: string; atendida: boolean; titulo: string; detalhe: string; veredito: MetodoEconomia["veredito"] };
 
-/** Veredito so a partir dos campos da API (a tolerancia e os numeros nunca sao fixos aqui). */
-export function vereditoEconomia(e: Economia): VereditoEconomia | null {
-  const v = e.veredito;
-  if (v === null) return null;
-  const tol = e.equipamentos[0]?.tolerancia_pp;
-  const faixa = tol === undefined ? "" : ` (±${num(tol, 1)} pp)`;
-  return {
-    atendida: v.tolerancia_atendida,
-    titulo: v.tolerancia_atendida ? `Tolerância${faixa} atendida em dado real` : `Tolerância${faixa} NÃO atendida em dado real`,
-    detalhe: v.texto,
-  };
+/** Veredito de cada metodo so a partir dos campos da API (a tolerancia e os numeros nunca sao fixos aqui). */
+export function resumosMetodos(e: Economia): ResumoMetodo[] {
+  return e.metodos.map((m) => {
+    const tol = m.equipamentos[0]?.tolerancia_pp;
+    const faixa = tol === undefined ? "" : ` (±${num(tol, 1)} pp)`;
+    const v = m.veredito;
+    return {
+      metodo: m.metodo,
+      nome: nomeMetodo(m),
+      atendida: v.tolerancia_atendida,
+      titulo: v.tolerancia_atendida ? `Tolerância${faixa} atendida em dado real` : `Tolerância${faixa} NÃO atendida em dado real`,
+      detalhe: v.texto,
+      veredito: v,
+    };
+  });
+}
+
+// ---------- Previsao do dia seguinte ----------
+const NOMES_PREVISOR: Record<string, string> = {
+  seasonal_naive_24: "Naive sazonal 24 h",
+  seasonal_naive_168: "Naive sazonal 168 h",
+  baseline_sazonal: "Baseline sazonal (média por hora da semana)",
+  ridge: "Ridge",
+  ets_24_tipo_dia: "ETS (período 24 h por tipo de dia)",
+  lightgbm_lag24: "LightGBM (sem lag 1)",
+};
+export const nomePrevisor = (m: string): string => NOMES_PREVISOR[m] ?? m;
+
+const NOMES_GRUPO: Record<string, string> = { calendario: "Calendário", lags: "Lags (24, 48, 168 h)", janela_movel: "Janela móvel (24 h)" };
+export const nomeGrupo = (g: string): string => NOMES_GRUPO[g] ?? g;
+
+export type LinhaMase = { equipamento: string; celulas: { modelo: string; mase: number | null; melhor: boolean; larguraMase: number }[] };
+
+/** MASE por equipamento e previsor; `melhor` marca o menor valor da linha, barras na mesma escala (teto 2). */
+export function linhasMase(p: Previsao): LinhaMase[] {
+  const teto = 2;
+  return p.mase_por_equipamento.map((l) => {
+    const valores = p.modelos.map((m) => l.mase[m.modelo] ?? null);
+    const menor = Math.min(...valores.filter((v): v is number => v !== null));
+    return {
+      equipamento: l.equipamento,
+      celulas: p.modelos.map((m, i) => {
+        const v = valores[i] ?? null;
+        return { modelo: m.modelo, mase: v, melhor: v !== null && v === menor, larguraMase: v === null ? 0 : largura(v, teto) };
+      }),
+    };
+  });
+}
+
+/** Total de equipamentos em que o previsor teve MASE menor que o da referencia (naive-168). */
+export function textoVitorias(m: Previsao["modelos"][number], total: number): string {
+  return m.vitorias_vs_naive168 === null ? "referência" : `${num(m.vitorias_vs_naive168, 0)} de ${num(total, 0)}`;
 }

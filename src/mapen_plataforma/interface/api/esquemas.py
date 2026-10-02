@@ -18,6 +18,7 @@ from mapen_plataforma.application.portas import ConsumoEquipamento, CustoLinha, 
 from mapen_plataforma.application.resultados_m3 import (
     EconomiaConsultada,
     PaginaAlertas,
+    PrevisaoConsultada,
     ResumoConsultado,
 )
 from mapen_plataforma.domain.comando import PADRAO_ASSINATURA, Acao, ConfiguracaoSeguranca
@@ -37,12 +38,17 @@ from mapen_plataforma.domain.resultados_m3 import (
     ComparacaoEquipamento,
     ContribuicaoShap,
     DadosSubconjunto,
+    DecisaoPrevisao,
     DetectorSintetico,
     Janela,
     MaeEquipamento,
+    MaseEquipamento,
+    MetodoAvaliado,
+    ModeloPrevisao,
     ParticipacaoFeature,
     ReducaoSintetica,
     ShapEquipamento,
+    ShapPrevisao,
     Veredito,
 )
 
@@ -482,6 +488,19 @@ class AlertasOut(BaseModel):
         )
 
 
+class MetodoEconomiaOut(BaseModel):
+    """Um metodo de antes x depois, com o mesmo veredito e as mesmas linhas por equipamento."""
+
+    metodo: str
+    rotulo: str
+    veredito: Veredito
+    equipamentos: list[ComparacaoEquipamento]
+
+    @classmethod
+    def de(cls, m: MetodoAvaliado) -> MetodoEconomiaOut:
+        return cls(metodo=m.metodo, rotulo=m.rotulo, veredito=m.veredito, equipamentos=list(m.comparacoes))
+
+
 class EconomiaOut(BaseModel):
     disponivel: bool
     valida_metodo_nao_economia_real: bool
@@ -490,8 +509,7 @@ class EconomiaOut(BaseModel):
     periodo_antes: Janela | None
     periodo_depois: Janela | None
     reducao_sintetica: ReducaoSintetica | None
-    veredito: Veredito | None
-    equipamentos: list[ComparacaoEquipamento]
+    metodos: list[MetodoEconomiaOut]
 
     @classmethod
     def de(cls, c: EconomiaConsultada) -> EconomiaOut:
@@ -504,6 +522,133 @@ class EconomiaOut(BaseModel):
             periodo_antes=None if e is None else e.periodo_antes,
             periodo_depois=None if e is None else e.periodo_depois,
             reducao_sintetica=None if e is None else e.reducao,
-            veredito=c.veredito,
-            equipamentos=list(c.comparacoes),
+            metodos=[MetodoEconomiaOut.de(m) for m in c.metodos],
+        )
+
+
+ROTULO_PREVISAO = (
+    "Estudo de previsao do dia seguinte (origem a meia-noite, sem lag menor que 24 h) sobre dado real do CU-BEMS; "
+    "o benchmark de anomalias e SINTETICO, nao e precisao/recall em dado real."
+)
+
+
+def _pct(v: float | None) -> float | None:
+    return None if v is None else 100.0 * v
+
+
+class ModeloPrevisaoOut(BaseModel):
+    modelo: str
+    adotado: bool
+    mae_agregado_kw: float | None
+    mediana_mase_reservado: float | None
+    mediana_mase_desenvolvimento: float | None
+    vitorias_vs_naive168: int | None
+    vitorias_melhor_de_todos: int
+
+    @classmethod
+    def de(cls, m: ModeloPrevisao, adotado: str) -> ModeloPrevisaoOut:
+        return cls(
+            modelo=m.modelo, adotado=m.modelo == adotado, mae_agregado_kw=m.mae_agregado_kw,
+            mediana_mase_reservado=m.mediana_mase_reservado, mediana_mase_desenvolvimento=m.mediana_mase_desenvolvimento,
+            vitorias_vs_naive168=m.vitorias_vs_naive168, vitorias_melhor_de_todos=m.vitorias_melhor_de_todos,
+        )
+
+
+class ShapPrevisaoOut(BaseModel):
+    horas: int
+    por_grupo_pct: dict[str, float | None]
+    por_feature_pct: dict[str, float | None]
+    feature_dominante: str | None
+    equipamentos_com_feature_dominante: list[str]
+
+    @classmethod
+    def de(cls, s: ShapPrevisao) -> ShapPrevisaoOut:
+        return cls(
+            horas=s.horas,
+            por_grupo_pct={g: _pct(v) for g, v in s.participacao_por_grupo.items()},
+            por_feature_pct={f: _pct(v) for f, v in s.participacao_por_feature.items()},
+            feature_dominante=s.d7_feature_dominante,
+            equipamentos_com_feature_dominante=list(s.equipamentos_com_flag),
+        )
+
+
+class BenchmarkPrevisaoOut(BaseModel):
+    sintetico: bool
+    previsor: str
+    semente: int
+    eventos_por_tipo_por_equipamento: int
+    limiar_z: float
+    por_tipo: list[TaxaPorTipoOut]
+    total_detectados: int
+    total_eventos: int
+    taxa_deteccao_pct: float | None
+    falso_alarme_horas: int
+    horas_base: int
+    taxa_falso_alarme_pct: float | None
+
+
+class MasePrevisaoOut(BaseModel):
+    equipamento: str
+    mase: dict[str, float | None]
+
+    @classmethod
+    def de(cls, m: MaseEquipamento) -> MasePrevisaoOut:
+        return cls(equipamento=m.equipamento, mase=dict(m.por_modelo))
+
+
+class PrevisaoOut(BaseModel):
+    disponivel: bool
+    rotulo: str
+    sensor_id: str | None
+    aviso: str | None
+    horizonte_h: int | None
+    defasagem_minima_h: int | None
+    treino: Janela | None
+    reservado: Janela | None
+    dobras_walk_forward: int | None
+    referencia_mase: str | None
+    equipamentos: list[str]
+    sem_carga: list[str]
+    modelos: list[ModeloPrevisaoOut]
+    decisao: DecisaoPrevisao | None
+    mase_por_equipamento: list[MasePrevisaoOut]
+    shap_lightgbm: ShapPrevisaoOut | None
+    benchmark_sintetico: BenchmarkPrevisaoOut | None
+    avisos: list[str]
+
+    @classmethod
+    def de(cls, c: PrevisaoConsultada) -> PrevisaoOut:
+        e = c.estudo
+        if e is None:
+            return cls(
+                disponivel=False, rotulo=ROTULO_PREVISAO, sensor_id=None, aviso=None, horizonte_h=None,
+                defasagem_minima_h=None, treino=None, reservado=None, dobras_walk_forward=None, referencia_mase=None,
+                equipamentos=[], sem_carga=[], modelos=[], decisao=None, mase_por_equipamento=[], shap_lightgbm=None,
+                benchmark_sintetico=None, avisos=[],
+            )
+        b = e.benchmark
+        total_det = None if b is None else sum(b.detectados.values())
+        total_eventos = None if b is None else sum(b.injetados.values())
+        return cls(
+            disponivel=True, rotulo=ROTULO_PREVISAO, sensor_id=e.sensor_id, aviso=e.aviso, horizonte_h=e.horizonte_h,
+            defasagem_minima_h=e.defasagem_minima_h, treino=e.treino, reservado=e.reservado,
+            dobras_walk_forward=e.dobras_walk_forward, referencia_mase=e.referencia_mase,
+            equipamentos=list(e.equipamentos), sem_carga=list(e.sem_carga),
+            modelos=[ModeloPrevisaoOut.de(m, e.decisao.adotado) for m in e.modelos], decisao=e.decisao,
+            mase_por_equipamento=[MasePrevisaoOut.de(m) for m in e.mase_por_equipamento],
+            shap_lightgbm=None if e.shap is None else ShapPrevisaoOut.de(e.shap),
+            benchmark_sintetico=None if b is None or total_det is None or total_eventos is None else BenchmarkPrevisaoOut(
+                sintetico=True, previsor=b.previsor, semente=b.semente,
+                eventos_por_tipo_por_equipamento=b.eventos_por_tipo_por_equipamento, limiar_z=b.limiar_z,
+                por_tipo=[
+                    TaxaPorTipoOut(
+                        tipo=t, detectados=b.detectados.get(t, 0), eventos=n, taxa_deteccao_pct=_taxa(b.detectados.get(t, 0), n),
+                    )
+                    for t, n in b.injetados.items()
+                ],
+                total_detectados=total_det, total_eventos=total_eventos, taxa_deteccao_pct=_taxa(total_det, total_eventos),
+                falso_alarme_horas=b.alertas_fora_da_zona, horas_base=b.horas_fora_da_zona,
+                taxa_falso_alarme_pct=_taxa(b.alertas_fora_da_zona, b.horas_fora_da_zona),
+            ),
+            avisos=list(e.avisos),
         )

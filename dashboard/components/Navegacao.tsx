@@ -10,6 +10,7 @@ const ITENS = [
   { href: "/custo", rotulo: "Custo por faixa" },
   { href: "/ranking", rotulo: "Ranking" },
   { href: "/modelos", rotulo: "Modelos" },
+  { href: "/previsao", rotulo: "Previsão" },
   { href: "/alertas", rotulo: "Alertas" },
   { href: "/economia", rotulo: "Economia" },
   { href: "/cadastro", rotulo: "Cadastro" },

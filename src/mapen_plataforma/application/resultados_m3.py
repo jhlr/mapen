@@ -10,16 +10,15 @@ from mapen_plataforma.domain.resultados_m3 import (
     AlertaM3,
     AlertasM3,
     AvisoD7,
-    ComparacaoEquipamento,
     EconomiaM3,
+    EstudoPrevisao,
     FiltroAlertas,
+    MetodoAvaliado,
     ResumoM3,
-    Veredito,
     avaliar_aviso_d7,
-    comparar,
+    avaliar_metodos,
     equipamentos_com_baseline_fraca,
     filtrar_alertas,
-    veredito,
 )
 
 LIMITE_ALERTAS_MAX = 500
@@ -51,8 +50,7 @@ class EconomiaConsultada:
     """`economia` e `None` quando a empresa nao tem resultados do M3."""
 
     economia: EconomiaM3 | None
-    comparacoes: tuple[ComparacaoEquipamento, ...]
-    veredito: Veredito | None
+    metodos: tuple[MetodoAvaliado, ...]
 
 
 class ConsultarResumoM3:
@@ -94,5 +92,20 @@ class ConsultarEconomiaM3:
     def executar(self, empresa_id: str) -> EconomiaConsultada:
         economia = self._repo.economia(empresa_id)
         if economia is None:
-            return EconomiaConsultada(None, (), None)
-        return EconomiaConsultada(economia, tuple(comparar(economia)), veredito(economia))
+            return EconomiaConsultada(None, ())
+        return EconomiaConsultada(economia, avaliar_metodos(economia))
+
+
+@dataclass(frozen=True)
+class PrevisaoConsultada:
+    """`estudo` e `None` quando a empresa nao tem resultados do M3."""
+
+    estudo: EstudoPrevisao | None
+
+
+class ConsultarPrevisaoM3:
+    def __init__(self, repo: ResultadosM3Repositorio) -> None:
+        self._repo = repo
+
+    def executar(self, empresa_id: str) -> PrevisaoConsultada:
+        return PrevisaoConsultada(self._repo.previsao(empresa_id))

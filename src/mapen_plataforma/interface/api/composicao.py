@@ -38,7 +38,12 @@ from mapen_plataforma.application.portas import (
     Relogio,
     ResultadosM3Repositorio,
 )
-from mapen_plataforma.application.resultados_m3 import ConsultarEconomiaM3, ConsultarResumoM3, ListarAlertasM3
+from mapen_plataforma.application.resultados_m3 import (
+    ConsultarEconomiaM3,
+    ConsultarPrevisaoM3,
+    ConsultarResumoM3,
+    ListarAlertasM3,
+)
 from mapen_plataforma.infrastructure.banco import BancoDuckDB
 from mapen_plataforma.infrastructure.custo_m1 import CalculadoraM1
 from mapen_plataforma.infrastructure.demo import EMPRESA_DEMO, EMPRESA_OUTRA, SegredosDemo, semear_demo
@@ -116,6 +121,7 @@ def montar_servicos(
         resumo_m3=ConsultarResumoM3(resultados_m3),
         alertas_m3=ListarAlertasM3(resultados_m3),
         economia_m3=ConsultarEconomiaM3(resultados_m3),
+        previsao_m3=ConsultarPrevisaoM3(resultados_m3),
     )
 
 

@@ -34,6 +34,7 @@ from mapen_plataforma.application.resultados_m3 import (
     LIMITE_ALERTAS_MAX,
     LIMITE_ALERTAS_PADRAO,
     ConsultarEconomiaM3,
+    ConsultarPrevisaoM3,
     ConsultarResumoM3,
     ListarAlertasM3,
 )
@@ -68,6 +69,7 @@ class Servicos:
     resumo_m3: ConsultarResumoM3
     alertas_m3: ListarAlertasM3
     economia_m3: ConsultarEconomiaM3
+    previsao_m3: ConsultarPrevisaoM3
 
 
 def _nao_autenticado() -> HTTPException:
@@ -238,6 +240,10 @@ def criar_app(servicos: Servicos) -> FastAPI:
     @app.get("/modelos/resumo")
     def resumo_modelos(p: Autenticado) -> e.ResumoOut:
         return e.ResumoOut.de(servicos.resumo_m3.executar(p.empresa_id))
+
+    @app.get("/modelos/previsao")
+    def previsao_modelos(p: Autenticado) -> e.PrevisaoOut:
+        return e.PrevisaoOut.de(servicos.previsao_m3.executar(p.empresa_id))
 
     @app.get("/alertas")
     def listar_alertas(

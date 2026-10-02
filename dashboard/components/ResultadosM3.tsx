@@ -1,9 +1,10 @@
 import Link from "next/link";
-import type { Alerta, Economia, ResumoModelos } from "../lib/api/tipos";
+import type { Alerta, Economia, Previsao, ResumoModelos } from "../lib/api/tipos";
 import { num, pct } from "../lib/dominio/formatacao";
 import {
   ALERTAS_POR_PAGINA, TIPOS_ALERTA, dia, faixaDeItens, hrefAlertas, kw, linhasAlertas, linhasEconomia, linhasMae,
-  nomeFeature, nomeTipo, pp, textoAvisoD7, vereditoEconomia, type FiltrosAlertasUrl,
+  linhasMase, nomeFeature, nomeGrupo, nomeMetodoCurto, nomePrevisor, nomeTipo, pp, resumosMetodos, textoAvisoD7, textoVitorias,
+  type FiltrosAlertasUrl,
 } from "../lib/dominio/resultadosM3";
 import { Aviso, Secao, Tabela, Vazio } from "./Basicos";
 
@@ -207,54 +208,198 @@ export function PaginacaoAlertas({ f, total, qtd, proximo }: { f: FiltrosAlertas
 
 // ---------- Economia ----------
 export function SecaoEconomia({ e }: { e: Economia }) {
-  const v = vereditoEconomia(e);
+  const resumos = resumosMetodos(e);
   const linhas = linhasEconomia(e);
   return (
     <>
-      <div className={`banner-metodo ${v?.atendida === true ? "atendida" : "nao"}`} role="alert">
+      <div className={`banner-metodo ${resumos.length > 0 && resumos.every((r) => r.atendida) ? "atendida" : "nao"}`} role="alert">
         <strong>{e.valida_metodo_nao_economia_real ? "Valida o MÉTODO, não é economia real." : "Resultado de validação do método."}</strong>
-        {v !== null && <p className="veredito"><b>{v.titulo}.</b></p>}
-        {v !== null && <p className="sub-banner">{v.detalhe}</p>}
+        {resumos.map((r) => <p key={r.metodo} className="veredito"><b>{r.nome}: {r.titulo}.</b> <span className="nota">{num(r.veredito.dentro_da_tolerancia, 0)} de {num(r.veredito.equipamentos, 0)} equipamentos dentro da tolerância.</span></p>)}
       </div>
       {e.reducao_sintetica !== null && e.periodo_antes !== null && e.periodo_depois !== null && (
         <p className="sub">
           Redução sintética de {pct(e.reducao_sintetica.fracao_pct)} injetada em {e.reducao_sintetica.equipamento} a partir de {dia(e.reducao_sintetica.a_partir_de)}.
           Antes: {dia(e.periodo_antes.inicio)} a {dia(e.periodo_antes.fim)}. Depois: {dia(e.periodo_depois.inicio)} a {dia(e.periodo_depois.fim)}.
+          {resumos.length > 1 && " Os dois métodos recebem exatamente os mesmos dados; o grupo-controle usa equipamentos sem intervenção para descontar a deriva de carga comum."}
         </p>
       )}
-      {v !== null && e.veredito !== null && (
-        <div className="cards">
-          <div className="card"><span className="rotulo">Dentro da tolerância</span><b>{e.veredito.dentro_da_tolerancia} de {e.veredito.equipamentos}</b></div>
-          <div className="card"><span className="rotulo">Alvo {e.veredito.alvo_equipamento}</span><b>{e.veredito.alvo_recuperado_pct === null ? "sem estimativa" : pct(e.veredito.alvo_recuperado_pct)}</b><span className="nota">injetado {pct(e.veredito.alvo_injetado_pct)}; {e.veredito.alvo_dentro_da_tolerancia ? "dentro" : "fora"} da tolerância</span></div>
-          {e.veredito.erro_abs_mediano_pp !== null && <div className="card"><span className="rotulo">Erro absoluto mediano</span><b>{num(e.veredito.erro_abs_mediano_pp, 1)} pp</b></div>}
-          {e.veredito.erro_abs_maximo_pp !== null && <div className="card"><span className="rotulo">Erro absoluto máximo</span><b>{num(e.veredito.erro_abs_maximo_pp, 1)} pp</b></div>}
-        </div>
-      )}
-      <Secao titulo="Antes e depois, por equipamento">
-        {linhas.length === 0 ? <Vazio>Sem equipamentos.</Vazio> : (
-          <Tabela legenda="Redução injetada contra redução recuperada pelo método, em % do consumo" empilhar>
+      <Secao titulo="Métodos lado a lado">
+        {resumos.length === 0 ? <Vazio>Sem resultados de antes e depois.</Vazio> : (
+          <Tabela legenda="Resumo de cada método ao recuperar a redução sintética injetada" empilhar>
             <thead>
-              <tr><th>Equipamento</th><th className="n">Injetado</th><th className="n">Recuperado</th><th>Comparação</th><th>Faixa de tolerância</th><th className="n">Erro</th><th>Resultado</th></tr>
+              <tr><th>Método</th><th className="n">Dentro da tolerância</th><th className="n">Alvo</th><th className="n">Erro absoluto mediano</th><th className="n">Erro absoluto máximo</th><th>Resultado</th></tr>
             </thead>
             <tbody>
-              {linhas.map((l) => (
-                <tr key={l.equipamento}>
-                  <td data-label="Equipamento"><div className="c">{l.equipamento}{l.alvo && <> <span className="selo alvo">alvo da injeção</span></>}{l.baseline_fraca && <> <MarcaFraca /></>}</div></td>
-                  <td className="n" data-label="Injetado"><div className="c">{pct(l.injetado_pct)}</div></td>
-                  <td className="n" data-label="Recuperado"><div className="c">{l.recuperado_pct === null ? "sem estimativa" : pct(l.recuperado_pct)}</div></td>
-                  <td className="det" data-label="Comparação"><div className="c">
-                    <span className="par"><span className="rotulo">injetado</span><span className="trilho"><span className="barra base" style={{ width: `${l.larguraInjetado}%` }} /></span></span>
-                    <span className="par"><span className="rotulo">recuperado</span><span className="trilho"><span className="barra" style={{ width: `${l.larguraRecuperado}%` }} /></span></span>
-                  </div></td>
-                  <td className="nw" data-label="Faixa de tolerância"><div className="c">{l.banda} (±{num(l.tolerancia_pp, 1)} pp)</div></td>
-                  <td className="n" data-label="Erro"><div className="c">{l.erro_pp === null ? "sem estimativa" : pp(l.erro_pp)}</div></td>
-                  <td data-label="Resultado"><div className="c"><span className={`selo ${l.fora ? "fora" : "dentro"}`}>{l.fora ? "fora da tolerância" : "dentro da tolerância"}</span></div></td>
+              {resumos.map(({ metodo, nome, atendida, veredito: v }) => (
+                <tr key={metodo}>
+                  <td data-label="Método"><div className="c">{nome}</div></td>
+                  <td className="n" data-label="Dentro da tolerância"><div className="c">{num(v.dentro_da_tolerancia, 0)} de {num(v.equipamentos, 0)}</div></td>
+                  <td className="n" data-label="Alvo"><div className="c">{v.alvo_recuperado_pct === null ? "sem estimativa" : pct(v.alvo_recuperado_pct)} <span className="nota">(injetado {pct(v.alvo_injetado_pct)}, {v.alvo_dentro_da_tolerancia ? "dentro" : "fora"})</span></div></td>
+                  <td className="n" data-label="Erro absoluto mediano"><div className="c">{v.erro_abs_mediano_pp === null ? "sem estimativa" : `${num(v.erro_abs_mediano_pp, 1)} pp`}</div></td>
+                  <td className="n" data-label="Erro absoluto máximo"><div className="c">{v.erro_abs_maximo_pp === null ? "sem estimativa" : `${num(v.erro_abs_maximo_pp, 1)} pp`}</div></td>
+                  <td data-label="Resultado"><div className="c"><span className={`selo ${atendida ? "dentro" : "fora"}`}>{atendida ? "tolerância atendida" : "tolerância não atendida"}</span></div></td>
                 </tr>
               ))}
             </tbody>
           </Tabela>
         )}
       </Secao>
+      <Secao titulo="Antes e depois, por equipamento">
+        {linhas.length === 0 ? <Vazio>Sem equipamentos.</Vazio> : (
+          <Tabela legenda="Redução injetada contra redução recuperada por cada método, em % do consumo" empilhar>
+            <thead>
+              <tr>
+                <th>Equipamento</th><th className="n">Injetado</th>
+                {e.metodos.map((m) => <th key={m.metodo} className="n">{nomeMetodoCurto(m.metodo)}: recuperado (erro)</th>)}
+                {e.metodos.some((m) => m.equipamentos.some((x) => x.controles.length > 0)) && <th>Controles usados</th>}
+              </tr>
+            </thead>
+            <tbody>
+              {linhas.map((l) => (
+                <tr key={l.equipamento}>
+                  <td data-label="Equipamento"><div className="c">{l.equipamento}{l.alvo && <> <span className="selo alvo">alvo da injeção</span></>}{l.fraca && <> <MarcaFraca /></>}</div></td>
+                  <td className="n" data-label="Injetado"><div className="c">{pct(l.injetado_pct)}</div></td>
+                  {l.celulas.map((c) => (
+                    <td key={c.metodo} className="n" data-label={`${nomeMetodoCurto(c.metodo)}: recuperado (erro)`}><div className="c">
+                      {c.recuperado === null ? "sem estimativa" : `${pct(c.recuperado)} (${c.erro_pp === null ? "sem erro" : pp(c.erro_pp)})`}{" "}
+                      <span className={`selo ${c.fora ? "fora" : "dentro"}`}>{c.fora ? "fora da tolerância" : "dentro da tolerância"}</span>
+                    </div></td>
+                  ))}
+                  {e.metodos.some((m) => m.equipamentos.some((x) => x.controles.length > 0)) && (
+                    <td data-label="Controles usados"><div className="c">{l.celulas.flatMap((c) => c.controles).join(", ") || "nenhum"}</div></td>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </Tabela>
+        )}
+      </Secao>
+    </>
+  );
+}
+
+// ---------- Previsao ----------
+const mae = (v: number | null): string => (v === null ? "sem estimativa" : kw(v, 4));
+const mase = (v: number | null): string => (v === null ? "sem estimativa" : num(v, 3));
+
+export function SecaoPrevisao({ p }: { p: Previsao }) {
+  const linhas = linhasMase(p);
+  const shap = p.shap_lightgbm;
+  const bench = p.benchmark_sintetico;
+  const total = p.equipamentos.length;
+  return (
+    <>
+      <Aviso tom="atencao" titulo="Escopo dos resultados">{p.rotulo}</Aviso>
+
+      {p.treino !== null && p.reservado !== null && (
+        <Secao titulo="Protocolo">
+          <dl className="fatos">
+            <div><dt>Origem da previsão</dt><dd>meia-noite, horizonte de {p.horizonte_h} h</dd></div>
+            <div><dt>Defasagem mínima</dt><dd>{p.defasagem_minima_h} h (nenhuma feature usa consumo mais recente)</dd></div>
+            <div><dt>Treino</dt><dd>{dia(p.treino.inicio)} a {dia(p.treino.fim)}</dd></div>
+            <div><dt>Reservado (teste)</dt><dd>{dia(p.reservado.inicio)} a {dia(p.reservado.fim)}</dd></div>
+            <div><dt>Dobras walk-forward</dt><dd>{p.dobras_walk_forward}</dd></div>
+            <div><dt>Referência do MASE</dt><dd>{p.referencia_mase === null ? "n/d" : nomePrevisor(p.referencia_mase)}</dd></div>
+            <div><dt>Equipamentos</dt><dd>{total} avaliados{p.sem_carga.length > 0 ? `; sem carga: ${p.sem_carga.join(", ")}` : ""}</dd></div>
+          </dl>
+        </Secao>
+      )}
+
+      {p.decisao !== null && (
+        <div className="banner-metodo atendida" role="note">
+          <strong>Previsor adotado: {nomePrevisor(p.decisao.adotado)}</strong>
+          <p className="sub-banner">{p.decisao.motivo}</p>
+          <p className="sub-banner">
+            {p.decisao.passaram_regra_de_ganho.length === 0
+              ? "Nenhum candidato passou na regra de ganho pré-registrada (mediana de MASE pelo menos 10% menor que a do naive de 168 h e vitória em pelo menos 12 de 19 equipamentos)."
+              : `Passaram na regra de ganho: ${p.decisao.passaram_regra_de_ganho.map(nomePrevisor).join(", ")}.`}
+          </p>
+        </div>
+      )}
+
+      <Secao titulo="Previsores no período reservado">
+        {p.modelos.length === 0 ? <Vazio>Sem previsores.</Vazio> : (
+          <Tabela legenda="Erro de cada previsor do dia seguinte no período reservado; MASE menor é melhor e 1 é o erro do naive de 168 h no treino" empilhar>
+            <thead>
+              <tr><th>Previsor</th><th className="n">MAE agregado</th><th className="n">Mediana do MASE</th><th className="n">Mediana do MASE (dobras)</th><th className="n">Vitórias sobre o naive 168 h</th><th className="n">Melhor em</th></tr>
+            </thead>
+            <tbody>
+              {p.modelos.map((m) => (
+                <tr key={m.modelo}>
+                  <td data-label="Previsor"><div className="c">{nomePrevisor(m.modelo)}{m.adotado && <> <span className="selo dentro">adotado</span></>}</div></td>
+                  <td className="n" data-label="MAE agregado"><div className="c">{mae(m.mae_agregado_kw)}</div></td>
+                  <td className="n" data-label="Mediana do MASE"><div className="c">{mase(m.mediana_mase_reservado)}</div></td>
+                  <td className="n" data-label="Mediana do MASE (dobras)"><div className="c">{mase(m.mediana_mase_desenvolvimento)}</div></td>
+                  <td className="n" data-label="Vitórias sobre o naive 168 h"><div className="c">{textoVitorias(m, total)}</div></td>
+                  <td className="n" data-label="Melhor em"><div className="c">{num(m.vitorias_melhor_de_todos, 0)} de {num(total, 0)}</div></td>
+                </tr>
+              ))}
+            </tbody>
+          </Tabela>
+        )}
+      </Secao>
+
+      <Secao titulo="MASE por equipamento">
+        {linhas.length === 0 ? <Vazio>Sem equipamentos.</Vazio> : (
+          <Tabela legenda="MASE de cada previsor por equipamento no período reservado; o menor da linha está marcado" empilhar>
+            <thead>
+              <tr><th>Equipamento</th>{p.modelos.map((m) => <th key={m.modelo} className="n">{nomePrevisor(m.modelo)}</th>)}</tr>
+            </thead>
+            <tbody>
+              {linhas.map((l) => (
+                <tr key={l.equipamento}>
+                  <td data-label="Equipamento"><div className="c">{l.equipamento}</div></td>
+                  {l.celulas.map((c) => (
+                    <td key={c.modelo} className="n" data-label={nomePrevisor(c.modelo)}><div className="c">
+                      {c.melhor ? <b>{mase(c.mase)} <span className="nota">(menor)</span></b> : mase(c.mase)}
+                    </div></td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </Tabela>
+        )}
+      </Secao>
+
+      {shap !== null && (
+        <Secao titulo="O que o LightGBM de previsão usa (SHAP)">
+          {shap.feature_dominante !== null
+            ? <Aviso tom="atencao" titulo="Aviso D7: dependência de uma feature">A feature {nomeFeature(shap.feature_dominante)} concentra mais de metade da importância SHAP; {shap.equipamentos_com_feature_dominante.length} equipamento(s) têm uma feature dominante.</Aviso>
+            : <p className="dica">Nenhuma feature passa de 50% da importância no agregado; em {shap.equipamentos_com_feature_dominante.length} equipamento(s) uma feature isolada passa{shap.equipamentos_com_feature_dominante.length > 0 ? `: ${shap.equipamentos_com_feature_dominante.join(", ")}` : ""}. O LightGBM não passou na regra de ganho, então esta atribuição explica um modelo que não foi adotado.</p>}
+          <ul className="legenda">
+            {Object.entries(shap.por_grupo_pct).map(([g, v]) => <li key={g}>{nomeGrupo(g)}: {v === null ? "sem estimativa" : pct(v)}</li>)}
+          </ul>
+          <Tabela legenda="Importância SHAP por feature do LightGBM de previsão (agregada)" empilhar>
+            <thead><tr><th>Feature</th><th className="n">Parcela</th></tr></thead>
+            <tbody>
+              {Object.entries(shap.por_feature_pct).sort(([, a], [, b]) => (b ?? 0) - (a ?? 0)).map(([f, v]) => (
+                <tr key={f}><td data-label="Feature"><div className="c">{nomeFeature(f)}</div></td><td className="n" data-label="Parcela"><div className="c">{v === null ? "sem estimativa" : pct(v)}</div></td></tr>
+              ))}
+            </tbody>
+          </Tabela>
+          <p className="dica">Calculado em {num(shap.horas, 0)} horas de equipamento.</p>
+        </Secao>
+      )}
+
+      {bench !== null && (
+        <Secao titulo="Benchmark de injeção com o previsor adotado">
+          <Aviso tom="atencao" titulo="Benchmark sintético">Taxas medidas em anomalias injetadas ({bench.eventos_por_tipo_por_equipamento} por tipo por equipamento, semente {bench.semente}, limiar z {num(bench.limiar_z, 1)}), com o resíduo de {nomePrevisor(bench.previsor)}. Não é precisão nem recall em dado real.</Aviso>
+          <Tabela legenda="Detecção sintética por tipo de anomalia e falso alarme sobre horas sem injeção" empilhar>
+            <thead>
+              <tr>{bench.por_tipo.map((t) => <th key={t.tipo} className="n">{nomeTipo(t.tipo)}</th>)}<th className="n">Total</th><th className="n">Falso alarme (sintético)</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                {bench.por_tipo.map((t) => <td key={t.tipo} className="n" data-label={nomeTipo(t.tipo)}><div className="c">{pct(t.taxa_deteccao_pct)} ({t.detectados}/{t.eventos})</div></td>)}
+                <td className="n" data-label="Total"><div className="c">{bench.taxa_deteccao_pct === null ? "sem estimativa" : pct(bench.taxa_deteccao_pct)} ({bench.total_detectados}/{bench.total_eventos})</div></td>
+                <td className="n" data-label="Falso alarme (sintético)"><div className="c">{bench.taxa_falso_alarme_pct === null ? "sem estimativa" : pct(bench.taxa_falso_alarme_pct)} ({bench.falso_alarme_horas}/{num(bench.horas_base, 0)} h)</div></td>
+              </tr>
+            </tbody>
+          </Tabela>
+        </Secao>
+      )}
+
+      {p.avisos.length > 0 && <Aviso tom="info" titulo="Avisos do estudo">{p.avisos.join(" ")}</Aviso>}
     </>
   );
 }
