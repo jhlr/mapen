@@ -288,7 +288,7 @@ FAILED test_red_previsao.py::test_nenhuma_feature_de_previsao_usa_defasagem_meno
 1. Modelos fixos no periodo reservado (ajustados uma vez em 18 semanas); nao foi testado reajuste semanal/expansivo, que e o que um sistema real faria e que pode mudar a classificacao de Ridge e LightGBM frente ao naive-168. Seria um estudo novo com regra pre-registrada nova.
 2. Sigma unico por equipamento no benchmark do naive-168 (sem sigma por hora); sensibilidade a elevacoes de madrugada ficou em 0%.
 3. Um andar, 22 semanas, uma unica janela reservada de 4 semanas; a classificacao pode mudar com outra janela.
-4. Os artefatos de alerta, economia e resumo e a API nao foram alterados; o `previsao.json` ainda nao e consumido por nenhum adaptador da plataforma.
+4. (Atualizado em 2026-10-02) O `previsao.json` agora e lido pela plataforma (`GET /modelos/previsao`) e mostrado na tela `/previsao`; a economia com grupo-controle tambem sai em `/economia`. Reexecucao de 2026-10-02: mediana de MASE do LightGBM 0,6550 (documentado antes: 0,6602), 4 vitorias de 19, decisao igual (naive-168); a diferenca vem de nao-determinismo do LightGBM entre execucoes e nao muda a conclusao.
 5. ETS usa periodo 24 com tipo de dia, nao periodo 168 (justificativa acima).
 
 ## Alertas z-score com seasonal-naive-168 e escala semanal (2026-10-02)

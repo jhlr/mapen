@@ -17,7 +17,7 @@ from mapen_plataforma.domain.entidades import (
     Sensor,
     Unidade,
 )
-from mapen_plataforma.domain.resultados_m3 import AlertasM3, EconomiaM3, ResumoM3
+from mapen_plataforma.domain.resultados_m3 import AlertasM3, EconomiaM3, EstudoPrevisao, ResumoM3
 
 
 class Relogio(Protocol):
@@ -203,3 +203,4 @@ class ResultadosM3Repositorio(Protocol):
     def resumo(self, empresa_id: str) -> ResumoM3 | None: ...
     def alertas(self, empresa_id: str) -> AlertasM3 | None: ...
     def economia(self, empresa_id: str) -> EconomiaM3 | None: ...
+    def previsao(self, empresa_id: str) -> EstudoPrevisao | None: ...

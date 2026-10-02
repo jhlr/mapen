@@ -183,26 +183,24 @@ Query: `equipamento` (1..128), `tipo` (`zscore` ou `lightgbm`), `de` (inclusivo)
                                         {"feature": "hora", "shap": -0.1250357914626631}]}}]}
 ```
 
-(Sem filtros: 214 alertas, 160 z-score e 54 LightGBM.)
+(Sem filtros: 182 alertas, 128 z-score e 54 LightGBM, depois da troca do baseline do z-score por seasonal-naive-168; eram 214, 160 e 54.)
 
 ### `GET /economia`
 
-Sem parametros. Sempre `valida_metodo_nao_economia_real: true`: reducao sintetica conhecida em dado real, nao e economia real. Campos: `disponivel`, `natureza`, `aviso`, `periodo_antes`, `periodo_depois`, `reducao_sintetica` (`equipamento`, `fracao_pct`, `a_partir_de`), `veredito` e `equipamentos[]` (`equipamento`, `injetado_pct`, `recuperado_pct`, `erro_pp`, `tolerancia_pp`, `dentro_da_tolerancia`, `economia_pct_sem_reducao`, `baseline_fraca`). `dentro_da_tolerancia` = `|recuperado - injetado| <= tolerancia_pp` (recuperado ausente conta como fora). O veredito e calculado a cada chamada: `tolerancia_atendida` so e verdadeiro se o alvo e todos os equipamentos estao dentro; `erro_abs_mediano_pp`/`erro_abs_maximo_pp` vem da mesma lista; `texto` e montado com esses numeros.
+Sem parametros. Sempre `valida_metodo_nao_economia_real: true`: reducao sintetica conhecida em dado real, nao e economia real. Campos: `disponivel`, `natureza`, `aviso`, `periodo_antes`, `periodo_depois`, `reducao_sintetica` (`equipamento`, `fracao_pct`, `a_partir_de`) e `metodos[]`, um item por metodo de antes x depois que o `economia.json` traz: `baseline_normalizado` (sempre) e `diferenca_em_diferencas_grupo_controle` (so se o M3 gravou os campos de controle; o esquema recusa o metodo pela metade). Cada item tem `metodo`, `rotulo`, `veredito` e `equipamentos[]` (`equipamento`, `injetado_pct`, `recuperado_pct`, `erro_pp`, `tolerancia_pp`, `dentro_da_tolerancia`, `economia_pct_sem_reducao`, `baseline_fraca`, `controles`, vazio no baseline). `dentro_da_tolerancia` = `|recuperado - injetado| <= tolerancia_pp` (recuperado ausente conta como fora). O veredito e calculado a cada chamada para cada metodo com a mesma regra: `tolerancia_atendida` so e verdadeiro se o alvo e todos os equipamentos estao dentro; `erro_abs_mediano_pp`/`erro_abs_maximo_pp` vem da mesma lista; `texto` e montado com esses numeros. Mudou em 2026-10-02: `veredito` e `equipamentos[]` deixaram de ser campos do topo e passaram a viver dentro de `metodos[]` (unico consumidor, o dashboard, foi migrado junto).
 
-Resposta real (veredito e uma linha de equipamento):
+Resposta real (resumo dos dois metodos, dados de 2026-10-02):
 
-```json
-{"disponivel": true, "valida_metodo_nao_economia_real": true, "natureza": "validacao_de_metodo_sintetica",
- "reducao_sintetica": {"equipamento": "z1_Light", "fracao_pct": 15.0, "a_partir_de": "2018-11-18T00:00:00-03:00"},
- "veredito": {"tolerancia_atendida": false, "equipamentos": 19, "dentro_da_tolerancia": 7,
-              "alvo_equipamento": "z1_Light", "alvo_injetado_pct": 15.0, "alvo_recuperado_pct": 27.177215305529216,
-              "alvo_dentro_da_tolerancia": false, "erro_abs_mediano_pp": 6.713548607862357,
-              "erro_abs_maximo_pp": 18.90075896112483,
-              "texto": "Tolerancia de +-3.0 pp NAO atendida em dado real: 7 de 19 equipamentos recuperam a reducao sintetica de 15.0% dentro da tolerancia; o alvo z1_Light recuperou 27.18%. Valida o metodo, nao e economia real."},
- "equipamentos": [{"equipamento": "z1_Light", "injetado_pct": 15.0, "recuperado_pct": 27.177215305529216,
-                   "erro_pp": 12.177215305529216, "tolerancia_pp": 3.0, "dentro_da_tolerancia": false,
-                   "economia_pct_sem_reducao": 14.326135653563776, "baseline_fraca": false}]}
-```
+| Metodo | Dentro da tolerancia | Alvo z1_Light (injetado 15,0%) | Erro abs. mediano / maximo |
+|---|---|---|---|
+| `baseline_normalizado` | 7 de 19 | 27,18% (fora) | 6,71 / 18,90 pp |
+| `diferenca_em_diferencas_grupo_controle` | 12 de 19 | 17,1% (dentro) | 1,9 / 13,1 pp |
+
+Nenhum dos dois atende a tolerancia de +-3,0 pp em todos os equipamentos (`tolerancia_atendida: false` nos dois).
+
+### `GET /modelos/previsao`
+
+Sem parametros. Le `previsao.json` (estudo de previsao do dia seguinte do M3, ver `docs/m3_notas.md`) com a mesma autenticacao, tenant e esquema estrito dos outros artefatos; arquivo ausente ou fora do esquema = 503 so com o nome do arquivo, e a falha dele nao derruba `/modelos/resumo`, `/alertas` nem `/economia` (sao artefatos independentes). Campos: `disponivel`, `rotulo`, `sensor_id`, `aviso`, `horizonte_h`, `defasagem_minima_h`, `treino`, `reservado`, `dobras_walk_forward`, `referencia_mase`, `equipamentos`, `sem_carga`, `modelos[]` (`modelo`, `adotado`, `mae_agregado_kw`, `mediana_mase_reservado`, `mediana_mase_desenvolvimento`, `vitorias_vs_naive168`, `vitorias_melhor_de_todos`), `decisao` (`regra_aplicada`, `adotado`, `passaram_regra_de_ganho`, `melhor_mediana`, `motivo`; a regra foi pre-registrada e aplicada pelo M3, a API nao a recalcula), `mase_por_equipamento[]`, `shap_lightgbm` (`por_grupo_pct`, `por_feature_pct`, `feature_dominante`, `equipamentos_com_feature_dominante`, `horas`), `benchmark_sintetico` (sempre `sintetico: true`, taxas em %) e `avisos`. O esquema recusa modelo desconhecido na decisao, tabelas com conjuntos de modelos diferentes e MASE que nao cobre todos os equipamentos. Dado real: adotado `seasonal_naive_168` (mediana de MASE 0,5089), nenhum candidato passou a regra de ganho, baseline sazonal estatico em 1,7505.
 
 ### Limites desta rodada
 

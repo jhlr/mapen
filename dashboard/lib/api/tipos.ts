@@ -136,7 +136,23 @@ export type EconomiaEquipamento = {
   dentro_da_tolerancia: boolean;
   economia_pct_sem_reducao: number | null;
   baseline_fraca: boolean;
+  /** Equipamentos de controle usados (so no metodo de grupo-controle). */
+  controles: string[];
 };
+export type VereditoEconomia = {
+  metodo: string;
+  tolerancia_atendida: boolean;
+  equipamentos: number;
+  dentro_da_tolerancia: number;
+  alvo_equipamento: string;
+  alvo_injetado_pct: number;
+  alvo_recuperado_pct: number | null;
+  alvo_dentro_da_tolerancia: boolean;
+  erro_abs_mediano_pp: number | null;
+  erro_abs_maximo_pp: number | null;
+  texto: string;
+};
+export type MetodoEconomia = { metodo: string; rotulo: string; veredito: VereditoEconomia; equipamentos: EconomiaEquipamento[] };
 export type Economia = {
   disponivel: boolean;
   valida_metodo_nao_economia_real: boolean;
@@ -145,17 +161,62 @@ export type Economia = {
   periodo_antes: Intervalo | null;
   periodo_depois: Intervalo | null;
   reducao_sintetica: { equipamento: string; fracao_pct: number; a_partir_de: string } | null;
-  veredito: {
-    tolerancia_atendida: boolean;
-    equipamentos: number;
-    dentro_da_tolerancia: number;
-    alvo_equipamento: string;
-    alvo_injetado_pct: number;
-    alvo_recuperado_pct: number | null;
-    alvo_dentro_da_tolerancia: boolean;
-    erro_abs_mediano_pp: number | null;
-    erro_abs_maximo_pp: number | null;
-    texto: string;
+  /** Um item por metodo que o artefato traz (baseline sempre; grupo-controle quando o M3 o gravou). */
+  metodos: MetodoEconomia[];
+};
+
+// M3: estudo de previsao do dia seguinte (GET /modelos/previsao).
+export type ModeloPrevisao = {
+  modelo: string;
+  adotado: boolean;
+  mae_agregado_kw: number | null;
+  mediana_mase_reservado: number | null;
+  mediana_mase_desenvolvimento: number | null;
+  vitorias_vs_naive168: number | null;
+  vitorias_melhor_de_todos: number;
+};
+export type Previsao = {
+  disponivel: boolean;
+  rotulo: string;
+  sensor_id: string | null;
+  aviso: string | null;
+  horizonte_h: number | null;
+  defasagem_minima_h: number | null;
+  treino: Intervalo | null;
+  reservado: Intervalo | null;
+  dobras_walk_forward: number | null;
+  referencia_mase: string | null;
+  equipamentos: string[];
+  sem_carga: string[];
+  modelos: ModeloPrevisao[];
+  decisao: {
+    regra_aplicada: string;
+    adotado: string;
+    passaram_regra_de_ganho: string[];
+    melhor_mediana: string;
+    motivo: string;
   } | null;
-  equipamentos: EconomiaEquipamento[];
+  mase_por_equipamento: { equipamento: string; mase: Record<string, number | null> }[];
+  shap_lightgbm: {
+    horas: number;
+    por_grupo_pct: Record<string, number | null>;
+    por_feature_pct: Record<string, number | null>;
+    feature_dominante: string | null;
+    equipamentos_com_feature_dominante: string[];
+  } | null;
+  benchmark_sintetico: {
+    sintetico: boolean;
+    previsor: string;
+    semente: number;
+    eventos_por_tipo_por_equipamento: number;
+    limiar_z: number;
+    por_tipo: TaxaPorTipo[];
+    total_detectados: number;
+    total_eventos: number;
+    taxa_deteccao_pct: number | null;
+    falso_alarme_horas: number;
+    horas_base: number;
+    taxa_falso_alarme_pct: number | null;
+  } | null;
+  avisos: string[];
 };
