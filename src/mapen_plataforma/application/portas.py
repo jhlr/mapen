@@ -63,6 +63,14 @@ class EventoRepo(Protocol):
     def listar(self, empresa_id: str, limite: int) -> list[Evento]: ...
 
 
+class EventoUnicoRepo(Protocol):
+    """Gravacao idempotente de eventos que o dispositivo reenvia ate ter confirmacao."""
+
+    def adicionar_se_novo(self, evento: Evento) -> bool:
+        """Grava so se o id ainda nao existe (reenvio do lote nao duplica). False se ja existia. Atomico."""
+        ...
+
+
 class NonceStore(Protocol):
     def registrar(self, device_id: str, nonce: str, expira_em: datetime) -> bool:
         """Grava o nonce. False se ja existia (repeticao). Atomico."""

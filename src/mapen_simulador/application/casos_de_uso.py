@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 from mapen_plataforma.domain.comando import Acao, ComandoRele
 from mapen_simulador.application.portas import (
     EnvioComando,
+    EnvioEventos,
     EnvioLeituras,
     FonteSerie,
     GeradorNonce,
@@ -38,6 +39,7 @@ class PedidoSimulacao:
 class SimularSensor:
     fonte: FonteSerie
     envio: EnvioLeituras
+    envio_eventos: EnvioEventos | None = None
 
     def executar(self, pedido: PedidoSimulacao) -> RelatorioSimulacao:
         serie = self.fonte.carregar(pedido.equipamento, pedido.inicio_fonte, pedido.duracao)
@@ -66,6 +68,10 @@ class SimularSensor:
                 dispositivo.confirmar(lote)
                 confirmadas.update(a.seq for a in lote.amostras)
                 lotes_ok.append(lote.id)
+            if self.envio_eventos is not None:
+                pendentes = dispositivo.eventos_pendentes()
+                if pendentes and self.envio_eventos.enviar(pendentes):
+                    dispositivo.confirmar_eventos(len(pendentes))
             k += 1
             t = serie.inicio + passo * k
         return RelatorioSimulacao(
@@ -78,6 +84,8 @@ class SimularSensor:
             eventos=dispositivo.eventos,
             lacunas=dispositivo.lacunas(),
             lotes_confirmados=tuple(lotes_ok),
+            eventos_confirmados=len(dispositivo.eventos) - dispositivo.eventos_nao_confirmados if self.envio_eventos else 0,
+            eventos_nao_confirmados=dispositivo.eventos_nao_confirmados if self.envio_eventos else 0,
         )
 
 

@@ -48,6 +48,7 @@ class DispositivoSimulado:
         self._seq = 0
         self._ticks: list[datetime] = []
         self._eventos: list[EventoDispositivo] = []
+        self._eventos_confirmados = 0
         self._perdidas = 0
         self._conectividade = Conectividade.ONLINE
         self._bateria = cenario.autonomia
@@ -107,6 +108,22 @@ class DispositivoSimulado:
             fatia = tuple(itens[i : i + n])
             lotes.append(LoteLeituras(f"{self._cfg.device_id}:{fatia[0].seq}-{fatia[-1].seq}", fatia))
         return lotes
+
+    def eventos_pendentes(self) -> list[EventoDispositivo]:
+        """Eventos ainda nao confirmados pelo servidor (so com conexao), do mais antigo ao mais novo."""
+        if self._conectividade is not Conectividade.ONLINE:
+            return []
+        return self._eventos[self._eventos_confirmados :]
+
+    def confirmar_eventos(self, quantidade: int) -> None:
+        """Os `quantidade` eventos mais antigos pendentes foram confirmados."""
+        if not 0 <= quantidade <= len(self._eventos) - self._eventos_confirmados:
+            raise ErroSimulador("confirmacao de mais eventos do que os pendentes")
+        self._eventos_confirmados += quantidade
+
+    @property
+    def eventos_nao_confirmados(self) -> int:
+        return len(self._eventos) - self._eventos_confirmados
 
     def confirmar(self, lote: LoteLeituras) -> None:
         """So depois da confirmacao do servidor o lote sai do buffer."""

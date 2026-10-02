@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from typing import Protocol
 
 import httpx
@@ -10,6 +10,7 @@ import httpx
 from mapen_plataforma.domain.comando import ComandoRele
 from mapen_simulador.application.portas import RespostaComando
 from mapen_simulador.domain.amostras import LoteLeituras
+from mapen_simulador.domain.eventos import EventoDispositivo
 
 
 class RespostaHttp(Protocol):
@@ -48,6 +49,38 @@ class EnvioLeiturasHttp:
         try:
             resposta = self._client.post(
                 f"/sensores/{self._sensor_id}/leituras",
+                json=corpo,
+                headers={"Authorization": f"Bearer {self._token}"},
+            )
+        except httpx.TransportError:
+            return False
+        return resposta.status_code == 200
+
+
+class EnvioEventosHttp:
+    """POST /sensores/{id}/eventos com o token do dispositivo. So status 200 e 'confirmado'."""
+
+    def __init__(self, client: ClienteHttp, sensor_id: str, token: str) -> None:
+        self._client = client
+        self._sensor_id = sensor_id
+        self._token = token
+
+    def enviar(self, eventos: Sequence[EventoDispositivo]) -> bool:
+        corpo = {
+            "eventos": [
+                {
+                    "tipo": e.tipo.value,
+                    "inicio": e.inicio.isoformat(),
+                    "fim": None if e.fim is None else e.fim.isoformat(),
+                    "duracao_s": e.duracao_s,
+                    "bateria_esgotada": e.bateria_esgotada,
+                }
+                for e in eventos
+            ]
+        }
+        try:
+            resposta = self._client.post(
+                f"/sensores/{self._sensor_id}/eventos",
                 json=corpo,
                 headers={"Authorization": f"Bearer {self._token}"},
             )

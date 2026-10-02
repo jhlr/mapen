@@ -26,6 +26,7 @@ from mapen_plataforma.application.casos_de_uso import (
     ObterConfiguracao,
     PedidoComando,
     RankingEquipamentos,
+    RegistrarEventosDispositivo,
     RegistrarLeitura,
     SolicitarDesligamento,
 )
@@ -55,6 +56,7 @@ class Servicos:
     autenticar_dispositivo: AutenticarDispositivo
     cadastro: Cadastro
     registrar_leitura: RegistrarLeitura
+    registrar_eventos_dispositivo: RegistrarEventosDispositivo
     consumo_agora: ConsumoAgoraEHoje
     consumo_horario: ConsumoHorario
     custo: ListarConsumoECusto
@@ -182,6 +184,11 @@ def criar_app(servicos: Servicos) -> FastAPI:
     def registrar_leituras(sensor_id: str, corpo: e.LeiturasIn, p: Dispositivo) -> e.LeiturasOut:
         lote = [x.para_dominio(sensor_id) for x in corpo.leituras]
         return e.LeiturasOut(gravadas=servicos.registrar_leitura.executar(p.empresa_id, sensor_id, lote))
+
+    @app.post("/sensores/{sensor_id}/eventos")
+    def registrar_eventos_dispositivo(sensor_id: str, corpo: e.EventosDispositivoIn, p: Dispositivo) -> e.EventosDispositivoOut:
+        lote = [x.para_dominio() for x in corpo.eventos]
+        return e.EventosDispositivoOut.de(servicos.registrar_eventos_dispositivo.executar(p.empresa_id, sensor_id, lote))
 
     @app.get("/sensores/{sensor_id}/consumo-agora")
     def consumo_agora(sensor_id: str, p: Autenticado) -> e.ConsumoAgoraOut:

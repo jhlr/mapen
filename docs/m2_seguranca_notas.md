@@ -83,7 +83,7 @@ Cobertura do item 9: nonce apos reinicio com banco em arquivo (`test_nonce_sobre
 ### Autenticacao
 
 - Endpoints da empresa: `Authorization: Bearer <chave_api>`. O header `X-Empresa-Id` foi removido (e ignorado). Falha: `401 {"detail":"nao autenticado"}` com `WWW-Authenticate: Bearer`.
-- Ingestao (`POST /sensores/{id}/leituras`): `Authorization: Bearer <token_dispositivo>` (a chave da empresa nao vale ai, e o token do dispositivo nao vale nos demais).
+- Ingestao (`POST /sensores/{id}/leituras` e `POST /sensores/{id}/eventos`): `Authorization: Bearer <token_dispositivo>` (a chave da empresa nao vale ai, e o token do dispositivo nao vale nos demais).
 - Chave de demo: impressa no stdout na partida (`[demo] empresa=demo chave_api=...`) ou fixada por `MAPEN_CHAVE_API_DEMO` / `MAPEN_CHAVE_API_OUTRA` (minimo 32 caracteres). Nova empresa: `.venv/bin/python -m mapen_plataforma.interface.cli criar-empresa --nome "X" [--principal admin] [--db caminho]` (imprime `empresa_id` e `chave_api` uma vez). Variavel nova: `MAPEN_SEGREDO_MESTRE`. Variaveis removidas: `MAPEN_DESLIGAMENTO_REMOTO`, `MAPEN_CHAVE_DEMO`.
 - Dashboard: trocar `MAPEN_EMPRESA_ID` por uma chave de API (por exemplo `MAPEN_API_KEY`) e mandar o header acima.
 
@@ -105,6 +105,7 @@ Toda data de entrada e saida tem fuso (`2018-08-01T00:00:00-03:00`; `+` vai como
 | `PATCH /regras/{id}` | `{"ativo"}` | `{"ativo"}` |
 | `GET /configuracao`, `PUT /configuracao` | `{"desligamento_remoto_habilitado": bool}` | idem; o PUT grava evento `configuracao_alterada` |
 | `POST /sensores/{id}/leituras` (token de dispositivo) | `{"leituras":[{equipamento, ts (com fuso), potencia_w?, tensao_v?, kwh?, ausente?}]}` ate 5000 | `{"gravadas": n}` |
+| `POST /sensores/{id}/eventos` (token de dispositivo) | `{"eventos":[{tipo: ultimo_suspiro\|queda_energia\|falha_conexao, inicio (com fuso, relogio do dispositivo), fim?, duracao_s?, bateria_esgotada?}]}` ate 100 | `{"gravados": n, "duplicados": m}` |
 | `GET /sensores/{id}/consumo-agora` | | como antes, `ts_referencia` com fuso |
 | `GET /sensores/{id}/custo` | `inicio`, `fim` com fuso, `modalidade` | como antes |
 | `GET /sensores/{id}/ranking` | `inicio`, `fim`, `modalidade`, `n` (1..100) | como antes |
@@ -208,3 +209,9 @@ Sem parametros. Le `previsao.json` (estudo de previsao do dia seguinte do M3, ve
 2. Nenhum cache: cada requisicao le e valida os JSON (80 KB de alertas).
 3. `dashboard/` nao foi alterado.
 4. Os testes novos (`tests/m2/test_resultados_m3.py`, 48) nao foram vistos vermelhos contra uma implementacao quebrada.
+
+## Eventos do dispositivo (2026-10-02)
+
+`POST /sensores/{id}/eventos` recebe o que o dispositivo mediu no proprio relogio (RTC): `ultimo_suspiro` (so o inicio da queda), `queda_energia` (inicio, fim e duracao, ou so o inicio quando o RTC nao sobreviveu a bateria zerada) e `falha_conexao`. Mesma autenticacao da ingestao de leituras (token do dispositivo ligado ao `sensor_id` da URL; chave de empresa e token de outro sensor dao 401; sensor de outra empresa nao e alcancavel). Regras: so os tres tipos acima (os demais, como `desligamento_executado`, sao 422: nascem na plataforma); campo desconhecido e 422 (`autorizado_por`, `equipamento_id`, `origem` nao entram); instante sem fuso, `fim` antes do `inicio`, duracao negativa ou NaN, `ultimo_suspiro` com `fim`/`duracao_s` e lote com mais de 100 eventos sao 422; instante mais de 1 dia no futuro da plataforma e 422 (RTC com data absurda nao pode fixar o evento no futuro do log); um evento invalido recusa o lote inteiro. Idempotencia: id deterministico `disp-` + SHA-256 de (sensor, tipo, inicio em UTC), com `INSERT ... ON CONFLICT DO NOTHING`; reenviar o lote (ack perdido) devolve `duplicados` e nao grava de novo, mesmo instante em outro fuso conta como o mesmo evento. O evento entra em `evento` com `ts` = inicio pelo relogio do dispositivo, `origem` = `dispositivo`, sem regra nem autorizador, e payload `bateria_esgotada`, `fim`/`duracao_s` quando existem e `recebido_em` (relogio da plataforma), para que o desvio entre os dois relogios fique visivel. Aparece em `GET /eventos` e na tela Eventos do dashboard. Testes: `tests/m2/test_eventos_dispositivo.py` (27 casos: gravacao, idempotencia, fuso, auth, tenant, validacao, futuro, limite de lote, NaN). Prova vermelha por troca no codigo (sem git): id sem normalizar o fuso = 1 falha; sem a checagem de futuro = 2; `ON CONFLICT DO UPDATE` no lugar de `DO NOTHING` = 2.
+
+Limites: a plataforma nao registra o desvio calculado entre os relogios (so os dois instantes no payload); nao ha endpoint de consulta so de eventos de dispositivo (usa `GET /eventos`, ate 500 mais recentes); sem rate limiting (ver acima).

@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
+import hashlib
 from dataclasses import dataclass, replace
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 
 from mapen_plataforma.application.portas import (
     Atuador,
@@ -20,6 +21,7 @@ from mapen_plataforma.application.portas import (
     EquipamentoRepo,
     ErroAtuador,
     EventoRepo,
+    EventoUnicoRepo,
     GeradorId,
     LeituraRepo,
     NonceStore,
@@ -50,6 +52,7 @@ from mapen_plataforma.domain.entidades import (
     Equipamento,
     ErroDominio,
     Evento,
+    EventoDispositivo,
     Leitura,
     RegraDesligamento,
     Sensor,
@@ -61,6 +64,9 @@ MODALIDADES: tuple[str, ...] = ("convencional", "branca")
 LIMITE_EVENTOS_MAX = 500
 RANKING_N_MAX = 100
 LOTE_LEITURAS_MAX = 5000
+LOTE_EVENTOS_MAX = 100
+TOLERANCIA_FUTURO = timedelta(days=1)  # RTC com data absurda nao pode fixar o evento no futuro do log
+ORIGEM_DISPOSITIVO = "dispositivo"
 PERIODO_HORARIO_MAX = timedelta(days=31)
 TAMANHO_MIN_CHAVE = 32
 
@@ -213,6 +219,55 @@ class RegistrarLeitura:
         if self.sensores.obter(empresa_id, sensor_id) is None:
             raise NaoEncontrado(f"sensor {sensor_id!r}")
         return self.leituras.adicionar([replace(item, sensor_id=sensor_id) for item in lote])
+
+
+@dataclass(frozen=True)
+class ResultadoEventosDispositivo:
+    gravados: int
+    duplicados: int
+
+
+def _id_evento_dispositivo(sensor_id: str, e: EventoDispositivo) -> str:
+    """Id deterministico (sensor, tipo, inicio em UTC): o dispositivo reenvia o lote ate ter confirmacao."""
+    chave = f"{sensor_id}|{e.tipo.value}|{e.inicio.astimezone(UTC).isoformat()}"
+    return "disp-" + hashlib.sha256(chave.encode()).hexdigest()[:32]
+
+
+@dataclass
+class RegistrarEventosDispositivo:
+    """Grava os eventos que o dispositivo mediu no proprio relogio (ultimo suspiro, queda de energia, falha de conexao).
+
+    O instante do evento e o do RTC do dispositivo; `recebido_em` (relogio da plataforma) fica no payload,
+    entao o desvio entre os dois relogios e visivel. Reenvio do mesmo evento nao duplica.
+    """
+
+    sensores: SensorRepo
+    eventos: EventoUnicoRepo
+    relogio: Relogio
+
+    def executar(self, empresa_id: str, sensor_id: str, lote: list[EventoDispositivo]) -> ResultadoEventosDispositivo:
+        if len(lote) > LOTE_EVENTOS_MAX:
+            raise ErroDominio(f"lote acima de {LOTE_EVENTOS_MAX} eventos")
+        if self.sensores.obter(empresa_id, sensor_id) is None:
+            raise NaoEncontrado(f"sensor {sensor_id!r}")
+        agora = self.relogio.agora()
+        for e in lote:
+            if e.inicio > agora + TOLERANCIA_FUTURO or (e.fim is not None and e.fim > agora + TOLERANCIA_FUTURO):
+                raise ErroDominio("instante do evento no futuro alem da tolerancia")
+        gravados = 0
+        for e in lote:
+            payload = {"recebido_em": agora.astimezone(UTC).isoformat(), "bateria_esgotada": str(e.bateria_esgotada).lower()}
+            if e.fim is not None:
+                payload["fim"] = e.fim.astimezone(UTC).isoformat()
+            if e.duracao_s is not None:
+                payload["duracao_s"] = repr(e.duracao_s)
+            evento = Evento(
+                _id_evento_dispositivo(sensor_id, e), e.inicio, e.tipo, empresa_id, sensor_id, None,
+                ORIGEM_DISPOSITIVO, None, None, payload,
+            )
+            if self.eventos.adicionar_se_novo(evento):
+                gravados += 1
+        return ResultadoEventosDispositivo(gravados, len(lote) - gravados)
 
 
 @dataclass(frozen=True)
