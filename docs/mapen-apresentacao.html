@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<title>MAPEN — Apresentação</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reset.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/theme/black.css" id="theme">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-0:#0a0e1a; --bg-1:#0f1729; --bg-2:#172033;
+  --accent:#34d399; --accent-2:#22d3ee; --accent-3:#a78bfa;
+  --ink:#e6edf7; --ink-soft:#9aa6bd; --hi:#fbbf24;
+}
+html, body { background: var(--bg-0); }
+.reveal {
+  background:
+    radial-gradient(1200px 800px at 85% -10%, rgba(52,211,153,.18), transparent 60%),
+    radial-gradient(900px 700px at -10% 110%, rgba(34,211,238,.15), transparent 60%),
+    radial-gradient(700px 500px at 50% 50%, rgba(167,139,250,.08), transparent 70%),
+    linear-gradient(180deg, var(--bg-0), var(--bg-1));
+  color: var(--ink);
+  font-family: 'Inter', system-ui, sans-serif;
+}
+.reveal::before {
+  content:""; position:fixed; inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
+  background-size: 56px 56px;
+  pointer-events:none; z-index:0;
+}
+.reveal .slides { z-index:1; }
+.reveal h1, .reveal h2, .reveal h3 {
+  color:#fff; font-family:'Space Grotesk', sans-serif; font-weight:700;
+  letter-spacing:-0.03em; line-height:1.05;
+}
+.reveal h1 { font-size: 3.2em; }
+.reveal h2 { font-size: 2em; margin-bottom:0.6em; }
+.reveal h1 span, .reveal h2 span {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 60%, var(--accent-3) 100%);
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+}
+.reveal section { font-size: 26px; }
+.reveal p, .reveal li { color: var(--ink); }
+.reveal .small { font-size: 0.72em; color: var(--ink-soft); line-height:1.5; }
+
+.reveal .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:18px; text-align:left; }
+.reveal .grid3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; text-align:left; }
+.reveal .card {
+  background: linear-gradient(160deg, rgba(255,255,255,.04), rgba(255,255,255,.01));
+  border: 1px solid rgba(255,255,255,.08); border-radius: 14px;
+  padding: 16px 20px; position:relative; backdrop-filter: blur(10px);
+}
+.reveal .card::before {
+  content:""; position:absolute; left:0; top:14px; bottom:14px; width:3px;
+  background: linear-gradient(180deg, var(--accent), var(--accent-2)); border-radius:0 3px 3px 0;
+}
+.reveal .card strong {
+  display:block; margin-bottom:6px; color:#fff;
+  font-family:'Space Grotesk', sans-serif; font-weight:600;
+}
+.reveal .tag {
+  display:inline-block; padding:5px 12px; border-radius:999px;
+  background: rgba(52,211,153,.12); color: var(--accent); font-size:0.5em; font-weight:600;
+  font-family:'Space Grotesk', sans-serif; letter-spacing:0.04em; text-transform:uppercase;
+  border:1px solid rgba(52,211,153,.3); margin-right:6px;
+}
+.reveal .tag.warn { background: rgba(251,191,36,.12); color: var(--hi); border-color: rgba(251,191,36,.3); }
+.reveal .num {
+  display:inline-block; font-family:'Space Grotesk', sans-serif;
+  color: var(--accent); font-size:0.5em; font-weight:600; letter-spacing:0.2em; margin-bottom:8px;
+}
+.reveal table { font-size: 0.62em; border-collapse: separate; border-spacing:0; }
+.reveal th {
+  background: rgba(52,211,153,.12); color: var(--accent);
+  font-family:'Space Grotesk', sans-serif; text-transform:uppercase;
+  font-size:0.85em; letter-spacing:0.05em; padding:10px 14px; border:none;
+}
+.reveal td { padding:12px 14px; border-bottom:1px solid rgba(255,255,255,.06); }
+.reveal code {
+  background: rgba(34,211,238,.12); color:#67e8f9; padding:2px 8px; border-radius:6px;
+  font-family:'JetBrains Mono', monospace; font-size:0.85em; border:1px solid rgba(34,211,238,.2);
+}
+.reveal ul { text-align:left; list-style:none; padding-left:0; }
+.reveal ul li { position:relative; padding-left:26px; margin-bottom:10px; line-height:1.5; }
+.reveal ul li::before {
+  content:""; position:absolute; left:0; top:0.55em; width:10px; height:10px; border-radius:3px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2)); transform: rotate(45deg);
+}
+.reveal blockquote {
+  background: rgba(52,211,153,.06); border-left:3px solid var(--accent);
+  border-radius:0 12px 12px 0; padding:12px 20px; color:var(--ink); box-shadow:none;
+}
+.footer {
+  position:fixed; bottom:14px; left:26px; font-family:'Space Grotesk', sans-serif;
+  font-size:13px; color: var(--ink-soft); letter-spacing:0.08em; text-transform:uppercase;
+  display:flex; align-items:center; gap:10px; z-index:10;
+}
+.footer .dot {
+  width:8px; height:8px; border-radius:50%;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2)); box-shadow:0 0 12px var(--accent);
+}
+.reveal .slide-number {
+  font-family:'Space Grotesk', sans-serif !important; background: rgba(255,255,255,.05) !important;
+  border:1px solid rgba(255,255,255,.1); border-radius:8px; padding:4px 10px !important;
+  color: var(--ink-soft) !important;
+}
+.cover { text-align:left !important; }
+.cover h1 { font-size: 4.4em; margin-top:0.2em; }
+.cover .kicker {
+  font-family:'Space Grotesk', sans-serif; color: var(--accent); font-weight:600;
+  letter-spacing:0.14em; text-transform:uppercase; font-size:0.5em; margin-bottom:18px;
+}
+.cover .sub {
+  font-family:'Space Grotesk', sans-serif; color: var(--ink-soft); font-weight:400;
+  font-size:1.3em; margin-top:0.3em;
+}
+.cover .meta {
+  margin-top:44px; font-size:0.65em; color:var(--ink-soft);
+  border-top:1px solid rgba(255,255,255,.1); padding-top:16px;
+}
+
+/* anti-overflow layout */
+.reveal .slides > section.present{
+  box-sizing:border-box; height:100%;
+  display:flex!important; flex-direction:column; justify-content:center;
+  padding:22px 16px 46px;
+}
+</style>
+</head>
+<body>
+<div class="reveal"><div class="slides">
+
+<section class="cover">
+  <div class="kicker">◆ Perdas de energia elétrica · BD2026.2 · Kickoff Neoenergia (data a confirmar)</div>
+  <h1>MAP<span>EN</span>.</h1>
+  <p class="sub">Redflags de perda de distribuição a partir de dado público — onde e quanto a energia distribuída não vira energia cobrada.</p>
+  <div class="meta">Grupo 3 · Cesar School</div>
+</section>
+
+<section>
+  <div class="num">01 — O PROBLEMA</div>
+  <h2>Energia <span>distribuída</span> ≠ energia <span>cobrada</span></h2>
+  <div class="grid2">
+    <div class="card">
+      <strong>O que é perda de distribuição</strong>
+      <p class="small">Diferença entre o que a distribuidora injeta na rede e o que ela efetivamente fatura. Parte é técnica (perda física de transmissão), parte é não-técnica (furto, erro de medição, inadimplência).</p>
+    </div>
+    <div class="card">
+      <strong>Por que importa</strong>
+      <p class="small">Regulado pela ANEEL, ligado à revisão tarifária 2025-2026. Existe cargo formal dedicado a isso ("Eletricista Sênior — Perdas", vaga real Enel, jul/2026). Não é um problema teórico.</p>
+    </div>
+  </div>
+  <p class="small" style="margin-top:20px">O MAPEN compara distribuída vs consumida, por área, e sinaliza onde a perda foge do padrão histórico — um <strong style="color:var(--accent)">redflag</strong>.</p>
+</section>
+
+<section>
+  <div class="num">02 — DADOS</div>
+  <h2>Duas fontes públicas, <span>granularidades diferentes</span></h2>
+  <table>
+    <tr><th>Fonte</th><th>Nível</th><th>Período</th><th>O que mede</th></tr>
+    <tr><td>EPE — Mercado de Distribuição</td><td>UF</td><td>2004 → 2024</td><td><code>perda_total_GWh</code> (perda oficial, regulatória)</td></tr>
+    <tr><td>ANEEL SAMP-Balanço</td><td>Distribuidora</td><td>2003 → 2026</td><td>Disponibilidades − Requisitos (545k linhas, 128 distribuidoras)</td></tr>
+  </table>
+  <p class="small" style="margin-top:18px">100% dado público e agregado — sem acesso a leitura por cliente nem rótulo de fraude confirmada. Granularidade fina demais para despachar fiscalização, mas suficiente para sinal e comparação entre áreas.</p>
+</section>
+
+<section>
+  <div class="num">03 — ACHADO METODOLÓGICO</div>
+  <h2>A EPE <span>não é mensal</span></h2>
+  <div class="grid2">
+    <div class="card">
+      <strong>A suposição inicial</strong>
+      <p class="small">O plano original assumia sazonalidade mensal nos dois níveis (UF e distribuidora) — normal para uma série de perdas de energia.</p>
+    </div>
+    <div class="card">
+      <strong>O que os dados realmente mostram</strong>
+      <p class="small">Verificado direto no arquivo: EPE (nível UF) tem <strong style="color:var(--hi)">1 ponto por UF por ano</strong>, sempre em dezembro. SAMP-Balanço (distribuidora) é genuinamente mensal, 545k linhas.</p>
+    </div>
+  </div>
+  <blockquote style="margin-top:20px">
+    Consequência direta na modelagem: nível UF (~567 linhas em 21 anos) é pouco dado para boosting superar o heurístico z-score — <strong>o modelo 3.2 roda só no nível distribuidora</strong>. UF mantém o baseline heurístico como versão final.
+  </blockquote>
+</section>
+
+<section>
+  <div class="num">04 — ABORDAGEM</div>
+  <h2>Baseline hoje, <span>modelo</span> em cima</h2>
+  <div class="grid2">
+    <div class="card">
+      <strong>Baseline — z-score sazonal (rodando)</strong>
+      <p class="small">Perda relativa fora da faixa histórica por UF/distribuidora. <strong style="color:var(--accent)">13 redflags</strong> em 27 UFs, <strong style="color:var(--accent)">751 redflags</strong> em 128 distribuidoras. Sem rótulo, sem treino — heurística pura.</p>
+    </div>
+    <div class="card">
+      <strong>Modelo 3.2 — regressão do esperado</strong>
+      <p class="small">XGBoost/LightGBM prevê a perda esperada por distribuidora/mês; o resíduo (esperado − observado) vira o score de anomalia. Validação temporal walk-forward (nunca embaralha mês). SHAP explica cada redflag.</p>
+    </div>
+  </div>
+  <p class="small" style="margin-top:16px"><span class="tag">Não supervisionado</span><span class="tag">Sem rótulo necessário</span><span class="tag warn">Nível distribuidora apenas</span></p>
+</section>
+
+<section>
+  <div class="num">05 — POR QUE GRADIENT BOOSTING</div>
+  <h2>A escolha <span>técnica</span></h2>
+  <ul>
+    <li>Dado tabular heterogêneo (GWh, % perda, UF, distribuidora, classe, mês) — boosting lida sem engenharia manual pesada</li>
+    <li>Captura interações não-lineares (ex.: classe residencial × mês de verão × região) sozinho</li>
+    <li>SHAP + feature importance justificam cada redflag — crítico para o cliente aceitar o alerta, não só confiar</li>
+    <li>Treina em minutos em CPU no volume atual</li>
+  </ul>
+</section>
+
+<section>
+  <div class="num">06 — DE PROJETO A EMPRESA</div>
+  <h2>Fase A <span>primeiro</span>, Fase C <span>valida a tese</span></h2>
+  <div class="grid2">
+    <div class="card">
+      <strong>Fase A — o produto existe</strong>
+      <p class="small">Modelo 3.2 treinado e validado, critérios de sucesso mensuráveis, artefato público com achado metodológico + SHAP. Não depende de terceiro — é a base técnica sobre a qual qualquer versão comercial se apoia.</p>
+    </div>
+    <div class="card">
+      <strong>Fase C — plano de validação de demanda</strong>
+      <p class="small">O status quo NÃO é "nada" — é mercado regulado, com cargo formal. A granularidade que temos (UF/distribuidora) é fraca para ação operacional interna, mas certa para <strong>transparência externa</strong> (ANEEL, jornalismo de dados, analista de crédito) — é aí que buscamos o primeiro comprador real.</p>
+    </div>
+  </div>
+  <p class="small" style="margin-top:18px">Decidimos seguir como empresa mesmo sem demanda validada ainda — aceitando esse risco de propósito. A sequência A→C é o plano pra testar a tese sem depender de dado de terceiro nem esperar meses: fechar o produto, depois nomear e validar 1 comprador real.</p>
+</section>
+
+<section>
+  <div class="num">07 — ONDE ESTAMOS DE VERDADE</div>
+  <h2>Honestidade <span>acima</span> de venda</h2>
+  <div class="grid2">
+    <div class="card">
+      <strong>Quem compra isso, hoje?</strong>
+      <p class="small">Ninguém ainda. Não temos uma pessoa/cargo específico nomeado — só a categoria "distribuidoras e órgãos fiscalizadores". Isso é o próximo passo do plano de validação, não uma limitação escondida.</p>
+    </div>
+    <div class="card">
+      <strong>Por que a distribuidora assinaria?</strong>
+      <p class="small">Provavelmente não seria ela. É mercado regulado com cargo interno formal — já existe processo próprio, mais fino que o nosso dado agregado. Por isso o comprador buscado é externo (ANEEL, imprensa, analista de crédito), não a distribuidora.</p>
+    </div>
+    <div class="card">
+      <strong>Quanto dinheiro isso economiza?</strong>
+      <p class="small">Não calculado. Não existe rótulo de fraude confirmada para validar uma taxa de recuperação — inventar um número aqui violaria o próprio critério de honestidade que reescrevemos no CRISP-DM.</p>
+    </div>
+    <div class="card">
+      <strong>Essa empresa é a única?</strong>
+      <p class="small">Não. A literatura já resolve perda com ML por consumidor (leitura do medidor + rótulo de fraude). O diferencial do MAPEN é usar só dado 100% público em granularidade agregada — mais fraco para ação interna, mais forte para auditoria externa.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="num">07B — TIME</div>
+  <h2>Quem <span>constrói</span></h2>
+  <div class="grid3">
+    <div class="card"><strong>João Rietra</strong><p class="small">4º período · Banco de Dados e IA · jhlr@cesar.school</p></div>
+    <div class="card"><strong>Alex Távora</strong><p class="small">2º período · Banco de Dados e IA · ats5@cesar.school</p></div>
+    <div class="card"><strong>Eloiza Merkl</strong><p class="small">2º período · Banco de Dados e IA · em3@cesar.school</p></div>
+    <div class="card"><strong>Jéssica Freitas</strong><p class="small">2º período · Banco de Dados e IA · jmsf@cesar.school</p></div>
+    <div class="card"><strong>Lucca Lima</strong><p class="small">2º período · Banco de Dados e IA · lld2@cesar.school</p></div>
+    <div class="card"><strong>Nathália Monteiro</strong><p class="small">2º período · Banco de Dados e IA · nmc2@cesar.school</p></div>
+  </div>
+  <p class="small" style="margin-top:16px">+ Wellen Mariah Lisba (2º período · Banco de Dados e IA · wmls@cesar.school)</p>
+</section>
+
+<section>
+  <div class="num">08 — ONDE ESTAMOS</div>
+  <h2>Estado <span>atual</span></h2>
+  <table>
+    <tr><th>Fase (CRISP-DM)</th><th>Estado</th></tr>
+    <tr><td>Entendimento dos dados</td><td>✅ completo</td></tr>
+    <tr><td>Preparação dos dados</td><td>🔶 parcial — falta checagem formal de leakage</td></tr>
+    <tr><td>Modelagem</td><td>🔶 baseline rodando, modelo 3.2 em construção</td></tr>
+    <tr><td>Avaliação</td><td>🔶 redflags gerados, validação contra evento real pendente</td></tr>
+  </table>
+</section>
+
+<section>
+  <div class="num">09 — PRÓXIMOS PASSOS</div>
+  <h2>Rumo ao <span>primeiro comprador</span></h2>
+  <ul>
+    <li>Treinar modelo 3.2 (distribuidora) com validação temporal + SHAP</li>
+    <li>Artefato público: resultados + seção metodológica + gráfico SHAP</li>
+    <li>Validar redflags contra pelo menos 1 evento real conhecido</li>
+    <li>Nomear e testar 1 comprador real (ANEEL/imprensa de dados/analista de crédito) — critério de sucesso da Fase C</li>
+  </ul>
+</section>
+
+</div></div>
+<div class="footer"><span class="dot"></span> MAPEN</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@4.6.1/dist/reveal.js"></script>
+<script>
+  Reveal.initialize({ hash:true, slideNumber:'c/t', transition:'slide',
+    controls:true, progress:true, width:1280, height:720, margin:0.04, center:false });
+</script>
+</body></html>
