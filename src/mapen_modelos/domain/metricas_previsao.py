@@ -57,7 +57,7 @@ def suporte_comum(y: np.ndarray, previsoes: dict[str, np.ndarray]) -> np.ndarray
     ok = ~np.isnan(y)
     for p in previsoes.values():
         ok &= ~np.isnan(p)
-    return ok
+    return np.asarray(ok, dtype=np.bool_)
 
 
 def mediana(valores: dict[str, float]) -> float:

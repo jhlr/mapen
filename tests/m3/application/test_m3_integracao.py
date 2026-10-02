@@ -129,7 +129,11 @@ def test_alertas_trazem_explicacao_e_status_de_candidato(resultado: ResultadoM3)
     for a in alertas:
         if a.tipo == TIPO_ZSCORE:
             assert a.top_shap is None
-            assert a.janela_inicio == INICIO and a.janela_fim == FIM_TREINO
+            # a escala do z-score e refeita por semana: o historico vai do inicio do treino ate o
+            # inicio da semana (a partir de FIM_TREINO) em que o alerta cai
+            assert a.janela_inicio == INICIO
+            assert FIM_TREINO <= a.janela_fim <= a.ts < a.janela_fim + pd.Timedelta(weeks=1)
+            assert (a.janela_fim - FIM_TREINO) % pd.Timedelta(weeks=1) == pd.Timedelta(0)
             assert abs(a.z) >= 4.0
         else:
             assert a.tipo == TIPO_LIGHTGBM

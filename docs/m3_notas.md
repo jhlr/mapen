@@ -290,3 +290,28 @@ FAILED test_red_previsao.py::test_nenhuma_feature_de_previsao_usa_defasagem_meno
 3. Um andar, 22 semanas, uma unica janela reservada de 4 semanas; a classificacao pode mudar com outra janela.
 4. Os artefatos de alerta, economia e resumo e a API nao foram alterados; o `previsao.json` ainda nao e consumido por nenhum adaptador da plataforma.
 5. ETS usa periodo 24 com tipo de dia, nao periodo 168 (justificativa acima).
+
+## Alertas z-score com seasonal-naive-168 e escala semanal (2026-10-02)
+
+Motivo: o estudo de previsao mostrou que o baseline sazonal estatico (media por hora da semana, 18 semanas fixas) e o pior candidato (mediana de MASE 1,75) e que o naive-168 e o adotado. Os alertas z-score usavam justamente o baseline pior. Mudou so o detector z-score; LightGBM, MAE da tabela, SHAP e antes x depois seguem como estavam.
+
+**Regra** (`domain/baseline_naive.py`, funcao `zscore_naive168`): esperado = valor observado 168 h antes; z = (observado - esperado) / sigma; sigma = desvio dos residuos `obs(t) - obs(t-168)` na mesma hora da semana (168 posicoes, posicao = dia da semana x 24 + hora, feriado NAO vira domingo), com o mesmo piso do baseline antigo (5% do nivel medio, minimo 0,01 kW) e queda para o desvio global com menos de 3 amostras. **Refit semanal**: o periodo reservado e dividido em blocos de 168 h a partir de 2018-11-04; o sigma de cada bloco usa so residuos anteriores ao inicio do bloco (historico expansivo desde o inicio do treino). Residuos de horas que ja viraram alerta ficam de fora das semanas seguintes. `baseline_fraca` = menos de 4 semanas completas de residuo no historico (nenhum alerta real ficou fraco). `janela_baseline` do alerta = do inicio do treino ao inicio da semana do alerta. O limiar (|z| >= 4) nao foi alterado.
+
+**O que nao se refaz:** o naive-168 nao tem parametro; adapta-se a deriva por construcao. LightGBM e Ridge continuam fixos (reajuste semanal deles segue em "Nao feito" do estudo de previsao).
+
+**Efeito colateral documentado:** o residuo carrega o valor de 168 h antes, entao um evento isolado alerta duas vezes (na hora e uma semana depois, com sinal oposto). E o mesmo contorno da zona contaminada do benchmark. Feriado nacional tambem gera alerta (15/11/2018 teve 3 de z-score), porque o esperado e a mesma hora da semana passada.
+
+### Resultado real (CU-BEMS 2018Floor2, mesmo periodo reservado, mesma semente 20181104)
+
+| | Antes (media por hora da semana) | Depois (naive-168 + escala semanal) |
+|---|---|---|
+| Alertas z-score no dado real (candidatos, 0 corroborados) | 160 | 128 |
+| Benchmark sintetico, deteccao total | 84/114 (73,7%) | 88/114 (77,2%) |
+| Pico | 38/38 | 38/38 |
+| Elevacao fora de horario | 19/38 | 19/38 |
+| Ligado continuo | 27/38 | 31/38 |
+| Falso alarme (horas fora da zona, limite superior) | 114/9145 (1,25%) | 99/9145 (1,08%) |
+
+LightGBM (alertas e benchmark) saiu identico: 54 alertas, 90/114, 44/9145. Leitura honesta: o ganho e pequeno (+4 eventos de 114, -15 horas de falso alarme) e vem do ligado continuo; a elevacao fora de horario continua em 50% porque a escala por hora da semana ainda e dominada pela variancia das cargas variaveis. O benchmark e SINTETICO, nao e precisao/recall em dado real. A injecao continua usando a escala P95 do aquecimento de 168 h antes do periodo (numeros do gerador inalterados); o historico completo do treino so alimenta a escala do z-score.
+
+Testes: `tests/m3/domain/test_m3_baseline_naive.py` (esperado = 168 h antes, pico, lacunas, escala sem uso do futuro, refit por semana, censura de alertas, janela/baseline fraca). Prova vermelha por variantes quebradas do modulo (copias em scratchpad, sem git): sem censura = 2 testes falham; escala calculada com a serie inteira (vazamento do futuro) = 4 testes falham; com o modulo real, 8 passam.
