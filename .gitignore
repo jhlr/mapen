@@ -11,7 +11,10 @@ mlflow.db
 
 # modelos / dados derivados (regeráveis)
 models/
-data/
+data/*
+!data/tarifas/
+data/tarifas/*
+!data/tarifas/neoenergia_pe.csv
 data.zip
 
 # graphify (índice regenerável)
@@ -19,3 +22,4 @@ graphify-out/
 
 # OS
 .DS_Store
+.playwright-mcp/

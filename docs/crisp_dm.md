@@ -13,7 +13,7 @@
 | 1. Entendimento do negócio | 🔶 | `contexto_mapen.md` (problema, solução, escopo, stakeholders: disciplina + Neoenergia) | **Sem critérios de sucesso mensuráveis** |
 | 2. Entendimento dos dados | ✅ | `origem_dos_dados.md`, `consumo_energia_brasil.md`, `power_grid_maps.md`, `perdas_energia_brasil.md`; dados baixados (EPE, SAMP, SAMP-Balanço, ONS, IBGE, grid maps); armadilha EPE≠SAMP descoberta | descrição de variáveis consolidada (parcial) |
 | 3. Preparação dos dados | 🔶 | parquet flat por dataset; `perda_rel`, z-score sazonal derivados (`data/analise/*.csv`) | dataset final formalizado + doc de derivação completa; **checagem de leakage** |
-| 4. Modelagem | 🔶 | `modelagem_redflags.md` (decisão XGBoost/LightGBM, 2 abordagens, stack) + baseline heurística z-sazonal (`src/redflags_perdas.py`) | **modelo 3.2 (regressão do esperado) não treinado** |
+| 4. Modelagem | 🔶 | `modelagem_redflags.md` (decisão XGBoost/LightGBM, 2 abordagens, stack) + baseline heurística z-sazonal (`src/redflags_perdas.py`) | **modelo 3.2 não treinado.** Escopo corrigido (`/plan-eng-review` 2026-09-03): EPE (nível UF) é **anual**, não mensal — pouco dado (~567 linhas) pra boosting; modelo 3.2 roda só no nível distribuidora (SAMP-Balanço, genuinamente mensal, 545k linhas). UF mantém o z-score como versão final. |
 | 5. Avaliação | 🔶 | redflags históricas geradas (13 UF, 751 distribuidora); armadilhas documentadas | **validação contra eventos conhecidos** pendente; revisão do processo formal |
 | 6. Implantação | ⬜ | saídas em CSV/PNG (`data/analise/`, Desktop) | aceitação, plano de deploy/monitoramento, relatório final |
 
@@ -33,8 +33,7 @@
 | Critério | Sugestão MAPEN |
 |---|---|
 | Financeiro | R$ de perda "explicada"/priorizada por redflag, ou nº de fiscalizações direcionadas |
-| Técnico (recall) | % das redflags acionadas que coincidem com evento real conhecido (ex.: 13 redflags UF) |
-| Técnico (precisão) | % de alertas confirmados (falsos positivos controlados) |
+| Técnico (corroboração) | Nº absoluto de redflags acionadas com evento real correspondente encontrado (busca manual/notícia) — **não %**, pois não existe rótulo de fiscalização confirmado pra calcular precisão/recall sem estimar (verificado em `/plan-eng-review` 2026-09-03) |
 | Aceitação | decisão por redflag justificável por SHAP/feature importance (modelagem 3.2) |
 
 ## 2. Entendimento dos dados
