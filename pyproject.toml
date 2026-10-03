@@ -3,30 +3,168 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "mapen-cv"
+name = "mapen-analise"
 version = "0.1.0"
-description = "MAPEN - subprojeto de visao computacional: leitura e validacao de fotos de medidores (TrOCR/PP-OCR)"
+description = "MAPEN - camada de dados e modelagem de redflags de perda energetica"
 requires-python = ">=3.11"
 dependencies = [
-    "torch",
-    "torchvision",
-    "transformers",
-    "datasets",
-    "accelerate",
-    "sentencepiece",
-    "tokenizers",
     "pandas",
     "pyarrow",
     "duckdb",
-    "pillow",
-    "mlflow",
+    "openpyxl",
+    "matplotlib",
+    "huggingface_hub",
+    "xgboost",
+    "lightgbm",
+    "scikit-learn",
+    "statsmodels",
+    "shap",
+    "pyyaml",
+    "python-dateutil",
+    "fastapi",
+    "uvicorn",
 ]
 
+[project.optional-dependencies]
+dev = ["pytest", "mypy", "pandas-stubs", "types-PyYAML", "types-python-dateutil", "httpx", "import-linter"]
+
 [project.scripts]
-mapen-cv = "mapen_cv.cli:main"
+mapen-simulador = "mapen_simulador.interface.cli:main"
 
 [tool.setuptools]
-package-dir = {"" = "src"}
+py-modules = []
 
 [tool.setuptools.packages.find]
 where = ["src"]
+include = ["mapen_aconselhamento*", "mapen_plataforma*", "mapen_modelos*", "mapen_simulador*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.mypy]
+strict = true
+files = ["src/mapen_aconselhamento", "src/mapen_plataforma", "src/mapen_modelos", "src/mapen_simulador", "tests/m1", "tests/m2", "tests/m3", "tests/simulador", "tests/contratos"]
+
+# scikit-learn e statsmodels nao publicam marcador py.typed nem stubs: tipos Any so nas fronteiras
+# dos adaptadores de infraestrutura do M3.
+[[tool.mypy.overrides]]
+module = ["sklearn.*", "statsmodels.*"]
+ignore_missing_imports = true
+
+[tool.importlinter]
+root_packages = ["mapen_aconselhamento", "mapen_plataforma", "mapen_modelos", "mapen_simulador"]
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "M1 camadas: interface > infrastructure > application > domain"
+type = "layers"
+layers = [
+    "mapen_aconselhamento.interface",
+    "mapen_aconselhamento.infrastructure",
+    "mapen_aconselhamento.application",
+    "mapen_aconselhamento.domain",
+]
+
+[[tool.importlinter.contracts]]
+name = "M1 dominio e aplicacao sem I/O, banco, YAML nem a plataforma"
+type = "forbidden"
+source_modules = ["mapen_aconselhamento.domain", "mapen_aconselhamento.application"]
+forbidden_modules = ["duckdb", "yaml", "httpx", "fastapi", "starlette", "mapen_plataforma"]
+
+[[tool.importlinter.contracts]]
+name = "M1 nao depende da plataforma"
+type = "forbidden"
+source_modules = ["mapen_aconselhamento"]
+forbidden_modules = ["mapen_plataforma"]
+
+[[tool.importlinter.contracts]]
+name = "M2 camadas: interface > infrastructure > application > domain"
+type = "layers"
+layers = [
+    "mapen_plataforma.interface",
+    "mapen_plataforma.infrastructure",
+    "mapen_plataforma.application",
+    "mapen_plataforma.domain",
+]
+
+[[tool.importlinter.contracts]]
+name = "M2 dominio e aplicacao sem I/O nem framework"
+type = "forbidden"
+source_modules = ["mapen_plataforma.domain", "mapen_plataforma.application"]
+forbidden_modules = ["fastapi", "starlette", "pydantic", "duckdb", "pandas", "numpy", "httpx", "mapen_aconselhamento"]
+
+[[tool.importlinter.contracts]]
+name = "M3 camadas: interface > infrastructure > application > domain"
+type = "layers"
+layers = [
+    "mapen_modelos.interface",
+    "mapen_modelos.infrastructure",
+    "mapen_modelos.application",
+    "mapen_modelos.domain",
+]
+
+[[tool.importlinter.contracts]]
+name = "M3 dominio e aplicacao sem I/O, modelos, banco nem camadas externas do M1"
+type = "forbidden"
+source_modules = ["mapen_modelos.domain", "mapen_modelos.application"]
+forbidden_modules = [
+    "duckdb",
+    "lightgbm",
+    "shap",
+    "sklearn",
+    "statsmodels",
+    "yaml",
+    "httpx",
+    "fastapi",
+    "starlette",
+    "mapen_plataforma",
+    "mapen_aconselhamento.infrastructure",
+    "mapen_aconselhamento.interface",
+]
+
+[[tool.importlinter.contracts]]
+name = "M3 nao depende da plataforma"
+type = "forbidden"
+source_modules = ["mapen_modelos"]
+forbidden_modules = ["mapen_plataforma"]
+
+[[tool.importlinter.contracts]]
+name = "M1 e M2 nao dependem do M3"
+type = "forbidden"
+source_modules = ["mapen_aconselhamento", "mapen_plataforma"]
+forbidden_modules = ["mapen_modelos"]
+
+[[tool.importlinter.contracts]]
+name = "Simulador camadas: interface > infrastructure > application > domain"
+type = "layers"
+layers = [
+    "mapen_simulador.interface",
+    "mapen_simulador.infrastructure",
+    "mapen_simulador.application",
+    "mapen_simulador.domain",
+]
+
+[[tool.importlinter.contracts]]
+name = "Simulador dominio e aplicacao sem I/O, rede, banco nem camadas externas das outras pecas"
+type = "forbidden"
+source_modules = ["mapen_simulador.domain", "mapen_simulador.application"]
+forbidden_modules = [
+    "duckdb",
+    "pandas",
+    "numpy",
+    "httpx",
+    "fastapi",
+    "starlette",
+    "pydantic",
+    "mapen_aconselhamento",
+    "mapen_modelos",
+    "mapen_plataforma.application",
+    "mapen_plataforma.infrastructure",
+    "mapen_plataforma.interface",
+]
+
+[[tool.importlinter.contracts]]
+name = "Nenhuma outra peca depende do simulador"
+type = "forbidden"
+source_modules = ["mapen_aconselhamento", "mapen_plataforma", "mapen_modelos"]
+forbidden_modules = ["mapen_simulador"]
