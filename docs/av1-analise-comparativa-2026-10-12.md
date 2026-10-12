@@ -45,7 +45,7 @@ O pacote cobre quase tudo que o professor pede e responde à encomenda do Grupo 
 | `python -m pytest codigo -q` | 4 passaram |
 | `node codigo/conferencia_cruzada.js` (arquivos do repositório) | 2.016 comparações, 0 falhas. Bate com o relatório |
 | `node codigo/conferencia_cruzada.js` **depois** de regenerar, antes da correção | 2.016 comparações, **4 falhas** (ver 2.1) |
-| Mesma sequência **depois** da correção, em Python 3.11, 3.12 e 3.13 (pandas 3.0.6) | Bases e `resultados_python.json` idênticos aos versionados; conta +5,3248 kWh; 5 testes passam; conferência com **0 falhas** |
+| Mesma sequência **depois** da correção, em Python 3.11, 3.12 e 3.13 (pandas 3.0.6) | Bases e `resultados_python.json` idênticos aos versionados; conta +5,3248 kWh; 5 testes passam (hoje 7, depois da revisão dos nomes); conferência com **0 falhas** |
 
 ### 2.1 Divergência de reprodução (achado e corrigido)
 
@@ -59,7 +59,7 @@ Correção (nesta branch): `ranking()` ordena por `["soma_positivos", "ativo"]` 
 
 O LEIA-ME tinha o essencial (arquivo que abre o painel, ordem dos comandos, origem do dado), mas faltavam: instrução de instalação e `requirements.txt`, saída esperada de cada passo, fallback do painel (`python -m http.server`), origem do CSV usado por `--fonte` e o aviso de que ele sobrescreve arquivos. O requisito "Python 3.14" também era mais rígido que o necessário.
 
-Agora o LEIA-ME traz tudo isso e há um atalho, `python rodar.py` (só biblioteca padrão), que cria o `.venv`, instala, roda os quatro passos e confere cada resultado (testado do zero em Python 3.11, 3.12 e 3.13, e com adulteração de um arquivo versionado, que ele acusa), e o requisito virou "Python 3.11 ou mais novo" (testado em 3.11, 3.12 e 3.13; Node 22). A seção 15 do relatório foi alinhada ao LEIA-ME: requisito mínimo Python 3.11, instalação, saída esperada de cada passo e o ambiente do autor (Python 3.14, pandas 3.0.5, Node 26) mantido como registro.
+Agora o LEIA-ME traz tudo isso e há um atalho, `python rodar.py` (só biblioteca padrão), que cria o `.venv`, instala, roda os quatro passos e confere cada resultado (testado do zero em Python 3.11, 3.12 e 3.13 no Linux, e com adulteração de um arquivo versionado, que ele acusa). Ele abre o painel por padrão (`--sem-abrir` desliga) e foi ajustado para Windows: acentos no console, fim de linha CRLF e `py rodar.py`. Isso foi verificado por simulação, não em uma máquina Windows, e o requisito virou "Python 3.11 ou mais novo" (testado em 3.11, 3.12 e 3.13; Node 22). A seção 15 do relatório foi alinhada ao LEIA-ME: requisito mínimo Python 3.11, instalação, saída esperada de cada passo e o ambiente do autor (Python 3.14, pandas 3.0.5, Node 26) mantido como registro.
 
 ## 3. O que falta, por critério da rubrica
 

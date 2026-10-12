@@ -1,12 +1,14 @@
 """Roda o pacote da AV1 do começo ao fim e confere o resultado de cada passo.
 
-Uso (na pasta av1-grupo-3-mapen, com qualquer Python 3.11 ou mais novo, sem instalar nada antes):
+Uso (na pasta av1-grupo-3-mapen, com qualquer Python 3.11 ou mais novo, sem instalar nada antes).
+No Windows use `py rodar.py` se `python` não for reconhecido:
 
-    python rodar.py            # cria .venv, instala as dependências e roda os 4 passos
-    python rodar.py --abrir    # idem, e abre o painel no navegador no fim
+    python rodar.py                # cria .venv, instala as dependências, roda os 4 passos e abre o painel
+    python rodar.py --sem-abrir    # idem, sem abrir o navegador
 
 Só usa a biblioteca padrão. Sai com código 0 se todos os passos confirmaram o valor esperado
 e com código 1 se algum falhou. Um passo marcado PULADO (Node ausente) não conta como falha.
+O painel só abre se nenhum passo falhou. É um arquivo HTML local: não usa porta nem servidor.
 """
 
 from __future__ import annotations
@@ -35,13 +37,19 @@ DESVIO_ESPERADO = "5.3248"  # z1_AC1, 2018-11-12, referência A (seção 7 do re
 
 resultados: list[tuple[str, str, str]] = []
 
+# Windows: o console ou o redirecionamento podem usar uma codificação sem acentos (cp1252, cp850).
+for _fluxo in (sys.stdout, sys.stderr):
+    if (_fluxo.encoding or "").lower().replace("-", "") != "utf8":
+        _fluxo.reconfigure(encoding="utf-8", errors="replace")
+
 
 def python_do_venv() -> Path:
     return VENV / ("Scripts/python.exe" if sys.platform == "win32" else "bin/python")
 
 
 def rodar(cmd: list[str | Path]) -> tuple[int, str]:
-    env = {**os.environ, "PYTHONIOENCODING": "utf-8"}
+    # PYTHONUTF8 faz os scripts filhos lerem e escreverem em UTF-8 também no Windows (padrão lá: cp1252).
+    env = {**os.environ, "PYTHONIOENCODING": "utf-8", "PYTHONUTF8": "1"}
     p = subprocess.run([str(c) for c in cmd], cwd=RAIZ, env=env, capture_output=True)
     return p.returncode, (p.stdout + p.stderr).decode("utf-8", errors="replace")
 
@@ -52,7 +60,8 @@ def registrar(passo: str, status: str, detalhe: str) -> None:
 
 
 def hashes() -> dict[Path, str]:
-    return {a: hashlib.sha256(a.read_bytes()).hexdigest() for a in VERSIONADOS}
+    # Ignora a diferença de fim de linha (CRLF no Windows com autocrlf, LF no Linux e no Mac).
+    return {a: hashlib.sha256(a.read_bytes().replace(b"\r\n", b"\n")).hexdigest() for a in VERSIONADOS}
 
 
 def preparar_ambiente() -> bool:
@@ -113,7 +122,7 @@ def passo4_testes() -> None:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--abrir", action="store_true", help="abre dashboard/index.html no navegador no fim")
+    ap.add_argument("--sem-abrir", action="store_true", help="não abre dashboard/index.html no navegador no fim")
     args = ap.parse_args()
 
     print(f"Pacote: {RAIZ}\n")
@@ -130,9 +139,14 @@ def main() -> int:
         print(f"RESULTADO: FALHOU ({len(falhas)} passo(s)). Veja as mensagens acima.")
     else:
         print("RESULTADO: OK" + (f" ({len(puladas)} passo pulado, veja acima)" if puladas else ""))
-        print(f"Painel: {RAIZ / 'dashboard' / 'index.html'}")
-        if args.abrir:
-            webbrowser.open((RAIZ / "dashboard" / "index.html").as_uri())
+        painel = RAIZ / "dashboard" / "index.html"
+        print(f"Painel: {painel}")
+        if not args.sem_abrir:
+            if webbrowser.open(painel.as_uri()):
+                print("Abrindo o painel no navegador ...")
+            else:
+                print("Não consegui abrir o navegador sozinho. Abra o arquivo acima com duplo clique,")
+                print("ou rode 'python -m http.server' dentro de dashboard/ e acesse http://localhost:8000")
     return 1 if falhas else 0
 
 
