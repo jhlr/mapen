@@ -9,6 +9,11 @@ const C = require(path.join(raiz, "dashboard/calculo.js"));
 const py = JSON.parse(fs.readFileSync(path.join(raiz, "evidencias/resultados_python.json"), "utf8"));
 const TOL = 1e-3;
 let maxDif = 0, n = 0, falhas = 0;
+// Todo ativo precisa de rótulo legível para o painel (nome, zona e tipo); sem isso a tela volta a mostrar só o código.
+for (const a of globalThis.D.ativos) {
+  const r = (globalThis.D.rotulos || {})[a];
+  if (!r || !r.nome || !r.completo) { falhas++; console.error("ativo sem rótulo em dados.js: " + a); }
+}
 for (const ref of ["A", "B", "C"]) {
   for (const linha of py.desvios_diarios[ref]) {
     const p = C.serieAtivo(globalThis.D, linha.ativo, ref, "2018-11-04", "2018-12-01").find((x) => x.data === linha.data);

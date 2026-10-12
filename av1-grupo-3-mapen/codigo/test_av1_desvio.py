@@ -65,3 +65,17 @@ def test_ranking_desempata_por_nome_do_ativo() -> None:
                       "desvio": [positivos.get(a, 0.0) for a in ativos]})
     rk = av.ranking(d)
     assert list(rk["ativo"]) == ["z1_AC1", "z4_AC1", "z2_Light", "z3_Light", "z1_Light", "z1_Plug", "z2_Plug", "z4_Plug"]
+
+
+def test_rotulos_traduzem_o_codigo_do_ativo_em_nome_legivel() -> None:
+    r = av.rotulos_ativos(["z1_AC1", "z2_Light", "z4_Plug", "z9_AC12", "estranho"], {"z4_Plug": 0.0, "z1_AC1": 59.6})
+    assert r["z1_AC1"]["nome"] == "Ar-condicionado 1" and r["z1_AC1"]["zona"] == 1
+    assert r["z1_AC1"]["completo"] == "Ar-condicionado 1 · zona 1"
+    assert r["z2_Light"]["nome"] == "Iluminação" and r["z2_Light"]["completo"] == "Iluminação · zona 2"
+    assert r["z9_AC12"]["nome"] == "Ar-condicionado 12"
+    assert "nunca consumiu" in str(r["z4_Plug"]["nota"]).lower() and r["z1_AC1"]["nota"] == ""  # nota só quando o máximo do recorte é 0
+
+
+def test_rotulo_de_codigo_desconhecido_cai_no_proprio_codigo() -> None:
+    r = av.rotulos_ativos(["estranho"], {"estranho": 1.0})
+    assert r["estranho"]["nome"] == "estranho" and r["estranho"]["completo"] == "estranho" and r["estranho"]["zona"] is None
