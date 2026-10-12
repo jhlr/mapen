@@ -283,6 +283,7 @@ Registrar: perfil da pessoa (usuário real ou colega), resposta e dificuldade de
 
 - **Entrada e onde obter:** `dados/recorte_minuto.csv.gz` (já incluso). Original: figshare, DOI 10.6084/m9.figshare.11726517 (o artigo), arquivo `2018Floor2.csv` (id 21350166, cerca de 41 MB).
 - **Ferramentas:** Python 3.11 ou mais novo (testado em 3.11, 3.12 e 3.13, com pandas 3.0.6) e Node (só para a conferência cruzada; testado com Node 22); Chrome para as capturas. O autor produziu os resultados com Python 3.14, pandas 3.0.5, numpy 2.5.2 e Node 26; as bases e os resultados saem idênticos nas versões testadas. Instalação: `pip install -r requirements.txt` (pandas, numpy, pytest), de preferência num ambiente virtual.
+- **Atalho:** `python rodar.py` (só biblioteca padrão) cria o `.venv`, instala as dependências, roda os quatro passos abaixo e confere cada resultado (`OK`, `FALHOU` ou `PULADO`); `--abrir` abre o painel.
 - **Ordem de execução**, na pasta `av1-grupo-3-mapen/` (saída esperada de cada passo no `LEIA-ME.md`):
   1. `python codigo/av1_desvio.py` (usa o recorte incluso; regrava bases e resultados com o mesmo conteúdo; com `--fonte <2018Floor2.csv>` refaz o recorte e a qualidade)
   2. `python codigo/conta_independente.py z1_AC1 2018-11-12 A` (desvio +5,3248 kWh, diferença 0,00003 kWh)

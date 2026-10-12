@@ -13,7 +13,17 @@ Estado do painel pela URL: `index.html?ativo=z1_AC1&de=2018-11-04&ate=2018-12-01
 
 ## 2. Recalcular e conferir os números
 
-Requisitos: **Python 3.11 ou mais novo** (testado em 3.11, 3.12 e 3.13) e **Node** (só para o passo 3; testado com Node 22).
+**Jeito rápido:** com Python 3.11 ou mais novo, na pasta `av1-grupo-3-mapen`:
+
+```
+python rodar.py            # cria .venv, instala as dependências, roda os 4 passos e confere cada resultado
+python rodar.py --abrir    # idem, e abre o painel no navegador no fim
+```
+
+Só usa a biblioteca padrão. Cada passo termina com `OK`, `FALHOU` ou `PULADO` (Node ausente) e o script sai com código 1 se algo falhar. Leva cerca de 20 segundos (a primeira vez inclui baixar pandas e numpy). Os passos manuais abaixo fazem a mesma coisa, um por um.
+
+
+Requisitos: **Python 3.11 ou mais novo** (testado em 3.11, 3.12 e 3.13) e **Node** (só para o passo 3; testado com Node 22). Sem Node, `rodar.py` pula o passo 3.
 
 ```
 cd av1-grupo-3-mapen
@@ -51,6 +61,7 @@ Isso **sobrescreve** `dados/recorte_minuto.csv.gz` e `evidencias/verificacoes_qu
 | `codigo/` | pipeline, conta independente, conferência cruzada, testes |
 | `dashboard/` | painel estático (HTML, CSS, JS, `dados.js`) |
 | `evidencias/` | rascunho, versões do painel, captura anotada, casos (E4), qualidade, contrastes, resultados |
+| `rodar.py` | roda e confere tudo (cria `.venv`, instala, passos 1 a 4) |
 | `requirements.txt` | dependências Python dos passos 1, 2 e 4 |
 
 ## Pendente do grupo
