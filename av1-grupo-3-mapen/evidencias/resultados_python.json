@@ -1,0 +1,5666 @@
+{
+ "ranking": {
+  "A": [
+   {
+    "ativo": "z1_AC1",
+    "soma_positivos": 66.215,
+    "soma_negativos": -323.847,
+    "saldo": -257.633,
+    "dias_validos": 28,
+    "observado": 5226.447,
+    "esperado": 5484.08
+   },
+   {
+    "ativo": "z4_AC1",
+    "soma_positivos": 38.414,
+    "soma_negativos": -12.73,
+    "saldo": 25.684,
+    "dias_validos": 28,
+    "observado": 1895.18,
+    "esperado": 1869.496
+   },
+   {
+    "ativo": "z2_Light",
+    "soma_positivos": 4.509,
+    "soma_negativos": -54.972,
+    "saldo": -50.462,
+    "dias_validos": 28,
+    "observado": 389.75,
+    "esperado": 440.213
+   },
+   {
+    "ativo": "z3_Light",
+    "soma_positivos": 2.04,
+    "soma_negativos": -38.588,
+    "saldo": -36.548,
+    "dias_validos": 28,
+    "observado": 330.562,
+    "esperado": 367.111
+   },
+   {
+    "ativo": "z1_Plug",
+    "soma_positivos": 0.017,
+    "soma_negativos": -59.422,
+    "saldo": -59.405,
+    "dias_validos": 28,
+    "observado": 692.008,
+    "esperado": 751.413
+   },
+   {
+    "ativo": "z1_Light",
+    "soma_positivos": 0.0,
+    "soma_negativos": -331.981,
+    "saldo": -331.981,
+    "dias_validos": 28,
+    "observado": 1642.394,
+    "esperado": 1974.374
+   },
+   {
+    "ativo": "z2_Plug",
+    "soma_positivos": 0.0,
+    "soma_negativos": -43.806,
+    "saldo": -43.806,
+    "dias_validos": 28,
+    "observado": 96.052,
+    "esperado": 139.858
+   },
+   {
+    "ativo": "z4_Plug",
+    "soma_positivos": 0.0,
+    "soma_negativos": 0.0,
+    "saldo": 0.0,
+    "dias_validos": 28,
+    "observado": 0.0,
+    "esperado": 0.0
+   }
+  ],
+  "B": [
+   {
+    "ativo": "z1_AC1",
+    "soma_positivos": 90.326,
+    "soma_negativos": -238.596,
+    "saldo": -148.27,
+    "dias_validos": 28,
+    "observado": 5226.447,
+    "esperado": 5374.717
+   },
+   {
+    "ativo": "z4_AC1",
+    "soma_positivos": 33.157,
+    "soma_negativos": -14.565,
+    "saldo": 18.592,
+    "dias_validos": 28,
+    "observado": 1895.18,
+    "esperado": 1876.588
+   },
+   {
+    "ativo": "z1_Plug",
+    "soma_positivos": 16.526,
+    "soma_negativos": -27.957,
+    "saldo": -11.431,
+    "dias_validos": 28,
+    "observado": 692.008,
+    "esperado": 703.439
+   },
+   {
+    "ativo": "z3_Light",
+    "soma_positivos": 11.33,
+    "soma_negativos": -24.989,
+    "saldo": -13.659,
+    "dias_validos": 28,
+    "observado": 330.562,
+    "esperado": 344.221
+   },
+   {
+    "ativo": "z2_Light",
+    "soma_positivos": 6.291,
+    "soma_negativos": -48.373,
+    "saldo": -42.081,
+    "dias_validos": 28,
+    "observado": 389.75,
+    "esperado": 431.832
+   },
+   {
+    "ativo": "z2_Plug",
+    "soma_positivos": 0.206,
+    "soma_negativos": -40.205,
+    "saldo": -39.999,
+    "dias_validos": 28,
+    "observado": 96.052,
+    "esperado": 136.05
+   },
+   {
+    "ativo": "z1_Light",
+    "soma_positivos": 0.0,
+    "soma_negativos": -265.788,
+    "saldo": -265.787,
+    "dias_validos": 28,
+    "observado": 1642.394,
+    "esperado": 1908.181
+   },
+   {
+    "ativo": "z4_Plug",
+    "soma_positivos": 0.0,
+    "soma_negativos": 0.0,
+    "saldo": 0.0,
+    "dias_validos": 28,
+    "observado": 0.0,
+    "esperado": 0.0
+   }
+  ],
+  "C": [
+   {
+    "ativo": "z1_AC1",
+    "soma_positivos": 55.505,
+    "soma_negativos": -344.598,
+    "saldo": -289.094,
+    "dias_validos": 28,
+    "observado": 5226.447,
+    "esperado": 5515.541
+   },
+   {
+    "ativo": "z4_AC1",
+    "soma_positivos": 36.787,
+    "soma_negativos": -13.105,
+    "saldo": 23.682,
+    "dias_validos": 28,
+    "observado": 1895.18,
+    "esperado": 1871.498
+   },
+   {
+    "ativo": "z2_Light",
+    "soma_positivos": 4.118,
+    "soma_negativos": -57.785,
+    "saldo": -53.667,
+    "dias_validos": 28,
+    "observado": 389.75,
+    "esperado": 443.418
+   },
+   {
+    "ativo": "z3_Light",
+    "soma_positivos": 1.948,
+    "soma_negativos": -39.507,
+    "saldo": -37.558,
+    "dias_validos": 28,
+    "observado": 330.562,
+    "esperado": 368.121
+   },
+   {
+    "ativo": "z1_Light",
+    "soma_positivos": 0.0,
+    "soma_negativos": -373.015,
+    "saldo": -373.015,
+    "dias_validos": 28,
+    "observado": 1642.394,
+    "esperado": 2015.409
+   },
+   {
+    "ativo": "z1_Plug",
+    "soma_positivos": 0.0,
+    "soma_negativos": -66.043,
+    "saldo": -66.043,
+    "dias_validos": 28,
+    "observado": 692.008,
+    "esperado": 758.052
+   },
+   {
+    "ativo": "z2_Plug",
+    "soma_positivos": 0.0,
+    "soma_negativos": -45.253,
+    "saldo": -45.253,
+    "dias_validos": 28,
+    "observado": 96.052,
+    "esperado": 141.305
+   },
+   {
+    "ativo": "z4_Plug",
+    "soma_positivos": 0.0,
+    "soma_negativos": 0.0,
+    "saldo": 0.0,
+    "dias_validos": 28,
+    "observado": 0.0,
+    "esperado": 0.0
+   }
+  ]
+ },
+ "sensibilidade": {
+  "ativo_no_topo_por_referencia": {
+   "A": "z1_AC1",
+   "B": "z1_AC1",
+   "C": "z1_AC1"
+  },
+  "ordem_por_referencia": {
+   "A": [
+    "z1_AC1",
+    "z4_AC1",
+    "z2_Light",
+    "z3_Light",
+    "z1_Plug",
+    "z1_Light",
+    "z2_Plug",
+    "z4_Plug"
+   ],
+   "B": [
+    "z1_AC1",
+    "z4_AC1",
+    "z1_Plug",
+    "z3_Light",
+    "z2_Light",
+    "z2_Plug",
+    "z1_Light",
+    "z4_Plug"
+   ],
+   "C": [
+    "z1_AC1",
+    "z4_AC1",
+    "z2_Light",
+    "z3_Light",
+    "z1_Light",
+    "z1_Plug",
+    "z2_Plug",
+    "z4_Plug"
+   ]
+  },
+  "maior_desvio_diario_por_referencia": {
+   "A": {
+    "ativo": "z1_AC1",
+    "data": "2018-11-08",
+    "desvio_kwh": 13.06
+   },
+   "B": {
+    "ativo": "z1_AC1",
+    "data": "2018-11-05",
+    "desvio_kwh": 16.22
+   },
+   "C": {
+    "ativo": "z1_AC1",
+    "data": "2018-11-08",
+    "desvio_kwh": 13.06
+   }
+  }
+ },
+ "desvios_diarios": {
+  "A": [
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-04",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-05",
+    "kwh": 296.4392,
+    "esperado": 284.0763,
+    "desvio": 12.3628,
+    "desvio_rel_pct": 4.3519
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-06",
+    "kwh": 279.6392,
+    "esperado": 293.6189,
+    "desvio": -13.9798,
+    "desvio_rel_pct": -4.7612
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-07",
+    "kwh": 264.421,
+    "esperado": 262.787,
+    "desvio": 1.634,
+    "desvio_rel_pct": 0.6218
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-08",
+    "kwh": 270.337,
+    "esperado": 257.2805,
+    "desvio": 13.0565,
+    "desvio_rel_pct": 5.0748
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-09",
+    "kwh": 237.468,
+    "esperado": 273.2572,
+    "desvio": -35.7892,
+    "desvio_rel_pct": -13.0972
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-10",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-11",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-12",
+    "kwh": 289.4012,
+    "esperado": 284.0763,
+    "desvio": 5.3248,
+    "desvio_rel_pct": 1.8744
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-13",
+    "kwh": 255.3188,
+    "esperado": 293.6189,
+    "desvio": -38.3001,
+    "desvio_rel_pct": -13.0441
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-14",
+    "kwh": 262.7217,
+    "esperado": 262.787,
+    "desvio": -0.0653,
+    "desvio_rel_pct": -0.0249
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-15",
+    "kwh": 264.6758,
+    "esperado": 257.2805,
+    "desvio": 7.3954,
+    "desvio_rel_pct": 2.8744
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-16",
+    "kwh": 266.1747,
+    "esperado": 273.2572,
+    "desvio": -7.0825,
+    "desvio_rel_pct": -2.5919
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-17",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-18",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-19",
+    "kwh": 284.5853,
+    "esperado": 284.0763,
+    "desvio": 0.509,
+    "desvio_rel_pct": 0.1792
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-20",
+    "kwh": 266.4905,
+    "esperado": 293.6189,
+    "desvio": -27.1284,
+    "desvio_rel_pct": -9.2393
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-21",
+    "kwh": 270.7083,
+    "esperado": 262.787,
+    "desvio": 7.9213,
+    "desvio_rel_pct": 3.0144
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-22",
+    "kwh": 269.8538,
+    "esperado": 257.2805,
+    "desvio": 12.5734,
+    "desvio_rel_pct": 4.887
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-23",
+    "kwh": 256.23,
+    "esperado": 273.2572,
+    "desvio": -17.0272,
+    "desvio_rel_pct": -6.2312
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-24",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-25",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-26",
+    "kwh": 289.5137,
+    "esperado": 284.0763,
+    "desvio": 5.4373,
+    "desvio_rel_pct": 1.914
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-27",
+    "kwh": 248.5375,
+    "esperado": 293.6189,
+    "desvio": -45.0814,
+    "desvio_rel_pct": -15.3537
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-28",
+    "kwh": 212.0913,
+    "esperado": 262.787,
+    "desvio": -50.6957,
+    "desvio_rel_pct": -19.2915
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-29",
+    "kwh": 218.6623,
+    "esperado": 257.2805,
+    "desvio": -38.6181,
+    "desvio_rel_pct": -15.0101
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-30",
+    "kwh": 223.1775,
+    "esperado": 273.2572,
+    "desvio": -50.0797,
+    "desvio_rel_pct": -18.3269
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-12-01",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-04",
+    "kwh": 0.2628,
+    "esperado": 0.2678,
+    "desvio": -0.005,
+    "desvio_rel_pct": -1.8668
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-05",
+    "kwh": 87.1692,
+    "esperado": 97.4696,
+    "desvio": -10.3004,
+    "desvio_rel_pct": -10.5678
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-06",
+    "kwh": 83.141,
+    "esperado": 101.0159,
+    "desvio": -17.8749,
+    "desvio_rel_pct": -17.6951
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-07",
+    "kwh": 86.995,
+    "esperado": 97.682,
+    "desvio": -10.687,
+    "desvio_rel_pct": -10.9406
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-08",
+    "kwh": 86.916,
+    "esperado": 97.8477,
+    "desvio": -10.9317,
+    "desvio_rel_pct": -11.1721
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-09",
+    "kwh": 89.1655,
+    "esperado": 96.4465,
+    "desvio": -7.281,
+    "desvio_rel_pct": -7.5493
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-10",
+    "kwh": 0.2625,
+    "esperado": 2.8641,
+    "desvio": -2.6016,
+    "desvio_rel_pct": -90.8348
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-11",
+    "kwh": 0.2657,
+    "esperado": 0.2678,
+    "desvio": -0.0022,
+    "desvio_rel_pct": -0.809
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-12",
+    "kwh": 83.5422,
+    "esperado": 97.4696,
+    "desvio": -13.9274,
+    "desvio_rel_pct": -14.289
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-13",
+    "kwh": 81.8105,
+    "esperado": 101.0159,
+    "desvio": -19.2054,
+    "desvio_rel_pct": -19.0123
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-14",
+    "kwh": 88.741,
+    "esperado": 97.682,
+    "desvio": -8.941,
+    "desvio_rel_pct": -9.1532
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-15",
+    "kwh": 80.155,
+    "esperado": 97.8477,
+    "desvio": -17.6927,
+    "desvio_rel_pct": -18.0818
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-16",
+    "kwh": 84.068,
+    "esperado": 96.4465,
+    "desvio": -12.3785,
+    "desvio_rel_pct": -12.8346
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-17",
+    "kwh": 0.2597,
+    "esperado": 2.8641,
+    "desvio": -2.6044,
+    "desvio_rel_pct": -90.9337
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-18",
+    "kwh": 0.2613,
+    "esperado": 0.2678,
+    "desvio": -0.0065,
+    "desvio_rel_pct": -2.4269
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-19",
+    "kwh": 80.4803,
+    "esperado": 97.4696,
+    "desvio": -16.9892,
+    "desvio_rel_pct": -17.4303
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-20",
+    "kwh": 76.8933,
+    "esperado": 101.0159,
+    "desvio": -24.1226,
+    "desvio_rel_pct": -23.88
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-21",
+    "kwh": 81.0102,
+    "esperado": 97.682,
+    "desvio": -16.6718,
+    "desvio_rel_pct": -17.0675
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-22",
+    "kwh": 75.7067,
+    "esperado": 97.8477,
+    "desvio": -22.141,
+    "desvio_rel_pct": -22.628
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-23",
+    "kwh": 76.0703,
+    "esperado": 96.4465,
+    "desvio": -20.3762,
+    "desvio_rel_pct": -21.1269
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-24",
+    "kwh": 0.2655,
+    "esperado": 2.8641,
+    "desvio": -2.5986,
+    "desvio_rel_pct": -90.73
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-25",
+    "kwh": 0.26,
+    "esperado": 0.2678,
+    "desvio": -0.0078,
+    "desvio_rel_pct": -2.9247
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-26",
+    "kwh": 77.6612,
+    "esperado": 97.4696,
+    "desvio": -19.8084,
+    "desvio_rel_pct": -20.3227
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-27",
+    "kwh": 72.95,
+    "esperado": 101.0159,
+    "desvio": -28.0659,
+    "desvio_rel_pct": -27.7837
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-28",
+    "kwh": 85.6025,
+    "esperado": 97.682,
+    "desvio": -12.0795,
+    "desvio_rel_pct": -12.3661
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-29",
+    "kwh": 80.1802,
+    "esperado": 97.8477,
+    "desvio": -17.6675,
+    "desvio_rel_pct": -18.0561
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-30",
+    "kwh": 82.0335,
+    "esperado": 96.4465,
+    "desvio": -14.413,
+    "desvio_rel_pct": -14.944
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-12-01",
+    "kwh": 0.2647,
+    "esperado": 2.8641,
+    "desvio": -2.5994,
+    "desvio_rel_pct": -90.7591
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-04",
+    "kwh": 4.4598,
+    "esperado": 4.7007,
+    "desvio": -0.2408,
+    "desvio_rel_pct": -5.1234
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-05",
+    "kwh": 33.2775,
+    "esperado": 35.6628,
+    "desvio": -2.3852,
+    "desvio_rel_pct": -6.6884
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-06",
+    "kwh": 33.8152,
+    "esperado": 36.1024,
+    "desvio": -2.2873,
+    "desvio_rel_pct": -6.3354
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-07",
+    "kwh": 34.665,
+    "esperado": 35.5525,
+    "desvio": -0.8875,
+    "desvio_rel_pct": -2.4963
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-08",
+    "kwh": 32.7747,
+    "esperado": 35.7939,
+    "desvio": -3.0192,
+    "desvio_rel_pct": -8.4351
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-09",
+    "kwh": 30.9597,
+    "esperado": 35.4382,
+    "desvio": -4.4785,
+    "desvio_rel_pct": -12.6375
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-10",
+    "kwh": 4.6202,
+    "esperado": 4.6028,
+    "desvio": 0.0173,
+    "desvio_rel_pct": 0.3766
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-11",
+    "kwh": 4.5698,
+    "esperado": 4.7007,
+    "desvio": -0.1308,
+    "desvio_rel_pct": -2.7833
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-12",
+    "kwh": 32.8443,
+    "esperado": 35.6628,
+    "desvio": -2.8184,
+    "desvio_rel_pct": -7.903
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-13",
+    "kwh": 32.072,
+    "esperado": 36.1024,
+    "desvio": -4.0304,
+    "desvio_rel_pct": -11.1638
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-14",
+    "kwh": 33.158,
+    "esperado": 35.5525,
+    "desvio": -2.3945,
+    "desvio_rel_pct": -6.7351
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-15",
+    "kwh": 32.4582,
+    "esperado": 35.7939,
+    "desvio": -3.3357,
+    "desvio_rel_pct": -9.3193
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-16",
+    "kwh": 32.8933,
+    "esperado": 35.4382,
+    "desvio": -2.5448,
+    "desvio_rel_pct": -7.1811
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-17",
+    "kwh": 4.5683,
+    "esperado": 4.6028,
+    "desvio": -0.0345,
+    "desvio_rel_pct": -0.7495
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-18",
+    "kwh": 4.5788,
+    "esperado": 4.7007,
+    "desvio": -0.1218,
+    "desvio_rel_pct": -2.5918
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-19",
+    "kwh": 34.5282,
+    "esperado": 35.6628,
+    "desvio": -1.1346,
+    "desvio_rel_pct": -3.1814
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-20",
+    "kwh": 32.5078,
+    "esperado": 36.1024,
+    "desvio": -3.5946,
+    "desvio_rel_pct": -9.9566
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-21",
+    "kwh": 34.2327,
+    "esperado": 35.5525,
+    "desvio": -1.3198,
+    "desvio_rel_pct": -3.7124
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-22",
+    "kwh": 32.2605,
+    "esperado": 35.7939,
+    "desvio": -3.5334,
+    "desvio_rel_pct": -9.8716
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-23",
+    "kwh": 30.0355,
+    "esperado": 35.4382,
+    "desvio": -5.4027,
+    "desvio_rel_pct": -15.2453
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-24",
+    "kwh": 4.2553,
+    "esperado": 4.6028,
+    "desvio": -0.3475,
+    "desvio_rel_pct": -7.5497
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-25",
+    "kwh": 4.204,
+    "esperado": 4.7007,
+    "desvio": -0.4967,
+    "desvio_rel_pct": -10.5659
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-26",
+    "kwh": 33.601,
+    "esperado": 35.6628,
+    "desvio": -2.0618,
+    "desvio_rel_pct": -5.7812
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-27",
+    "kwh": 32.9952,
+    "esperado": 36.1024,
+    "desvio": -3.1073,
+    "desvio_rel_pct": -8.6068
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-28",
+    "kwh": 33.256,
+    "esperado": 35.5525,
+    "desvio": -2.2965,
+    "desvio_rel_pct": -6.4595
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-29",
+    "kwh": 32.4347,
+    "esperado": 35.7939,
+    "desvio": -3.3592,
+    "desvio_rel_pct": -9.385
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-30",
+    "kwh": 32.5805,
+    "esperado": 35.4382,
+    "desvio": -2.8577,
+    "desvio_rel_pct": -8.0638
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-12-01",
+    "kwh": 3.402,
+    "esperado": 4.6028,
+    "desvio": -1.2008,
+    "desvio_rel_pct": -26.089
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-04",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-05",
+    "kwh": 21.9195,
+    "esperado": 21.5259,
+    "desvio": 0.3936,
+    "desvio_rel_pct": 1.8285
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-06",
+    "kwh": 22.874,
+    "esperado": 21.8476,
+    "desvio": 1.0264,
+    "desvio_rel_pct": 4.6981
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-07",
+    "kwh": 18.448,
+    "esperado": 24.1347,
+    "desvio": -5.6867,
+    "desvio_rel_pct": -23.5622
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-08",
+    "kwh": 13.7078,
+    "esperado": 21.4482,
+    "desvio": -7.7403,
+    "desvio_rel_pct": -36.0886
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-09",
+    "kwh": 19.642,
+    "esperado": 20.6869,
+    "desvio": -1.0449,
+    "desvio_rel_pct": -5.0511
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-10",
+    "kwh": 0.0,
+    "esperado": 0.4099,
+    "desvio": -0.4099,
+    "desvio_rel_pct": -100.0
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-11",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-12",
+    "kwh": 19.2727,
+    "esperado": 21.5259,
+    "desvio": -2.2532,
+    "desvio_rel_pct": -10.4675
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-13",
+    "kwh": 19.8968,
+    "esperado": 21.8476,
+    "desvio": -1.9507,
+    "desvio_rel_pct": -8.9289
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-14",
+    "kwh": 20.8568,
+    "esperado": 24.1347,
+    "desvio": -3.2778,
+    "desvio_rel_pct": -13.5814
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-15",
+    "kwh": 19.3382,
+    "esperado": 21.4482,
+    "desvio": -2.11,
+    "desvio_rel_pct": -9.8377
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-16",
+    "kwh": 18.253,
+    "esperado": 20.6869,
+    "desvio": -2.4339,
+    "desvio_rel_pct": -11.7655
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-17",
+    "kwh": 0.0,
+    "esperado": 0.4099,
+    "desvio": -0.4099,
+    "desvio_rel_pct": -100.0
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-18",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-19",
+    "kwh": 20.88,
+    "esperado": 21.5259,
+    "desvio": -0.6459,
+    "desvio_rel_pct": -3.0006
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-20",
+    "kwh": 17.5498,
+    "esperado": 21.8476,
+    "desvio": -4.2978,
+    "desvio_rel_pct": -19.6715
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-21",
+    "kwh": 16.7278,
+    "esperado": 24.1347,
+    "desvio": -7.4068,
+    "desvio_rel_pct": -30.6896
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-22",
+    "kwh": 23.5902,
+    "esperado": 21.4482,
+    "desvio": 2.142,
+    "desvio_rel_pct": 9.9869
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-23",
+    "kwh": 19.8665,
+    "esperado": 20.6869,
+    "desvio": -0.8204,
+    "desvio_rel_pct": -3.9659
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-24",
+    "kwh": 0.0002,
+    "esperado": 0.4099,
+    "desvio": -0.4097,
+    "desvio_rel_pct": -99.9593
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-25",
+    "kwh": 0.0003,
+    "esperado": 0.0,
+    "desvio": 0.0003,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-26",
+    "kwh": 17.3922,
+    "esperado": 21.5259,
+    "desvio": -4.1337,
+    "desvio_rel_pct": -19.2035
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-27",
+    "kwh": 15.3907,
+    "esperado": 21.8476,
+    "desvio": -6.4569,
+    "desvio_rel_pct": -29.5544
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-28",
+    "kwh": 21.979,
+    "esperado": 24.1347,
+    "desvio": -2.1557,
+    "desvio_rel_pct": -8.9318
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-29",
+    "kwh": 22.3952,
+    "esperado": 21.4482,
+    "desvio": 0.947,
+    "desvio_rel_pct": 4.4153
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-30",
+    "kwh": 19.7162,
+    "esperado": 20.6869,
+    "desvio": -0.9708,
+    "desvio_rel_pct": -4.6926
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-12-01",
+    "kwh": 0.0535,
+    "esperado": 0.4099,
+    "desvio": -0.3564,
+    "desvio_rel_pct": -86.9486
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-04",
+    "kwh": 0.1373,
+    "esperado": 1.3486,
+    "desvio": -1.2113,
+    "desvio_rel_pct": -89.8165
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-05",
+    "kwh": 4.4875,
+    "esperado": 6.9936,
+    "desvio": -2.5061,
+    "desvio_rel_pct": -35.834
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-06",
+    "kwh": 5.2145,
+    "esperado": 6.5173,
+    "desvio": -1.3028,
+    "desvio_rel_pct": -19.9903
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-07",
+    "kwh": 5.325,
+    "esperado": 6.8542,
+    "desvio": -1.5292,
+    "desvio_rel_pct": -22.31
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-08",
+    "kwh": 4.673,
+    "esperado": 6.2067,
+    "desvio": -1.5337,
+    "desvio_rel_pct": -24.711
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-09",
+    "kwh": 5.071,
+    "esperado": 5.7598,
+    "desvio": -0.6888,
+    "desvio_rel_pct": -11.9593
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-10",
+    "kwh": 0.956,
+    "esperado": 1.2843,
+    "desvio": -0.3283,
+    "desvio_rel_pct": -25.5597
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-11",
+    "kwh": 0.9558,
+    "esperado": 1.3486,
+    "desvio": -0.3928,
+    "desvio_rel_pct": -29.1232
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-12",
+    "kwh": 6.924,
+    "esperado": 6.9936,
+    "desvio": -0.0696,
+    "desvio_rel_pct": -0.995
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-13",
+    "kwh": 5.5052,
+    "esperado": 6.5173,
+    "desvio": -1.0122,
+    "desvio_rel_pct": -15.5304
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-14",
+    "kwh": 4.3092,
+    "esperado": 6.8542,
+    "desvio": -2.545,
+    "desvio_rel_pct": -37.1307
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-15",
+    "kwh": 5.0415,
+    "esperado": 6.2067,
+    "desvio": -1.1652,
+    "desvio_rel_pct": -18.7739
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-16",
+    "kwh": 3.7632,
+    "esperado": 5.7598,
+    "desvio": -1.9967,
+    "desvio_rel_pct": -34.6654
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-17",
+    "kwh": 0.2398,
+    "esperado": 1.2843,
+    "desvio": -1.0444,
+    "desvio_rel_pct": -81.325
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-18",
+    "kwh": 0.24,
+    "esperado": 1.3486,
+    "desvio": -1.1086,
+    "desvio_rel_pct": -82.2035
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-19",
+    "kwh": 4.1248,
+    "esperado": 6.9936,
+    "desvio": -2.8687,
+    "desvio_rel_pct": -41.0197
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-20",
+    "kwh": 3.337,
+    "esperado": 6.5173,
+    "desvio": -3.1803,
+    "desvio_rel_pct": -48.7981
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-21",
+    "kwh": 3.704,
+    "esperado": 6.8542,
+    "desvio": -3.1502,
+    "desvio_rel_pct": -45.9599
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-22",
+    "kwh": 6.0622,
+    "esperado": 6.2067,
+    "desvio": -0.1446,
+    "desvio_rel_pct": -2.3295
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-23",
+    "kwh": 5.361,
+    "esperado": 5.7598,
+    "desvio": -0.3988,
+    "desvio_rel_pct": -6.9244
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-24",
+    "kwh": 0.2398,
+    "esperado": 1.2843,
+    "desvio": -1.0444,
+    "desvio_rel_pct": -81.325
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-25",
+    "kwh": 0.2398,
+    "esperado": 1.3486,
+    "desvio": -1.1088,
+    "desvio_rel_pct": -82.2159
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-26",
+    "kwh": 2.6885,
+    "esperado": 6.9936,
+    "desvio": -4.3051,
+    "desvio_rel_pct": -61.5576
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-27",
+    "kwh": 2.6048,
+    "esperado": 6.5173,
+    "desvio": -3.9125,
+    "desvio_rel_pct": -60.0322
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-28",
+    "kwh": 4.4975,
+    "esperado": 6.8542,
+    "desvio": -2.3567,
+    "desvio_rel_pct": -34.383
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-29",
+    "kwh": 5.586,
+    "esperado": 6.2067,
+    "desvio": -0.6207,
+    "desvio_rel_pct": -10.0012
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-30",
+    "kwh": 3.8827,
+    "esperado": 5.7598,
+    "desvio": -1.8772,
+    "desvio_rel_pct": -32.5906
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-12-01",
+    "kwh": 0.8803,
+    "esperado": 1.2843,
+    "desvio": -0.4039,
+    "desvio_rel_pct": -31.4516
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-04",
+    "kwh": 3.6662,
+    "esperado": 7.2057,
+    "desvio": -3.5395,
+    "desvio_rel_pct": -49.1211
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-05",
+    "kwh": 14.1957,
+    "esperado": 15.0715,
+    "desvio": -0.8759,
+    "desvio_rel_pct": -5.8115
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-06",
+    "kwh": 13.5423,
+    "esperado": 15.0061,
+    "desvio": -1.4638,
+    "desvio_rel_pct": -9.7544
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-07",
+    "kwh": 15.1415,
+    "esperado": 15.0162,
+    "desvio": 0.1253,
+    "desvio_rel_pct": 0.8347
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-08",
+    "kwh": 15.3772,
+    "esperado": 15.3278,
+    "desvio": 0.0493,
+    "desvio_rel_pct": 0.3219
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-09",
+    "kwh": 14.2065,
+    "esperado": 15.8163,
+    "desvio": -1.6098,
+    "desvio_rel_pct": -10.1783
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-10",
+    "kwh": 5.8938,
+    "esperado": 8.334,
+    "desvio": -2.4402,
+    "desvio_rel_pct": -29.2797
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-11",
+    "kwh": 5.2268,
+    "esperado": 7.2057,
+    "desvio": -1.9788,
+    "desvio_rel_pct": -27.4622
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-12",
+    "kwh": 16.2042,
+    "esperado": 15.0715,
+    "desvio": 1.1326,
+    "desvio_rel_pct": 7.5149
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-13",
+    "kwh": 14.331,
+    "esperado": 15.0061,
+    "desvio": -0.6751,
+    "desvio_rel_pct": -4.4987
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-14",
+    "kwh": 14.393,
+    "esperado": 15.0162,
+    "desvio": -0.6232,
+    "desvio_rel_pct": -4.15
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-15",
+    "kwh": 13.8763,
+    "esperado": 15.3278,
+    "desvio": -1.4515,
+    "desvio_rel_pct": -9.4697
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-16",
+    "kwh": 15.0748,
+    "esperado": 15.8163,
+    "desvio": -0.7415,
+    "desvio_rel_pct": -4.6882
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-17",
+    "kwh": 3.8232,
+    "esperado": 8.334,
+    "desvio": -4.5108,
+    "desvio_rel_pct": -54.1257
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-18",
+    "kwh": 3.8488,
+    "esperado": 7.2057,
+    "desvio": -3.3568,
+    "desvio_rel_pct": -46.586
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-19",
+    "kwh": 14.177,
+    "esperado": 15.0715,
+    "desvio": -0.8945,
+    "desvio_rel_pct": -5.9353
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-20",
+    "kwh": 14.989,
+    "esperado": 15.0061,
+    "desvio": -0.0171,
+    "desvio_rel_pct": -0.1138
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-21",
+    "kwh": 14.7555,
+    "esperado": 15.0162,
+    "desvio": -0.2607,
+    "desvio_rel_pct": -1.7359
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-22",
+    "kwh": 15.65,
+    "esperado": 15.3278,
+    "desvio": 0.3222,
+    "desvio_rel_pct": 2.1018
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-23",
+    "kwh": 14.6713,
+    "esperado": 15.8163,
+    "desvio": -1.145,
+    "desvio_rel_pct": -7.2394
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-24",
+    "kwh": 4.9788,
+    "esperado": 8.334,
+    "desvio": -3.3552,
+    "desvio_rel_pct": -40.2588
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-25",
+    "kwh": 5.5877,
+    "esperado": 7.2057,
+    "desvio": -1.618,
+    "desvio_rel_pct": -22.4545
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-26",
+    "kwh": 14.1693,
+    "esperado": 15.0715,
+    "desvio": -0.9022,
+    "desvio_rel_pct": -5.9862
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-27",
+    "kwh": 13.6605,
+    "esperado": 15.0061,
+    "desvio": -1.3456,
+    "desvio_rel_pct": -8.9669
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-28",
+    "kwh": 14.4548,
+    "esperado": 15.0162,
+    "desvio": -0.5613,
+    "desvio_rel_pct": -3.7382
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-29",
+    "kwh": 14.4835,
+    "esperado": 15.3278,
+    "desvio": -0.8443,
+    "desvio_rel_pct": -5.5085
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-30",
+    "kwh": 16.2268,
+    "esperado": 15.8163,
+    "desvio": 0.4105,
+    "desvio_rel_pct": 2.5954
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-12-01",
+    "kwh": 3.9565,
+    "esperado": 8.334,
+    "desvio": -4.3775,
+    "desvio_rel_pct": -52.5258
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-04",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-05",
+    "kwh": 98.0278,
+    "esperado": 93.5649,
+    "desvio": 4.4629,
+    "desvio_rel_pct": 4.7698
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-06",
+    "kwh": 96.5203,
+    "esperado": 93.5858,
+    "desvio": 2.9344,
+    "desvio_rel_pct": 3.1355
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-07",
+    "kwh": 95.4714,
+    "esperado": 94.1548,
+    "desvio": 1.3166,
+    "desvio_rel_pct": 1.3983
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-08",
+    "kwh": 95.3662,
+    "esperado": 92.6391,
+    "desvio": 2.727,
+    "desvio_rel_pct": 2.9437
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-09",
+    "kwh": 91.8972,
+    "esperado": 93.4292,
+    "desvio": -1.532,
+    "desvio_rel_pct": -1.6398
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-10",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-11",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-12",
+    "kwh": 97.0139,
+    "esperado": 93.5649,
+    "desvio": 3.449,
+    "desvio_rel_pct": 3.6862
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-13",
+    "kwh": 94.1162,
+    "esperado": 93.5858,
+    "desvio": 0.5304,
+    "desvio_rel_pct": 0.5667
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-14",
+    "kwh": 96.2232,
+    "esperado": 94.1548,
+    "desvio": 2.0683,
+    "desvio_rel_pct": 2.1967
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-15",
+    "kwh": 96.0783,
+    "esperado": 92.6391,
+    "desvio": 3.4392,
+    "desvio_rel_pct": 3.7125
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-16",
+    "kwh": 96.6177,
+    "esperado": 93.4292,
+    "desvio": 3.1885,
+    "desvio_rel_pct": 3.4127
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-17",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-18",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-19",
+    "kwh": 95.2176,
+    "esperado": 93.5649,
+    "desvio": 1.6527,
+    "desvio_rel_pct": 1.7664
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-20",
+    "kwh": 95.6635,
+    "esperado": 93.5858,
+    "desvio": 2.0777,
+    "desvio_rel_pct": 2.2201
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-21",
+    "kwh": 96.7075,
+    "esperado": 94.1548,
+    "desvio": 2.5527,
+    "desvio_rel_pct": 2.7111
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-22",
+    "kwh": 96.8763,
+    "esperado": 92.6391,
+    "desvio": 4.2371,
+    "desvio_rel_pct": 4.5738
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-23",
+    "kwh": 95.0357,
+    "esperado": 93.4292,
+    "desvio": 1.6065,
+    "desvio_rel_pct": 1.7195
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-24",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-25",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-26",
+    "kwh": 95.7358,
+    "esperado": 93.5649,
+    "desvio": 2.1709,
+    "desvio_rel_pct": 2.3202
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-27",
+    "kwh": 92.0438,
+    "esperado": 93.5858,
+    "desvio": -1.542,
+    "desvio_rel_pct": -1.6477
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-28",
+    "kwh": 87.1309,
+    "esperado": 94.1548,
+    "desvio": -7.024,
+    "desvio_rel_pct": -7.46
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-29",
+    "kwh": 91.3893,
+    "esperado": 92.6391,
+    "desvio": -1.2498,
+    "desvio_rel_pct": -1.3491
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-30",
+    "kwh": 92.0475,
+    "esperado": 93.4292,
+    "desvio": -1.3817,
+    "desvio_rel_pct": -1.4789
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-12-01",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-04",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-05",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-06",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-07",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-08",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-09",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-10",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-11",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-12",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-13",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-14",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-15",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-16",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-17",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-18",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-19",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-20",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-21",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-22",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-23",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-24",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-25",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-26",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-27",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-28",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-29",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-30",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-12-01",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   }
+  ],
+  "B": [
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-04",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-05",
+    "kwh": 296.4392,
+    "esperado": 280.2239,
+    "desvio": 16.2152,
+    "desvio_rel_pct": 5.7865
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-06",
+    "kwh": 279.6392,
+    "esperado": 270.937,
+    "desvio": 8.7022,
+    "desvio_rel_pct": 3.2119
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-07",
+    "kwh": 264.421,
+    "esperado": 262.787,
+    "desvio": 1.634,
+    "desvio_rel_pct": 0.6218
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-08",
+    "kwh": 270.337,
+    "esperado": 257.2805,
+    "desvio": 13.0565,
+    "desvio_rel_pct": 5.0748
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-09",
+    "kwh": 237.468,
+    "esperado": 272.4508,
+    "desvio": -34.9828,
+    "desvio_rel_pct": -12.84
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-10",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-11",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-12",
+    "kwh": 289.4012,
+    "esperado": 280.2239,
+    "desvio": 9.1772,
+    "desvio_rel_pct": 3.275
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-13",
+    "kwh": 255.3188,
+    "esperado": 270.937,
+    "desvio": -15.6182,
+    "desvio_rel_pct": -5.7645
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-14",
+    "kwh": 262.7217,
+    "esperado": 262.787,
+    "desvio": -0.0653,
+    "desvio_rel_pct": -0.0249
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-15",
+    "kwh": 264.6758,
+    "esperado": 257.2805,
+    "desvio": 7.3954,
+    "desvio_rel_pct": 2.8744
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-16",
+    "kwh": 266.1747,
+    "esperado": 272.4508,
+    "desvio": -6.2761,
+    "desvio_rel_pct": -2.3036
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-17",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-18",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-19",
+    "kwh": 284.5853,
+    "esperado": 280.2239,
+    "desvio": 4.3614,
+    "desvio_rel_pct": 1.5564
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-20",
+    "kwh": 266.4905,
+    "esperado": 270.937,
+    "desvio": -4.4465,
+    "desvio_rel_pct": -1.6412
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-21",
+    "kwh": 270.7083,
+    "esperado": 262.787,
+    "desvio": 7.9213,
+    "desvio_rel_pct": 3.0144
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-22",
+    "kwh": 269.8538,
+    "esperado": 257.2805,
+    "desvio": 12.5734,
+    "desvio_rel_pct": 4.887
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-23",
+    "kwh": 256.23,
+    "esperado": 272.4508,
+    "desvio": -16.2208,
+    "desvio_rel_pct": -5.9536
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-24",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-25",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-26",
+    "kwh": 289.5137,
+    "esperado": 280.2239,
+    "desvio": 9.2897,
+    "desvio_rel_pct": 3.3151
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-27",
+    "kwh": 248.5375,
+    "esperado": 270.937,
+    "desvio": -22.3995,
+    "desvio_rel_pct": -8.2674
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-28",
+    "kwh": 212.0913,
+    "esperado": 262.787,
+    "desvio": -50.6957,
+    "desvio_rel_pct": -19.2915
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-29",
+    "kwh": 218.6623,
+    "esperado": 257.2805,
+    "desvio": -38.6181,
+    "desvio_rel_pct": -15.0101
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-30",
+    "kwh": 223.1775,
+    "esperado": 272.4508,
+    "desvio": -49.2733,
+    "desvio_rel_pct": -18.0852
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-12-01",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-04",
+    "kwh": 0.2628,
+    "esperado": 4.7744,
+    "desvio": -4.5116,
+    "desvio_rel_pct": -94.495
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-05",
+    "kwh": 87.1692,
+    "esperado": 94.5495,
+    "desvio": -7.3803,
+    "desvio_rel_pct": -7.8058
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-06",
+    "kwh": 83.141,
+    "esperado": 92.1295,
+    "desvio": -8.9885,
+    "desvio_rel_pct": -9.7564
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-07",
+    "kwh": 86.995,
+    "esperado": 96.7588,
+    "desvio": -9.7638,
+    "desvio_rel_pct": -10.0909
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-08",
+    "kwh": 86.916,
+    "esperado": 94.7155,
+    "desvio": -7.7995,
+    "desvio_rel_pct": -8.2347
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-09",
+    "kwh": 89.1655,
+    "esperado": 93.8522,
+    "desvio": -4.6867,
+    "desvio_rel_pct": -4.9938
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-10",
+    "kwh": 0.2625,
+    "esperado": 0.2652,
+    "desvio": -0.0028,
+    "desvio_rel_pct": -1.0368
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-11",
+    "kwh": 0.2657,
+    "esperado": 4.7744,
+    "desvio": -4.5088,
+    "desvio_rel_pct": -94.4356
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-12",
+    "kwh": 83.5422,
+    "esperado": 94.5495,
+    "desvio": -11.0073,
+    "desvio_rel_pct": -11.6419
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-13",
+    "kwh": 81.8105,
+    "esperado": 92.1295,
+    "desvio": -10.319,
+    "desvio_rel_pct": -11.2005
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-14",
+    "kwh": 88.741,
+    "esperado": 96.7588,
+    "desvio": -8.0178,
+    "desvio_rel_pct": -8.2864
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-15",
+    "kwh": 80.155,
+    "esperado": 94.7155,
+    "desvio": -14.5605,
+    "desvio_rel_pct": -15.3729
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-16",
+    "kwh": 84.068,
+    "esperado": 93.8522,
+    "desvio": -9.7842,
+    "desvio_rel_pct": -10.4252
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-17",
+    "kwh": 0.2597,
+    "esperado": 0.2652,
+    "desvio": -0.0056,
+    "desvio_rel_pct": -2.1049
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-18",
+    "kwh": 0.2613,
+    "esperado": 4.7744,
+    "desvio": -4.5131,
+    "desvio_rel_pct": -94.5264
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-19",
+    "kwh": 80.4803,
+    "esperado": 94.5495,
+    "desvio": -14.0692,
+    "desvio_rel_pct": -14.8802
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-20",
+    "kwh": 76.8933,
+    "esperado": 92.1295,
+    "desvio": -15.2362,
+    "desvio_rel_pct": -16.5378
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-21",
+    "kwh": 81.0102,
+    "esperado": 96.7588,
+    "desvio": -15.7487,
+    "desvio_rel_pct": -16.2762
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-22",
+    "kwh": 75.7067,
+    "esperado": 94.7155,
+    "desvio": -19.0088,
+    "desvio_rel_pct": -20.0694
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-23",
+    "kwh": 76.0703,
+    "esperado": 93.8522,
+    "desvio": -17.7819,
+    "desvio_rel_pct": -18.9467
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-24",
+    "kwh": 0.2655,
+    "esperado": 0.2652,
+    "desvio": 0.0002,
+    "desvio_rel_pct": 0.0943
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-25",
+    "kwh": 0.26,
+    "esperado": 4.7744,
+    "desvio": -4.5144,
+    "desvio_rel_pct": -94.5543
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-26",
+    "kwh": 77.6612,
+    "esperado": 94.5495,
+    "desvio": -16.8883,
+    "desvio_rel_pct": -17.8619
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-27",
+    "kwh": 72.95,
+    "esperado": 92.1295,
+    "desvio": -19.1795,
+    "desvio_rel_pct": -20.818
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-28",
+    "kwh": 85.6025,
+    "esperado": 96.7588,
+    "desvio": -11.1563,
+    "desvio_rel_pct": -11.53
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-29",
+    "kwh": 80.1802,
+    "esperado": 94.7155,
+    "desvio": -14.5353,
+    "desvio_rel_pct": -15.3463
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-30",
+    "kwh": 82.0335,
+    "esperado": 93.8522,
+    "desvio": -11.8187,
+    "desvio_rel_pct": -12.5929
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-12-01",
+    "kwh": 0.2647,
+    "esperado": 0.2652,
+    "desvio": -0.0006,
+    "desvio_rel_pct": -0.2199
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-04",
+    "kwh": 4.4598,
+    "esperado": 3.8532,
+    "desvio": 0.6067,
+    "desvio_rel_pct": 15.7446
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-05",
+    "kwh": 33.2775,
+    "esperado": 31.3188,
+    "desvio": 1.9587,
+    "desvio_rel_pct": 6.2542
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-06",
+    "kwh": 33.8152,
+    "esperado": 32.2504,
+    "desvio": 1.5648,
+    "desvio_rel_pct": 4.8519
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-07",
+    "kwh": 34.665,
+    "esperado": 35.1153,
+    "desvio": -0.4503,
+    "desvio_rel_pct": -1.2822
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-08",
+    "kwh": 32.7747,
+    "esperado": 34.6091,
+    "desvio": -1.8344,
+    "desvio_rel_pct": -5.3004
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-09",
+    "kwh": 30.9597,
+    "esperado": 35.093,
+    "desvio": -4.1333,
+    "desvio_rel_pct": -11.7782
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-10",
+    "kwh": 4.6202,
+    "esperado": 3.6201,
+    "desvio": 1.0001,
+    "desvio_rel_pct": 27.626
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-11",
+    "kwh": 4.5698,
+    "esperado": 3.8532,
+    "desvio": 0.7167,
+    "desvio_rel_pct": 18.5994
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-12",
+    "kwh": 32.8443,
+    "esperado": 31.3188,
+    "desvio": 1.5256,
+    "desvio_rel_pct": 4.8711
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-13",
+    "kwh": 32.072,
+    "esperado": 32.2504,
+    "desvio": -0.1784,
+    "desvio_rel_pct": -0.5532
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-14",
+    "kwh": 33.158,
+    "esperado": 35.1153,
+    "desvio": -1.9573,
+    "desvio_rel_pct": -5.5738
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-15",
+    "kwh": 32.4582,
+    "esperado": 34.6091,
+    "desvio": -2.1509,
+    "desvio_rel_pct": -6.2149
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-16",
+    "kwh": 32.8933,
+    "esperado": 35.093,
+    "desvio": -2.1997,
+    "desvio_rel_pct": -6.2681
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-17",
+    "kwh": 4.5683,
+    "esperado": 3.6201,
+    "desvio": 0.9483,
+    "desvio_rel_pct": 26.1941
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-18",
+    "kwh": 4.5788,
+    "esperado": 3.8532,
+    "desvio": 0.7257,
+    "desvio_rel_pct": 18.833
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-19",
+    "kwh": 34.5282,
+    "esperado": 31.3188,
+    "desvio": 3.2094,
+    "desvio_rel_pct": 10.2476
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-20",
+    "kwh": 32.5078,
+    "esperado": 32.2504,
+    "desvio": 0.2574,
+    "desvio_rel_pct": 0.7982
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-21",
+    "kwh": 34.2327,
+    "esperado": 35.1153,
+    "desvio": -0.8826,
+    "desvio_rel_pct": -2.5134
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-22",
+    "kwh": 32.2605,
+    "esperado": 34.6091,
+    "desvio": -2.3486,
+    "desvio_rel_pct": -6.786
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-23",
+    "kwh": 30.0355,
+    "esperado": 35.093,
+    "desvio": -5.0575,
+    "desvio_rel_pct": -14.4117
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-24",
+    "kwh": 4.2553,
+    "esperado": 3.6201,
+    "desvio": 0.6352,
+    "desvio_rel_pct": 17.5479
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-25",
+    "kwh": 4.204,
+    "esperado": 3.8532,
+    "desvio": 0.3508,
+    "desvio_rel_pct": 9.1051
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-26",
+    "kwh": 33.601,
+    "esperado": 31.3188,
+    "desvio": 2.2822,
+    "desvio_rel_pct": 7.2871
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-27",
+    "kwh": 32.9952,
+    "esperado": 32.2504,
+    "desvio": 0.7448,
+    "desvio_rel_pct": 2.3093
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-28",
+    "kwh": 33.256,
+    "esperado": 35.1153,
+    "desvio": -1.8593,
+    "desvio_rel_pct": -5.2947
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-29",
+    "kwh": 32.4347,
+    "esperado": 34.6091,
+    "desvio": -2.1744,
+    "desvio_rel_pct": -6.2828
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-30",
+    "kwh": 32.5805,
+    "esperado": 35.093,
+    "desvio": -2.5125,
+    "desvio_rel_pct": -7.1595
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-12-01",
+    "kwh": 3.402,
+    "esperado": 3.6201,
+    "desvio": -0.2181,
+    "desvio_rel_pct": -6.0243
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-04",
+    "kwh": 0.0,
+    "esperado": 0.0182,
+    "desvio": -0.0182,
+    "desvio_rel_pct": -100.0
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-05",
+    "kwh": 21.9195,
+    "esperado": 20.7702,
+    "desvio": 1.1493,
+    "desvio_rel_pct": 5.5332
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-06",
+    "kwh": 22.874,
+    "esperado": 21.1863,
+    "desvio": 1.6877,
+    "desvio_rel_pct": 7.9658
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-07",
+    "kwh": 18.448,
+    "esperado": 24.1032,
+    "desvio": -5.6552,
+    "desvio_rel_pct": -23.4626
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-08",
+    "kwh": 13.7078,
+    "esperado": 21.3471,
+    "desvio": -7.6392,
+    "desvio_rel_pct": -35.7859
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-09",
+    "kwh": 19.642,
+    "esperado": 20.5328,
+    "desvio": -0.8908,
+    "desvio_rel_pct": -4.3382
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-10",
+    "kwh": 0.0,
+    "esperado": 0.0001,
+    "desvio": -0.0001,
+    "desvio_rel_pct": -100.0
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-11",
+    "kwh": 0.0,
+    "esperado": 0.0182,
+    "desvio": -0.0182,
+    "desvio_rel_pct": -100.0
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-12",
+    "kwh": 19.2727,
+    "esperado": 20.7702,
+    "desvio": -1.4976,
+    "desvio_rel_pct": -7.2102
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-13",
+    "kwh": 19.8968,
+    "esperado": 21.1863,
+    "desvio": -1.2895,
+    "desvio_rel_pct": -6.0865
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-14",
+    "kwh": 20.8568,
+    "esperado": 24.1032,
+    "desvio": -3.2464,
+    "desvio_rel_pct": -13.4688
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-15",
+    "kwh": 19.3382,
+    "esperado": 21.3471,
+    "desvio": -2.0089,
+    "desvio_rel_pct": -9.4107
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-16",
+    "kwh": 18.253,
+    "esperado": 20.5328,
+    "desvio": -2.2798,
+    "desvio_rel_pct": -11.103
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-17",
+    "kwh": 0.0,
+    "esperado": 0.0001,
+    "desvio": -0.0001,
+    "desvio_rel_pct": -100.0
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-18",
+    "kwh": 0.0,
+    "esperado": 0.0182,
+    "desvio": -0.0182,
+    "desvio_rel_pct": -100.0
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-19",
+    "kwh": 20.88,
+    "esperado": 20.7702,
+    "desvio": 0.1097,
+    "desvio_rel_pct": 0.5284
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-20",
+    "kwh": 17.5498,
+    "esperado": 21.1863,
+    "desvio": -3.6365,
+    "desvio_rel_pct": -17.1644
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-21",
+    "kwh": 16.7278,
+    "esperado": 24.1032,
+    "desvio": -7.3754,
+    "desvio_rel_pct": -30.5993
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-22",
+    "kwh": 23.5902,
+    "esperado": 21.3471,
+    "desvio": 2.2431,
+    "desvio_rel_pct": 10.5077
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-23",
+    "kwh": 19.8665,
+    "esperado": 20.5328,
+    "desvio": -0.6662,
+    "desvio_rel_pct": -3.2448
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-24",
+    "kwh": 0.0002,
+    "esperado": 0.0001,
+    "desvio": 0.0001,
+    "desvio_rel_pct": 100.0
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-25",
+    "kwh": 0.0003,
+    "esperado": 0.0182,
+    "desvio": -0.0178,
+    "desvio_rel_pct": -98.1651
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-26",
+    "kwh": 17.3922,
+    "esperado": 20.7702,
+    "desvio": -3.3781,
+    "desvio_rel_pct": -16.264
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-27",
+    "kwh": 15.3907,
+    "esperado": 21.1863,
+    "desvio": -5.7957,
+    "desvio_rel_pct": -27.3557
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-28",
+    "kwh": 21.979,
+    "esperado": 24.1032,
+    "desvio": -2.1242,
+    "desvio_rel_pct": -8.8131
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-29",
+    "kwh": 22.3952,
+    "esperado": 21.3471,
+    "desvio": 1.0481,
+    "desvio_rel_pct": 4.9097
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-30",
+    "kwh": 19.7162,
+    "esperado": 20.5328,
+    "desvio": -0.8166,
+    "desvio_rel_pct": -3.977
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-12-01",
+    "kwh": 0.0535,
+    "esperado": 0.0001,
+    "desvio": 0.0534,
+    "desvio_rel_pct": 64100.0
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-04",
+    "kwh": 0.1373,
+    "esperado": 1.2127,
+    "desvio": -1.0753,
+    "desvio_rel_pct": -88.6751
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-05",
+    "kwh": 4.4875,
+    "esperado": 6.718,
+    "desvio": -2.2305,
+    "desvio_rel_pct": -33.2016
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-06",
+    "kwh": 5.2145,
+    "esperado": 5.5212,
+    "desvio": -0.3067,
+    "desvio_rel_pct": -5.5544
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-07",
+    "kwh": 5.325,
+    "esperado": 7.0608,
+    "desvio": -1.7358,
+    "desvio_rel_pct": -24.5831
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-08",
+    "kwh": 4.673,
+    "esperado": 6.2067,
+    "desvio": -1.5337,
+    "desvio_rel_pct": -24.711
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-09",
+    "kwh": 5.071,
+    "esperado": 6.3124,
+    "desvio": -1.2414,
+    "desvio_rel_pct": -19.6663
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-10",
+    "kwh": 0.956,
+    "esperado": 0.9808,
+    "desvio": -0.0248,
+    "desvio_rel_pct": -2.5319
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-11",
+    "kwh": 0.9558,
+    "esperado": 1.2127,
+    "desvio": -0.2568,
+    "desvio_rel_pct": -21.1792
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-12",
+    "kwh": 6.924,
+    "esperado": 6.718,
+    "desvio": 0.206,
+    "desvio_rel_pct": 3.0668
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-13",
+    "kwh": 5.5052,
+    "esperado": 5.5212,
+    "desvio": -0.016,
+    "desvio_rel_pct": -0.2898
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-14",
+    "kwh": 4.3092,
+    "esperado": 7.0608,
+    "desvio": -2.7516,
+    "desvio_rel_pct": -38.9701
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-15",
+    "kwh": 5.0415,
+    "esperado": 6.2067,
+    "desvio": -1.1652,
+    "desvio_rel_pct": -18.7739
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-16",
+    "kwh": 3.7632,
+    "esperado": 6.3124,
+    "desvio": -2.5492,
+    "desvio_rel_pct": -40.3847
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-17",
+    "kwh": 0.2398,
+    "esperado": 0.9808,
+    "desvio": -0.741,
+    "desvio_rel_pct": -75.548
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-18",
+    "kwh": 0.24,
+    "esperado": 1.2127,
+    "desvio": -0.9727,
+    "desvio_rel_pct": -80.2089
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-19",
+    "kwh": 4.1248,
+    "esperado": 6.718,
+    "desvio": -2.5931,
+    "desvio_rel_pct": -38.6
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-20",
+    "kwh": 3.337,
+    "esperado": 5.5212,
+    "desvio": -2.1842,
+    "desvio_rel_pct": -39.5599
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-21",
+    "kwh": 3.704,
+    "esperado": 7.0608,
+    "desvio": -3.3568,
+    "desvio_rel_pct": -47.541
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-22",
+    "kwh": 6.0622,
+    "esperado": 6.2067,
+    "desvio": -0.1446,
+    "desvio_rel_pct": -2.3295
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-23",
+    "kwh": 5.361,
+    "esperado": 6.3124,
+    "desvio": -0.9514,
+    "desvio_rel_pct": -15.0721
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-24",
+    "kwh": 0.2398,
+    "esperado": 0.9808,
+    "desvio": -0.741,
+    "desvio_rel_pct": -75.548
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-25",
+    "kwh": 0.2398,
+    "esperado": 1.2127,
+    "desvio": -0.9728,
+    "desvio_rel_pct": -80.2226
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-26",
+    "kwh": 2.6885,
+    "esperado": 6.718,
+    "desvio": -4.0295,
+    "desvio_rel_pct": -59.9805
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-27",
+    "kwh": 2.6048,
+    "esperado": 5.5212,
+    "desvio": -2.9163,
+    "desvio_rel_pct": -52.821
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-28",
+    "kwh": 4.4975,
+    "esperado": 7.0608,
+    "desvio": -2.5632,
+    "desvio_rel_pct": -36.3028
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-29",
+    "kwh": 5.586,
+    "esperado": 6.2067,
+    "desvio": -0.6207,
+    "desvio_rel_pct": -10.0012
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-30",
+    "kwh": 3.8827,
+    "esperado": 6.3124,
+    "desvio": -2.4297,
+    "desvio_rel_pct": -38.4916
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-12-01",
+    "kwh": 0.8803,
+    "esperado": 0.9808,
+    "desvio": -0.1005,
+    "desvio_rel_pct": -10.2464
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-04",
+    "kwh": 3.6662,
+    "esperado": 7.2057,
+    "desvio": -3.5395,
+    "desvio_rel_pct": -49.1211
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-05",
+    "kwh": 14.1957,
+    "esperado": 14.2546,
+    "desvio": -0.0589,
+    "desvio_rel_pct": -0.4133
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-06",
+    "kwh": 13.5423,
+    "esperado": 14.4214,
+    "desvio": -0.8791,
+    "desvio_rel_pct": -6.0957
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-07",
+    "kwh": 15.1415,
+    "esperado": 13.9672,
+    "desvio": 1.1743,
+    "desvio_rel_pct": 8.4072
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-08",
+    "kwh": 15.3772,
+    "esperado": 14.255,
+    "desvio": 1.1222,
+    "desvio_rel_pct": 7.8721
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-09",
+    "kwh": 14.2065,
+    "esperado": 14.2606,
+    "desvio": -0.0541,
+    "desvio_rel_pct": -0.3793
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-10",
+    "kwh": 5.8938,
+    "esperado": 7.6908,
+    "desvio": -1.7969,
+    "desvio_rel_pct": -23.3646
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-11",
+    "kwh": 5.2268,
+    "esperado": 7.2057,
+    "desvio": -1.9788,
+    "desvio_rel_pct": -27.4622
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-12",
+    "kwh": 16.2042,
+    "esperado": 14.2546,
+    "desvio": 1.9496,
+    "desvio_rel_pct": 13.6769
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-13",
+    "kwh": 14.331,
+    "esperado": 14.4214,
+    "desvio": -0.0904,
+    "desvio_rel_pct": -0.627
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-14",
+    "kwh": 14.393,
+    "esperado": 13.9672,
+    "desvio": 0.4258,
+    "desvio_rel_pct": 3.0482
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-15",
+    "kwh": 13.8763,
+    "esperado": 14.255,
+    "desvio": -0.3787,
+    "desvio_rel_pct": -2.6564
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-16",
+    "kwh": 15.0748,
+    "esperado": 14.2606,
+    "desvio": 0.8142,
+    "desvio_rel_pct": 5.7098
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-17",
+    "kwh": 3.8232,
+    "esperado": 7.6908,
+    "desvio": -3.8676,
+    "desvio_rel_pct": -50.2888
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-18",
+    "kwh": 3.8488,
+    "esperado": 7.2057,
+    "desvio": -3.3568,
+    "desvio_rel_pct": -46.586
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-19",
+    "kwh": 14.177,
+    "esperado": 14.2546,
+    "desvio": -0.0776,
+    "desvio_rel_pct": -0.5443
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-20",
+    "kwh": 14.989,
+    "esperado": 14.4214,
+    "desvio": 0.5676,
+    "desvio_rel_pct": 3.9357
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-21",
+    "kwh": 14.7555,
+    "esperado": 13.9672,
+    "desvio": 0.7882,
+    "desvio_rel_pct": 5.6436
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-22",
+    "kwh": 15.65,
+    "esperado": 14.255,
+    "desvio": 1.395,
+    "desvio_rel_pct": 9.786
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-23",
+    "kwh": 14.6713,
+    "esperado": 14.2606,
+    "desvio": 0.4107,
+    "desvio_rel_pct": 2.8803
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-24",
+    "kwh": 4.9788,
+    "esperado": 7.6908,
+    "desvio": -2.7119,
+    "desvio_rel_pct": -35.2621
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-25",
+    "kwh": 5.5877,
+    "esperado": 7.2057,
+    "desvio": -1.618,
+    "desvio_rel_pct": -22.4545
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-26",
+    "kwh": 14.1693,
+    "esperado": 14.2546,
+    "desvio": -0.0853,
+    "desvio_rel_pct": -0.5981
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-27",
+    "kwh": 13.6605,
+    "esperado": 14.4214,
+    "desvio": -0.7609,
+    "desvio_rel_pct": -5.2763
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-28",
+    "kwh": 14.4548,
+    "esperado": 13.9672,
+    "desvio": 0.4876,
+    "desvio_rel_pct": 3.4909
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-29",
+    "kwh": 14.4835,
+    "esperado": 14.255,
+    "desvio": 0.2285,
+    "desvio_rel_pct": 1.6029
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-30",
+    "kwh": 16.2268,
+    "esperado": 14.2606,
+    "desvio": 1.9663,
+    "desvio_rel_pct": 13.788
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-12-01",
+    "kwh": 3.9565,
+    "esperado": 7.6908,
+    "desvio": -3.7342,
+    "desvio_rel_pct": -48.5551
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-04",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-05",
+    "kwh": 98.0278,
+    "esperado": 93.9155,
+    "desvio": 4.1123,
+    "desvio_rel_pct": 4.3787
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-06",
+    "kwh": 96.5203,
+    "esperado": 94.212,
+    "desvio": 2.3083,
+    "desvio_rel_pct": 2.4501
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-07",
+    "kwh": 95.4714,
+    "esperado": 94.1548,
+    "desvio": 1.3166,
+    "desvio_rel_pct": 1.3983
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-08",
+    "kwh": 95.3662,
+    "esperado": 93.1181,
+    "desvio": 2.248,
+    "desvio_rel_pct": 2.4142
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-09",
+    "kwh": 91.8972,
+    "esperado": 93.7464,
+    "desvio": -1.8493,
+    "desvio_rel_pct": -1.9726
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-10",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-11",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-12",
+    "kwh": 97.0139,
+    "esperado": 93.9155,
+    "desvio": 3.0984,
+    "desvio_rel_pct": 3.2991
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-13",
+    "kwh": 94.1162,
+    "esperado": 94.212,
+    "desvio": -0.0958,
+    "desvio_rel_pct": -0.1017
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-14",
+    "kwh": 96.2232,
+    "esperado": 94.1548,
+    "desvio": 2.0683,
+    "desvio_rel_pct": 2.1967
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-15",
+    "kwh": 96.0783,
+    "esperado": 93.1181,
+    "desvio": 2.9602,
+    "desvio_rel_pct": 3.179
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-16",
+    "kwh": 96.6177,
+    "esperado": 93.7464,
+    "desvio": 2.8712,
+    "desvio_rel_pct": 3.0628
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-17",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-18",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-19",
+    "kwh": 95.2176,
+    "esperado": 93.9155,
+    "desvio": 1.3021,
+    "desvio_rel_pct": 1.3865
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-20",
+    "kwh": 95.6635,
+    "esperado": 94.212,
+    "desvio": 1.4515,
+    "desvio_rel_pct": 1.5407
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-21",
+    "kwh": 96.7075,
+    "esperado": 94.1548,
+    "desvio": 2.5527,
+    "desvio_rel_pct": 2.7111
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-22",
+    "kwh": 96.8763,
+    "esperado": 93.1181,
+    "desvio": 3.7581,
+    "desvio_rel_pct": 4.0359
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-23",
+    "kwh": 95.0357,
+    "esperado": 93.7464,
+    "desvio": 1.2892,
+    "desvio_rel_pct": 1.3752
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-24",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-25",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-26",
+    "kwh": 95.7358,
+    "esperado": 93.9155,
+    "desvio": 1.8203,
+    "desvio_rel_pct": 1.9383
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-27",
+    "kwh": 92.0438,
+    "esperado": 94.212,
+    "desvio": -2.1682,
+    "desvio_rel_pct": -2.3014
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-28",
+    "kwh": 87.1309,
+    "esperado": 94.1548,
+    "desvio": -7.024,
+    "desvio_rel_pct": -7.46
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-29",
+    "kwh": 91.3893,
+    "esperado": 93.1181,
+    "desvio": -1.7288,
+    "desvio_rel_pct": -1.8566
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-30",
+    "kwh": 92.0475,
+    "esperado": 93.7464,
+    "desvio": -1.6989,
+    "desvio_rel_pct": -1.8123
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-12-01",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-04",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-05",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-06",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-07",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-08",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-09",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-10",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-11",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-12",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-13",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-14",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-15",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-16",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-17",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-18",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-19",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-20",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-21",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-22",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-23",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-24",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-25",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-26",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-27",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-28",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-29",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-30",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-12-01",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   }
+  ],
+  "C": [
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-04",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-05",
+    "kwh": 296.4392,
+    "esperado": 287.4767,
+    "desvio": 8.9625,
+    "desvio_rel_pct": 3.1176
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-06",
+    "kwh": 279.6392,
+    "esperado": 298.0838,
+    "desvio": -18.4447,
+    "desvio_rel_pct": -6.1877
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-07",
+    "kwh": 264.421,
+    "esperado": 262.787,
+    "desvio": 1.634,
+    "desvio_rel_pct": 0.6218
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-08",
+    "kwh": 270.337,
+    "esperado": 257.2805,
+    "desvio": 13.0565,
+    "desvio_rel_pct": 5.0748
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-09",
+    "kwh": 237.468,
+    "esperado": 273.2572,
+    "desvio": -35.7892,
+    "desvio_rel_pct": -13.0972
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-10",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-11",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-12",
+    "kwh": 289.4012,
+    "esperado": 287.4767,
+    "desvio": 1.9245,
+    "desvio_rel_pct": 0.6694
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-13",
+    "kwh": 255.3188,
+    "esperado": 298.0838,
+    "desvio": -42.765,
+    "desvio_rel_pct": -14.3466
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-14",
+    "kwh": 262.7217,
+    "esperado": 262.787,
+    "desvio": -0.0653,
+    "desvio_rel_pct": -0.0249
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-15",
+    "kwh": 264.6758,
+    "esperado": 257.2805,
+    "desvio": 7.3954,
+    "desvio_rel_pct": 2.8744
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-16",
+    "kwh": 266.1747,
+    "esperado": 273.2572,
+    "desvio": -7.0825,
+    "desvio_rel_pct": -2.5919
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-17",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-18",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-19",
+    "kwh": 284.5853,
+    "esperado": 287.4767,
+    "desvio": -2.8913,
+    "desvio_rel_pct": -1.0058
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-20",
+    "kwh": 266.4905,
+    "esperado": 298.0838,
+    "desvio": -31.5933,
+    "desvio_rel_pct": -10.5988
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-21",
+    "kwh": 270.7083,
+    "esperado": 262.787,
+    "desvio": 7.9213,
+    "desvio_rel_pct": 3.0144
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-22",
+    "kwh": 269.8538,
+    "esperado": 257.2805,
+    "desvio": 12.5734,
+    "desvio_rel_pct": 4.887
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-23",
+    "kwh": 256.23,
+    "esperado": 273.2572,
+    "desvio": -17.0272,
+    "desvio_rel_pct": -6.2312
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-24",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-25",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-26",
+    "kwh": 289.5137,
+    "esperado": 287.4767,
+    "desvio": 2.037,
+    "desvio_rel_pct": 0.7086
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-27",
+    "kwh": 248.5375,
+    "esperado": 298.0838,
+    "desvio": -49.5463,
+    "desvio_rel_pct": -16.6216
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-28",
+    "kwh": 212.0913,
+    "esperado": 262.787,
+    "desvio": -50.6957,
+    "desvio_rel_pct": -19.2915
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-29",
+    "kwh": 218.6623,
+    "esperado": 257.2805,
+    "desvio": -38.6181,
+    "desvio_rel_pct": -15.0101
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-11-30",
+    "kwh": 223.1775,
+    "esperado": 273.2572,
+    "desvio": -50.0797,
+    "desvio_rel_pct": -18.3269
+   },
+   {
+    "ativo": "z1_AC1",
+    "data": "2018-12-01",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-04",
+    "kwh": 0.2628,
+    "esperado": 0.2678,
+    "desvio": -0.005,
+    "desvio_rel_pct": -1.8668
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-05",
+    "kwh": 87.1692,
+    "esperado": 98.9715,
+    "desvio": -11.8023,
+    "desvio_rel_pct": -11.925
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-06",
+    "kwh": 83.141,
+    "esperado": 107.4035,
+    "desvio": -24.2625,
+    "desvio_rel_pct": -22.59
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-07",
+    "kwh": 86.995,
+    "esperado": 97.682,
+    "desvio": -10.687,
+    "desvio_rel_pct": -10.9406
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-08",
+    "kwh": 86.916,
+    "esperado": 97.8477,
+    "desvio": -10.9317,
+    "desvio_rel_pct": -11.1721
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-09",
+    "kwh": 89.1655,
+    "esperado": 96.4465,
+    "desvio": -7.281,
+    "desvio_rel_pct": -7.5493
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-10",
+    "kwh": 0.2625,
+    "esperado": 5.2332,
+    "desvio": -4.9707,
+    "desvio_rel_pct": -94.9839
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-11",
+    "kwh": 0.2657,
+    "esperado": 0.2678,
+    "desvio": -0.0022,
+    "desvio_rel_pct": -0.809
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-12",
+    "kwh": 83.5422,
+    "esperado": 98.9715,
+    "desvio": -15.4293,
+    "desvio_rel_pct": -15.5897
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-13",
+    "kwh": 81.8105,
+    "esperado": 107.4035,
+    "desvio": -25.593,
+    "desvio_rel_pct": -23.8288
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-14",
+    "kwh": 88.741,
+    "esperado": 97.682,
+    "desvio": -8.941,
+    "desvio_rel_pct": -9.1532
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-15",
+    "kwh": 80.155,
+    "esperado": 97.8477,
+    "desvio": -17.6927,
+    "desvio_rel_pct": -18.0818
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-16",
+    "kwh": 84.068,
+    "esperado": 96.4465,
+    "desvio": -12.3785,
+    "desvio_rel_pct": -12.8346
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-17",
+    "kwh": 0.2597,
+    "esperado": 5.2332,
+    "desvio": -4.9735,
+    "desvio_rel_pct": -95.0381
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-18",
+    "kwh": 0.2613,
+    "esperado": 0.2678,
+    "desvio": -0.0065,
+    "desvio_rel_pct": -2.4269
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-19",
+    "kwh": 80.4803,
+    "esperado": 98.9715,
+    "desvio": -18.4912,
+    "desvio_rel_pct": -18.6833
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-20",
+    "kwh": 76.8933,
+    "esperado": 107.4035,
+    "desvio": -30.5102,
+    "desvio_rel_pct": -28.4071
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-21",
+    "kwh": 81.0102,
+    "esperado": 97.682,
+    "desvio": -16.6718,
+    "desvio_rel_pct": -17.0675
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-22",
+    "kwh": 75.7067,
+    "esperado": 97.8477,
+    "desvio": -22.141,
+    "desvio_rel_pct": -22.628
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-23",
+    "kwh": 76.0703,
+    "esperado": 96.4465,
+    "desvio": -20.3762,
+    "desvio_rel_pct": -21.1269
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-24",
+    "kwh": 0.2655,
+    "esperado": 5.2332,
+    "desvio": -4.9677,
+    "desvio_rel_pct": -94.9266
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-25",
+    "kwh": 0.26,
+    "esperado": 0.2678,
+    "desvio": -0.0078,
+    "desvio_rel_pct": -2.9247
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-26",
+    "kwh": 77.6612,
+    "esperado": 98.9715,
+    "desvio": -21.3103,
+    "desvio_rel_pct": -21.5318
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-27",
+    "kwh": 72.95,
+    "esperado": 107.4035,
+    "desvio": -34.4535,
+    "desvio_rel_pct": -32.0786
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-28",
+    "kwh": 85.6025,
+    "esperado": 97.682,
+    "desvio": -12.0795,
+    "desvio_rel_pct": -12.3661
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-29",
+    "kwh": 80.1802,
+    "esperado": 97.8477,
+    "desvio": -17.6675,
+    "desvio_rel_pct": -18.0561
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-11-30",
+    "kwh": 82.0335,
+    "esperado": 96.4465,
+    "desvio": -14.413,
+    "desvio_rel_pct": -14.944
+   },
+   {
+    "ativo": "z1_Light",
+    "data": "2018-12-01",
+    "kwh": 0.2647,
+    "esperado": 5.2332,
+    "desvio": -4.9685,
+    "desvio_rel_pct": -94.9425
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-04",
+    "kwh": 4.4598,
+    "esperado": 4.7007,
+    "desvio": -0.2408,
+    "desvio_rel_pct": -5.1234
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-05",
+    "kwh": 33.2775,
+    "esperado": 35.744,
+    "desvio": -2.4665,
+    "desvio_rel_pct": -6.9005
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-06",
+    "kwh": 33.8152,
+    "esperado": 37.5828,
+    "desvio": -3.7677,
+    "desvio_rel_pct": -10.025
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-07",
+    "kwh": 34.665,
+    "esperado": 35.5525,
+    "desvio": -0.8875,
+    "desvio_rel_pct": -2.4963
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-08",
+    "kwh": 32.7747,
+    "esperado": 35.7939,
+    "desvio": -3.0192,
+    "desvio_rel_pct": -8.4351
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-09",
+    "kwh": 30.9597,
+    "esperado": 35.4382,
+    "desvio": -4.4785,
+    "desvio_rel_pct": -12.6375
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-10",
+    "kwh": 4.6202,
+    "esperado": 4.7008,
+    "desvio": -0.0807,
+    "desvio_rel_pct": -1.716
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-11",
+    "kwh": 4.5698,
+    "esperado": 4.7007,
+    "desvio": -0.1308,
+    "desvio_rel_pct": -2.7833
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-12",
+    "kwh": 32.8443,
+    "esperado": 35.744,
+    "desvio": -2.8997,
+    "desvio_rel_pct": -8.1123
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-13",
+    "kwh": 32.072,
+    "esperado": 37.5828,
+    "desvio": -5.5108,
+    "desvio_rel_pct": -14.6632
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-14",
+    "kwh": 33.158,
+    "esperado": 35.5525,
+    "desvio": -2.3945,
+    "desvio_rel_pct": -6.7351
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-15",
+    "kwh": 32.4582,
+    "esperado": 35.7939,
+    "desvio": -3.3357,
+    "desvio_rel_pct": -9.3193
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-16",
+    "kwh": 32.8933,
+    "esperado": 35.4382,
+    "desvio": -2.5448,
+    "desvio_rel_pct": -7.1811
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-17",
+    "kwh": 4.5683,
+    "esperado": 4.7008,
+    "desvio": -0.1325,
+    "desvio_rel_pct": -2.8186
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-18",
+    "kwh": 4.5788,
+    "esperado": 4.7007,
+    "desvio": -0.1218,
+    "desvio_rel_pct": -2.5918
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-19",
+    "kwh": 34.5282,
+    "esperado": 35.744,
+    "desvio": -1.2158,
+    "desvio_rel_pct": -3.4015
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-20",
+    "kwh": 32.5078,
+    "esperado": 37.5828,
+    "desvio": -5.075,
+    "desvio_rel_pct": -13.5035
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-21",
+    "kwh": 34.2327,
+    "esperado": 35.5525,
+    "desvio": -1.3198,
+    "desvio_rel_pct": -3.7124
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-22",
+    "kwh": 32.2605,
+    "esperado": 35.7939,
+    "desvio": -3.5334,
+    "desvio_rel_pct": -9.8716
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-23",
+    "kwh": 30.0355,
+    "esperado": 35.4382,
+    "desvio": -5.4027,
+    "desvio_rel_pct": -15.2453
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-24",
+    "kwh": 4.2553,
+    "esperado": 4.7008,
+    "desvio": -0.4455,
+    "desvio_rel_pct": -9.477
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-25",
+    "kwh": 4.204,
+    "esperado": 4.7007,
+    "desvio": -0.4967,
+    "desvio_rel_pct": -10.5659
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-26",
+    "kwh": 33.601,
+    "esperado": 35.744,
+    "desvio": -2.143,
+    "desvio_rel_pct": -5.9954
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-27",
+    "kwh": 32.9952,
+    "esperado": 37.5828,
+    "desvio": -4.5877,
+    "desvio_rel_pct": -12.2068
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-28",
+    "kwh": 33.256,
+    "esperado": 35.5525,
+    "desvio": -2.2965,
+    "desvio_rel_pct": -6.4595
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-29",
+    "kwh": 32.4347,
+    "esperado": 35.7939,
+    "desvio": -3.3592,
+    "desvio_rel_pct": -9.385
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-11-30",
+    "kwh": 32.5805,
+    "esperado": 35.4382,
+    "desvio": -2.8577,
+    "desvio_rel_pct": -8.0638
+   },
+   {
+    "ativo": "z1_Plug",
+    "data": "2018-12-01",
+    "kwh": 3.402,
+    "esperado": 4.7008,
+    "desvio": -1.2988,
+    "desvio_rel_pct": -27.6299
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-04",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-05",
+    "kwh": 21.9195,
+    "esperado": 21.6601,
+    "desvio": 0.2594,
+    "desvio_rel_pct": 1.1975
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-06",
+    "kwh": 22.874,
+    "esperado": 22.1048,
+    "desvio": 0.7692,
+    "desvio_rel_pct": 3.4796
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-07",
+    "kwh": 18.448,
+    "esperado": 24.1347,
+    "desvio": -5.6867,
+    "desvio_rel_pct": -23.5622
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-08",
+    "kwh": 13.7078,
+    "esperado": 21.4482,
+    "desvio": -7.7403,
+    "desvio_rel_pct": -36.0886
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-09",
+    "kwh": 19.642,
+    "esperado": 20.6869,
+    "desvio": -1.0449,
+    "desvio_rel_pct": -5.0511
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-10",
+    "kwh": 0.0,
+    "esperado": 0.8197,
+    "desvio": -0.8197,
+    "desvio_rel_pct": -100.0
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-11",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-12",
+    "kwh": 19.2727,
+    "esperado": 21.6601,
+    "desvio": -2.3875,
+    "desvio_rel_pct": -11.0224
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-13",
+    "kwh": 19.8968,
+    "esperado": 22.1048,
+    "desvio": -2.208,
+    "desvio_rel_pct": -9.9888
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-14",
+    "kwh": 20.8568,
+    "esperado": 24.1347,
+    "desvio": -3.2778,
+    "desvio_rel_pct": -13.5814
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-15",
+    "kwh": 19.3382,
+    "esperado": 21.4482,
+    "desvio": -2.11,
+    "desvio_rel_pct": -9.8377
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-16",
+    "kwh": 18.253,
+    "esperado": 20.6869,
+    "desvio": -2.4339,
+    "desvio_rel_pct": -11.7655
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-17",
+    "kwh": 0.0,
+    "esperado": 0.8197,
+    "desvio": -0.8197,
+    "desvio_rel_pct": -100.0
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-18",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-19",
+    "kwh": 20.88,
+    "esperado": 21.6601,
+    "desvio": -0.7801,
+    "desvio_rel_pct": -3.6017
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-20",
+    "kwh": 17.5498,
+    "esperado": 22.1048,
+    "desvio": -4.555,
+    "desvio_rel_pct": -20.6064
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-21",
+    "kwh": 16.7278,
+    "esperado": 24.1347,
+    "desvio": -7.4068,
+    "desvio_rel_pct": -30.6896
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-22",
+    "kwh": 23.5902,
+    "esperado": 21.4482,
+    "desvio": 2.142,
+    "desvio_rel_pct": 9.9869
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-23",
+    "kwh": 19.8665,
+    "esperado": 20.6869,
+    "desvio": -0.8204,
+    "desvio_rel_pct": -3.9659
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-24",
+    "kwh": 0.0002,
+    "esperado": 0.8197,
+    "desvio": -0.8195,
+    "desvio_rel_pct": -99.9797
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-25",
+    "kwh": 0.0003,
+    "esperado": 0.0,
+    "desvio": 0.0003,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-26",
+    "kwh": 17.3922,
+    "esperado": 21.6601,
+    "desvio": -4.268,
+    "desvio_rel_pct": -19.7042
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-27",
+    "kwh": 15.3907,
+    "esperado": 22.1048,
+    "desvio": -6.7142,
+    "desvio_rel_pct": -30.3742
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-28",
+    "kwh": 21.979,
+    "esperado": 24.1347,
+    "desvio": -2.1557,
+    "desvio_rel_pct": -8.9318
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-29",
+    "kwh": 22.3952,
+    "esperado": 21.4482,
+    "desvio": 0.947,
+    "desvio_rel_pct": 4.4153
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-11-30",
+    "kwh": 19.7162,
+    "esperado": 20.6869,
+    "desvio": -0.9708,
+    "desvio_rel_pct": -4.6926
+   },
+   {
+    "ativo": "z2_Light",
+    "data": "2018-12-01",
+    "kwh": 0.0535,
+    "esperado": 0.8197,
+    "desvio": -0.7662,
+    "desvio_rel_pct": -93.473
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-04",
+    "kwh": 0.1373,
+    "esperado": 1.3486,
+    "desvio": -1.2113,
+    "desvio_rel_pct": -89.8165
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-05",
+    "kwh": 4.4875,
+    "esperado": 7.1215,
+    "desvio": -2.634,
+    "desvio_rel_pct": -36.9866
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-06",
+    "kwh": 5.2145,
+    "esperado": 6.6995,
+    "desvio": -1.485,
+    "desvio_rel_pct": -22.1658
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-07",
+    "kwh": 5.325,
+    "esperado": 6.8542,
+    "desvio": -1.5292,
+    "desvio_rel_pct": -22.31
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-08",
+    "kwh": 4.673,
+    "esperado": 6.2067,
+    "desvio": -1.5337,
+    "desvio_rel_pct": -24.711
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-09",
+    "kwh": 5.071,
+    "esperado": 5.7598,
+    "desvio": -0.6888,
+    "desvio_rel_pct": -11.9593
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-10",
+    "kwh": 0.956,
+    "esperado": 1.3358,
+    "desvio": -0.3798,
+    "desvio_rel_pct": -28.4342
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-11",
+    "kwh": 0.9558,
+    "esperado": 1.3486,
+    "desvio": -0.3928,
+    "desvio_rel_pct": -29.1232
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-12",
+    "kwh": 6.924,
+    "esperado": 7.1215,
+    "desvio": -0.1975,
+    "desvio_rel_pct": -2.7733
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-13",
+    "kwh": 5.5052,
+    "esperado": 6.6995,
+    "desvio": -1.1943,
+    "desvio_rel_pct": -17.8272
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-14",
+    "kwh": 4.3092,
+    "esperado": 6.8542,
+    "desvio": -2.545,
+    "desvio_rel_pct": -37.1307
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-15",
+    "kwh": 5.0415,
+    "esperado": 6.2067,
+    "desvio": -1.1652,
+    "desvio_rel_pct": -18.7739
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-16",
+    "kwh": 3.7632,
+    "esperado": 5.7598,
+    "desvio": -1.9967,
+    "desvio_rel_pct": -34.6654
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-17",
+    "kwh": 0.2398,
+    "esperado": 1.3358,
+    "desvio": -1.096,
+    "desvio_rel_pct": -82.0462
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-18",
+    "kwh": 0.24,
+    "esperado": 1.3486,
+    "desvio": -1.1086,
+    "desvio_rel_pct": -82.2035
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-19",
+    "kwh": 4.1248,
+    "esperado": 7.1215,
+    "desvio": -2.9967,
+    "desvio_rel_pct": -42.0791
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-20",
+    "kwh": 3.337,
+    "esperado": 6.6995,
+    "desvio": -3.3625,
+    "desvio_rel_pct": -50.1903
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-21",
+    "kwh": 3.704,
+    "esperado": 6.8542,
+    "desvio": -3.1502,
+    "desvio_rel_pct": -45.9599
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-22",
+    "kwh": 6.0622,
+    "esperado": 6.2067,
+    "desvio": -0.1446,
+    "desvio_rel_pct": -2.3295
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-23",
+    "kwh": 5.361,
+    "esperado": 5.7598,
+    "desvio": -0.3988,
+    "desvio_rel_pct": -6.9244
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-24",
+    "kwh": 0.2398,
+    "esperado": 1.3358,
+    "desvio": -1.096,
+    "desvio_rel_pct": -82.0462
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-25",
+    "kwh": 0.2398,
+    "esperado": 1.3486,
+    "desvio": -1.1088,
+    "desvio_rel_pct": -82.2159
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-26",
+    "kwh": 2.6885,
+    "esperado": 7.1215,
+    "desvio": -4.433,
+    "desvio_rel_pct": -62.2481
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-27",
+    "kwh": 2.6048,
+    "esperado": 6.6995,
+    "desvio": -4.0947,
+    "desvio_rel_pct": -61.119
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-28",
+    "kwh": 4.4975,
+    "esperado": 6.8542,
+    "desvio": -2.3567,
+    "desvio_rel_pct": -34.383
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-29",
+    "kwh": 5.586,
+    "esperado": 6.2067,
+    "desvio": -0.6207,
+    "desvio_rel_pct": -10.0012
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-11-30",
+    "kwh": 3.8827,
+    "esperado": 5.7598,
+    "desvio": -1.8772,
+    "desvio_rel_pct": -32.5906
+   },
+   {
+    "ativo": "z2_Plug",
+    "data": "2018-12-01",
+    "kwh": 0.8803,
+    "esperado": 1.3358,
+    "desvio": -0.4555,
+    "desvio_rel_pct": -34.0986
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-04",
+    "kwh": 3.6662,
+    "esperado": 7.2057,
+    "desvio": -3.5395,
+    "desvio_rel_pct": -49.1211
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-05",
+    "kwh": 14.1957,
+    "esperado": 15.1632,
+    "desvio": -0.9675,
+    "desvio_rel_pct": -6.3806
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-06",
+    "kwh": 13.5423,
+    "esperado": 15.1465,
+    "desvio": -1.6042,
+    "desvio_rel_pct": -10.591
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-07",
+    "kwh": 15.1415,
+    "esperado": 15.0162,
+    "desvio": 0.1253,
+    "desvio_rel_pct": 0.8347
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-08",
+    "kwh": 15.3772,
+    "esperado": 15.3278,
+    "desvio": 0.0493,
+    "desvio_rel_pct": 0.3219
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-09",
+    "kwh": 14.2065,
+    "esperado": 15.8163,
+    "desvio": -1.6098,
+    "desvio_rel_pct": -10.1783
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-10",
+    "kwh": 5.8938,
+    "esperado": 8.3545,
+    "desvio": -2.4607,
+    "desvio_rel_pct": -29.4532
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-11",
+    "kwh": 5.2268,
+    "esperado": 7.2057,
+    "desvio": -1.9788,
+    "desvio_rel_pct": -27.4622
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-12",
+    "kwh": 16.2042,
+    "esperado": 15.1632,
+    "desvio": 1.041,
+    "desvio_rel_pct": 6.8653
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-13",
+    "kwh": 14.331,
+    "esperado": 15.1465,
+    "desvio": -0.8155,
+    "desvio_rel_pct": -5.3841
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-14",
+    "kwh": 14.393,
+    "esperado": 15.0162,
+    "desvio": -0.6232,
+    "desvio_rel_pct": -4.15
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-15",
+    "kwh": 13.8763,
+    "esperado": 15.3278,
+    "desvio": -1.4515,
+    "desvio_rel_pct": -9.4697
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-16",
+    "kwh": 15.0748,
+    "esperado": 15.8163,
+    "desvio": -0.7415,
+    "desvio_rel_pct": -4.6882
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-17",
+    "kwh": 3.8232,
+    "esperado": 8.3545,
+    "desvio": -4.5313,
+    "desvio_rel_pct": -54.2382
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-18",
+    "kwh": 3.8488,
+    "esperado": 7.2057,
+    "desvio": -3.3568,
+    "desvio_rel_pct": -46.586
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-19",
+    "kwh": 14.177,
+    "esperado": 15.1632,
+    "desvio": -0.9862,
+    "desvio_rel_pct": -6.5037
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-20",
+    "kwh": 14.989,
+    "esperado": 15.1465,
+    "desvio": -0.1575,
+    "desvio_rel_pct": -1.0398
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-21",
+    "kwh": 14.7555,
+    "esperado": 15.0162,
+    "desvio": -0.2607,
+    "desvio_rel_pct": -1.7359
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-22",
+    "kwh": 15.65,
+    "esperado": 15.3278,
+    "desvio": 0.3222,
+    "desvio_rel_pct": 2.1018
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-23",
+    "kwh": 14.6713,
+    "esperado": 15.8163,
+    "desvio": -1.145,
+    "desvio_rel_pct": -7.2394
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-24",
+    "kwh": 4.9788,
+    "esperado": 8.3545,
+    "desvio": -3.3757,
+    "desvio_rel_pct": -40.4054
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-25",
+    "kwh": 5.5877,
+    "esperado": 7.2057,
+    "desvio": -1.618,
+    "desvio_rel_pct": -22.4545
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-26",
+    "kwh": 14.1693,
+    "esperado": 15.1632,
+    "desvio": -0.9938,
+    "desvio_rel_pct": -6.5543
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-27",
+    "kwh": 13.6605,
+    "esperado": 15.1465,
+    "desvio": -1.486,
+    "desvio_rel_pct": -9.8108
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-28",
+    "kwh": 14.4548,
+    "esperado": 15.0162,
+    "desvio": -0.5613,
+    "desvio_rel_pct": -3.7382
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-29",
+    "kwh": 14.4835,
+    "esperado": 15.3278,
+    "desvio": -0.8443,
+    "desvio_rel_pct": -5.5085
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-11-30",
+    "kwh": 16.2268,
+    "esperado": 15.8163,
+    "desvio": 0.4105,
+    "desvio_rel_pct": 2.5954
+   },
+   {
+    "ativo": "z3_Light",
+    "data": "2018-12-01",
+    "kwh": 3.9565,
+    "esperado": 8.3545,
+    "desvio": -4.398,
+    "desvio_rel_pct": -52.6423
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-04",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-05",
+    "kwh": 98.0278,
+    "esperado": 93.6898,
+    "desvio": 4.338,
+    "desvio_rel_pct": 4.6302
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-06",
+    "kwh": 96.5203,
+    "esperado": 93.9615,
+    "desvio": 2.5588,
+    "desvio_rel_pct": 2.7232
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-07",
+    "kwh": 95.4714,
+    "esperado": 94.1548,
+    "desvio": 1.3166,
+    "desvio_rel_pct": 1.3983
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-08",
+    "kwh": 95.3662,
+    "esperado": 92.6391,
+    "desvio": 2.727,
+    "desvio_rel_pct": 2.9437
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-09",
+    "kwh": 91.8972,
+    "esperado": 93.4292,
+    "desvio": -1.532,
+    "desvio_rel_pct": -1.6398
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-10",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-11",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-12",
+    "kwh": 97.0139,
+    "esperado": 93.6898,
+    "desvio": 3.324,
+    "desvio_rel_pct": 3.5479
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-13",
+    "kwh": 94.1162,
+    "esperado": 93.9615,
+    "desvio": 0.1547,
+    "desvio_rel_pct": 0.1647
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-14",
+    "kwh": 96.2232,
+    "esperado": 94.1548,
+    "desvio": 2.0683,
+    "desvio_rel_pct": 2.1967
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-15",
+    "kwh": 96.0783,
+    "esperado": 92.6391,
+    "desvio": 3.4392,
+    "desvio_rel_pct": 3.7125
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-16",
+    "kwh": 96.6177,
+    "esperado": 93.4292,
+    "desvio": 3.1885,
+    "desvio_rel_pct": 3.4127
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-17",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-18",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-19",
+    "kwh": 95.2176,
+    "esperado": 93.6898,
+    "desvio": 1.5278,
+    "desvio_rel_pct": 1.6307
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-20",
+    "kwh": 95.6635,
+    "esperado": 93.9615,
+    "desvio": 1.702,
+    "desvio_rel_pct": 1.8114
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-21",
+    "kwh": 96.7075,
+    "esperado": 94.1548,
+    "desvio": 2.5527,
+    "desvio_rel_pct": 2.7111
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-22",
+    "kwh": 96.8763,
+    "esperado": 92.6391,
+    "desvio": 4.2371,
+    "desvio_rel_pct": 4.5738
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-23",
+    "kwh": 95.0357,
+    "esperado": 93.4292,
+    "desvio": 1.6065,
+    "desvio_rel_pct": 1.7195
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-24",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-25",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-26",
+    "kwh": 95.7358,
+    "esperado": 93.6898,
+    "desvio": 2.046,
+    "desvio_rel_pct": 2.1838
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-27",
+    "kwh": 92.0438,
+    "esperado": 93.9615,
+    "desvio": -1.9177,
+    "desvio_rel_pct": -2.0409
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-28",
+    "kwh": 87.1309,
+    "esperado": 94.1548,
+    "desvio": -7.024,
+    "desvio_rel_pct": -7.46
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-29",
+    "kwh": 91.3893,
+    "esperado": 92.6391,
+    "desvio": -1.2498,
+    "desvio_rel_pct": -1.3491
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-11-30",
+    "kwh": 92.0475,
+    "esperado": 93.4292,
+    "desvio": -1.3817,
+    "desvio_rel_pct": -1.4789
+   },
+   {
+    "ativo": "z4_AC1",
+    "data": "2018-12-01",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-04",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-05",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-06",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-07",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-08",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-09",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-10",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-11",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-12",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-13",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-14",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-15",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-16",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-17",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-18",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-19",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-20",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-21",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-22",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-23",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-24",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-25",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-26",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-27",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-28",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-29",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-11-30",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   },
+   {
+    "ativo": "z4_Plug",
+    "data": "2018-12-01",
+    "kwh": 0.0,
+    "esperado": 0.0,
+    "desvio": 0.0,
+    "desvio_rel_pct": null
+   }
+  ]
+ }
+}

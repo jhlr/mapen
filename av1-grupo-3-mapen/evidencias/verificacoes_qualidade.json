@@ -1,0 +1,71 @@
+{
+  "1_chaves_duplicidade": {
+    "linhas_na_janela": 120960,
+    "timestamps_duplicados": 0
+  },
+  "2_ausencia": {
+    "timestamps_ausentes_na_grade_de_1_min": 0,
+    "minutos_sem_valor_por_ativo": {
+      "z1_AC1": 152,
+      "z1_Light": 113,
+      "z1_Plug": 114,
+      "z2_Light": 114,
+      "z2_Plug": 114,
+      "z3_Light": 115,
+      "z4_AC1": 193,
+      "z4_Plug": 114
+    }
+  },
+  "3_tipos_unidades": {
+    "tipos": {
+      "z1_AC1": "float64",
+      "z1_Light": "float64",
+      "z1_Plug": "float64",
+      "z2_Light": "float64",
+      "z2_Plug": "float64",
+      "z3_Light": "float64",
+      "z4_AC1": "float64",
+      "z4_Plug": "float64"
+    },
+    "unidade_original": "kW (potência média por minuto), conforme o sufixo '(kW)' do cabeçalho"
+  },
+  "4_dominio_plausibilidade": {
+    "negativos": {
+      "z1_AC1": 0,
+      "z1_Light": 0,
+      "z1_Plug": 0,
+      "z2_Light": 0,
+      "z2_Plug": 0,
+      "z3_Light": 0,
+      "z4_AC1": 0,
+      "z4_Plug": 0
+    },
+    "maximo_kw": {
+      "z1_AC1": 59.61,
+      "z1_Light": 10.49,
+      "z1_Plug": 4.78,
+      "z2_Light": 3.29,
+      "z2_Plug": 1.71,
+      "z3_Light": 5.82,
+      "z4_AC1": 54.32,
+      "z4_Plug": 0.0
+    },
+    "ativos_com_maximo_zero": [
+      "z4_Plug"
+    ]
+  },
+  "5_cobertura": {
+    "dias_na_janela": 84,
+    "dias_com_menos_de_95pct_dos_minutos": {
+      "z1_AC1": 0,
+      "z1_Light": 1,
+      "z1_Plug": 1,
+      "z2_Light": 1,
+      "z2_Plug": 1,
+      "z3_Light": 1,
+      "z4_AC1": 0,
+      "z4_Plug": 1
+    },
+    "juncoes": "nenhuma: a base é uma única tabela; sem junção, a cardinalidade não muda"
+  }
+}

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MAPEN: onde investigar o consumo</title>
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<header>
+  <h1>Onde investigar primeiro? Consumo observado × referência</h1>
+  <p class="meta" id="cabecalho"></p>
+  <p class="selo" role="note"><strong>Dado real público (CU-BEMS), não é cliente do MAPEN.</strong>
+    A referência é <em>estimada</em> a partir do histórico, não é “consumo normal medido”. Desvio não é desperdício nem economia.</p>
+</header>
+
+<form id="filtros" aria-label="Filtros do painel">
+  <label>Ativo
+    <select id="f-ativo"></select>
+  </label>
+  <label>De
+    <input type="date" id="f-de" min="2018-11-04" max="2018-12-01" value="2018-11-04">
+  </label>
+  <label>Até
+    <input type="date" id="f-ate" min="2018-11-04" max="2018-12-01" value="2018-12-01">
+  </label>
+  <fieldset>
+    <legend>Referência (linha de base)</legend>
+    <label class="radio"><input type="radio" name="ref" value="A" checked> A · 8 semanas</label>
+    <label class="radio"><input type="radio" name="ref" value="B"> B · 4 semanas</label>
+    <label class="radio"><input type="radio" name="ref" value="C"> C · 8 semanas sem feriados</label>
+  </fieldset>
+</form>
+
+<p id="regra" class="regra"></p>
+<p id="sintese" class="sintese" aria-live="polite"></p>
+<p id="vazio" class="vazio" role="status" hidden></p>
+
+<main id="vistas">
+  <section aria-labelledby="t1" id="v1">
+    <h2 id="t1"><span class="id">V1</span> Quando o consumo se afastou da referência?</h2>
+    <div class="grafico" id="g1" role="img" aria-describedby="d1"></div>
+    <p class="leg" id="d1"></p>
+    <details><summary>Tabela equivalente da V1</summary><div id="tab1"></div></details>
+  </section>
+
+  <section aria-labelledby="t2" id="v2">
+    <h2 id="t2"><span class="id">V2</span> Onde investigar primeiro?</h2>
+    <div class="grafico" id="g2" role="img" aria-describedby="d2"></div>
+    <p class="leg" id="d2"></p>
+    <details><summary>Tabela equivalente da V2</summary><div id="tab2"></div></details>
+  </section>
+
+  <section aria-labelledby="t3" id="v3">
+    <h2 id="t3"><span class="id">V3</span> O padrão acompanha o funcionamento?</h2>
+    <div class="grafico duplo" id="g3" role="img" aria-describedby="d3"></div>
+    <p class="leg" id="d3"></p>
+    <details><summary>Tabela equivalente da V3</summary><div id="tab3"></div></details>
+  </section>
+</main>
+
+<footer id="rodape"></footer>
+<script src="dados.js"></script>
+<script src="calculo.js"></script>
+<script src="painel.js"></script>
+</body>
+</html>

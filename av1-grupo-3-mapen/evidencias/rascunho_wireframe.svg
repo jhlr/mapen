@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1000" font-family="Comic Sans MS, Segoe Print, cursive, sans-serif" font-size="16">
+<rect width="900" height="1000" fill="#fffef6"/>
+<text x="30" y="40" font-size="17" font-weight="700">Rascunho inicial (reconstruído após a versão 1, a partir do plano de partida) — AV1 MAPEN, Grupo 3</text>
+<g fill="none" stroke="#333" stroke-width="2">
+<rect x="30" y="60" width="840" height="70" rx="6"/>
+<rect x="30" y="150" width="840" height="60" rx="6" stroke-dasharray="6 4"/>
+<rect x="30" y="230" width="840" height="300" rx="6"/>
+<rect x="30" y="550" width="840" height="230" rx="6"/>
+<rect x="30" y="800" width="840" height="170" rx="6"/>
+</g>
+<text x="45" y="90">Cabeçalho: unidade (andar 2, CU-BEMS), período, FONTE, "dado real público / referência estimada"</text>
+<text x="45" y="112" font-size="13">pergunta: em quais ativos/períodos o consumo ficou acima ou abaixo da referência?</text>
+<text x="45" y="175">Filtros: [ativo ▾] [de] [até] [referência A/B/C]</text>
+<text x="45" y="198" font-size="13">(ainda sem decidir se vira botões)</text>
+<text x="45" y="258" font-weight="700">V1 — observado × esperado por dia (linhas)</text>
+<polyline points="60,480 140,330 220,340 300,335 380,345 460,480 540,480 620,330 700,340 780,335" fill="none" stroke="#1d4f91" stroke-width="3"/>
+<polyline points="60,480 140,335 220,338 300,342 380,340 460,480 540,480 620,335 700,338 780,342" fill="none" stroke="#c76b00" stroke-width="3" stroke-dasharray="8 6"/>
+<text x="45" y="518" font-size="13">lacuna = sem dado (não zero). sáb/dom em cinza.</text>
+<text x="45" y="578" font-weight="700">V2 — ranking por ativo: SALDO do desvio (barras horizontais, ordem pelo saldo)</text>
+<g fill="#1d4f91"><rect x="440" y="600" width="40" height="22" fill="#c0392b"/><rect x="300" y="630" width="140" height="22"/><rect x="340" y="660" width="100" height="22"/><rect x="380" y="690" width="60" height="22"/></g>
+<line x1="440" y1="590" x2="440" y2="730" stroke="#333" stroke-width="2"/>
+<text x="45" y="760" font-size="13">zero = igual à referência; vermelho acima, azul abaixo</text>
+<text x="45" y="828" font-weight="700">V3 — perfil horário: dia útil × fim de semana (observado × referência)</text>
+<polyline points="60,940 200,940 230,870 450,865 520,940 840,940" fill="none" stroke="#1d4f91" stroke-width="3"/>
+<text x="45" y="960" font-size="13">V1 = comparação, V2 = onde investigar, V3 = contexto. Resumo textual no fim. Sem KPI cards por ora.</text>
+</svg>
