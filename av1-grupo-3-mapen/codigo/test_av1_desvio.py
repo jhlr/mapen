@@ -53,3 +53,15 @@ def test_ranking_ordena_por_soma_dos_positivos_nao_pelo_saldo() -> None:
                       "kwh": [10.0, 0.0, 3.0], "esperado": [0.0, 20.0, 1.0], "desvio": [10.0, -20.0, 2.0]})
     rk = av.ranking(d)
     assert list(rk["ativo"]) == ["A", "B"] and rk.iloc[0]["saldo"] == -10.0 and rk.iloc[0]["soma_positivos"] == 10.0
+
+
+def test_ranking_desempata_por_nome_do_ativo() -> None:
+    # Empate exato na soma dos positivos: a ordem não pode depender da versão do pandas.
+    # O painel (dashboard/calculo.js) desempata por nome, e a conferência cruzada compara posição a posição.
+    # Com 8 ativos e 4 empatados em zero, pandas 3.0.x devolvia z1_Plug antes de z1_Light.
+    ativos = ["z1_AC1", "z1_Light", "z1_Plug", "z2_Light", "z2_Plug", "z3_Light", "z4_AC1", "z4_Plug"]
+    positivos = {"z1_AC1": 66.2, "z4_AC1": 38.4, "z2_Light": 4.1, "z3_Light": 1.9}
+    d = pd.DataFrame({"ativo": ativos, "data": pd.to_datetime(["2018-11-04"] * 8), "kwh": 1.0, "esperado": 1.0,
+                      "desvio": [positivos.get(a, 0.0) for a in ativos]})
+    rk = av.ranking(d)
+    assert list(rk["ativo"]) == ["z1_AC1", "z4_AC1", "z2_Light", "z3_Light", "z1_Light", "z1_Plug", "z2_Plug", "z4_Plug"]
