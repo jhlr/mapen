@@ -1,8 +1,10 @@
 # Dicionário de dados — AV1 Grupo 3 (MAPEN)
 
-Origem: CU-BEMS, andar 2 (`2018Floor2.csv`), Bangkok, 2018. **Dado real público**, licença CC BY 4.0, https://doi.org/10.6084/m9.figshare.11726517 (arquivo 21350166). Citação: Pipattanasomporn et al., 2020, *Scientific Data* 7:241. Não é cliente nem medição do MAPEN. A referência calculada é **estimada**.
+Origem: CU-BEMS, andar 2 (`2018Floor2.csv`), Bangkok, 2018. **Dado real público**, licença CC BY 4.0, https://doi.org/10.6084/m9.figshare.11726517 (o artigo; o arquivo `2018Floor2.csv` tem id 21350166 e cerca de 41 MB). Citação: Pipattanasomporn et al., 2020, *Scientific Data* 7:241. Não é cliente nem medição do MAPEN. A referência calculada é **estimada**.
 
 Recorte: 8 ativos, 09/09/2018 a 01/12/2018 (84 dias; avaliados: 04/11 a 01/12, 28 dias). Ativos: `z1_AC1`, `z1_Light`, `z1_Plug`, `z2_Light`, `z2_Plug`, `z3_Light`, `z4_AC1`, `z4_Plug` (`z4_Plug` fica de propósito: nunca consome, serve de caso de denominador zero).
+
+Recorte de 8 dos 24 equipamentos do andar 2: cobre as quatro zonas (z1 a z4) e os três tipos de carga (ar-condicionado, iluminação e tomadas) e mantém `z4_Plug`, que nunca consome, de propósito, como caso de denominador zero (ver acima). Os outros 16 ficaram fora e o motivo individual da escolha não foi registrado, então os 8 não são uma amostra estatística do andar e os achados não se generalizam para ele.
 
 ## Fontes e grãos
 

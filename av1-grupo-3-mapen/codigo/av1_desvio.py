@@ -169,7 +169,7 @@ def esperado_diario(diaria: pd.DataFrame, ref: JanelaRef) -> pd.DataFrame:
 
 
 def ranking(desvios: pd.DataFrame) -> pd.DataFrame:
-    """Soma dos desvios positivos (ordem), soma dos negativos e saldo, por ativo, em kWh."""
+    """Soma dos desvios positivos (ordem, empate pelo nome), soma dos negativos e saldo, por ativo, em kWh."""
     d = desvios.dropna(subset=["desvio"])
     agg = d.groupby("ativo").agg(
         soma_positivos=("desvio", lambda s: float(s[s > 0].sum())),
@@ -179,7 +179,8 @@ def ranking(desvios: pd.DataFrame) -> pd.DataFrame:
         observado=("kwh", "sum"),
         esperado=("esperado", "sum"),
     )
-    return agg.sort_values("soma_positivos", ascending=False).reset_index()
+    # Empate: nome do ativo, como no painel (dashboard/calculo.js). Sem isso a ordem dos empatados muda com a versão do pandas.
+    return agg.reset_index().sort_values(["soma_positivos", "ativo"], ascending=[False, True]).reset_index(drop=True)
 
 
 def perfil_horario(horaria: pd.DataFrame, diaria: pd.DataFrame, ref: JanelaRef) -> pd.DataFrame:
