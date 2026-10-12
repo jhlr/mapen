@@ -73,7 +73,7 @@ def carregar_recorte(fonte: Path) -> pd.DataFrame:
 def gerar_recorte(fonte: Path, destino: Path) -> None:
     """Extrai do arquivo original só os ativos e o período do estudo (reprodutível sem os 5 meses)."""
     minuto = carregar_recorte(fonte)
-    minuto.reset_index().to_csv(destino, index=False, float_format="%.2f", compression="gzip")
+    minuto.reset_index().to_csv(destino, index=False, float_format="%.2f", compression="gzip", lineterminator="\n")
 
 
 def verificacoes_qualidade(fonte: Path) -> dict[str, object]:
@@ -250,13 +250,13 @@ def main() -> None:
         gerar_recorte(args.fonte, recorte)
         qualidade = verificacoes_qualidade(args.fonte)
         (RAIZ / "evidencias" / "verificacoes_qualidade.json").write_text(
-            json.dumps(qualidade, ensure_ascii=False, indent=2), encoding="utf-8"
+            json.dumps(qualidade, ensure_ascii=False, indent=2), encoding="utf-8", newline="\n"
         )
     minuto = carregar_recorte(recorte)
     diaria, horaria = base_diaria(minuto), base_horaria(minuto)
-    diaria.to_csv(RAIZ / "dados" / "base_diaria.csv", index=False, float_format="%.4f")
-    horaria.to_csv(RAIZ / "dados" / "base_horaria.csv", index=False, float_format="%.3f")
-    (RAIZ / "dashboard" / "dados.js").write_text(dados_js(diaria, horaria), encoding="utf-8")
+    diaria.to_csv(RAIZ / "dados" / "base_diaria.csv", index=False, float_format="%.4f", lineterminator="\n")
+    horaria.to_csv(RAIZ / "dados" / "base_horaria.csv", index=False, float_format="%.3f", lineterminator="\n")
+    (RAIZ / "dashboard" / "dados.js").write_text(dados_js(diaria, horaria), encoding="utf-8", newline="\n")
 
     desvios = {r["id"]: esperado_diario(diaria, r) for r in REFERENCIAS}
     rankings = {k: ranking(v) for k, v in desvios.items()}
@@ -271,7 +271,7 @@ def main() -> None:
         },
     }
     (RAIZ / "evidencias" / "resultados_python.json").write_text(
-        json.dumps(saida, ensure_ascii=False, indent=1), encoding="utf-8"
+        json.dumps(saida, ensure_ascii=False, indent=1), encoding="utf-8", newline="\n"
     )
     print(json.dumps(saida["sensibilidade"], ensure_ascii=False, indent=1))
     for k, v in rankings.items():
