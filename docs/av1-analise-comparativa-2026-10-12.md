@@ -45,7 +45,7 @@ O pacote cobre quase tudo que o professor pede e responde à encomenda do Grupo 
 | `python -m pytest codigo -q` | 4 passaram |
 | `node codigo/conferencia_cruzada.js` (arquivos do repositório) | 2.016 comparações, 0 falhas. Bate com o relatório |
 | `node codigo/conferencia_cruzada.js` **depois** de regenerar, antes da correção | 2.016 comparações, **4 falhas** (ver 2.1) |
-| Mesma sequência **depois** da correção, em Python 3.11, 3.12 e 3.13 (pandas 3.0.6) | Bases e `resultados_python.json` idênticos aos versionados; conta +5,3248 kWh; 5 testes passam; conferência com **0 falhas** |
+| Mesma sequência **depois** da correção, em Python 3.11, 3.12 e 3.13 (pandas 3.0.6) | Bases e `resultados_python.json` idênticos aos versionados; conta +5,3248 kWh; 5 testes passam (hoje 7, depois da revisão dos nomes); conferência com **0 falhas** |
 
 ### 2.1 Divergência de reprodução (achado e corrigido)
 

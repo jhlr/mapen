@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MAPEN: o que significa cada nome</title>
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<header class="topo">
+  <div class="topo-in">
+    <div>
+      <p class="marca">MAPEN · AV1</p>
+      <h1>O que significa cada nome</h1>
+      <p class="meta">Os ativos medidos, os códigos como <code style="background:#1a3453;color:#fff">z1_AC1</code> e os termos usados no painel.</p>
+    </div>
+    <p class="volta"><a href="index.html" style="color:#cfe0f7;font-weight:600">← Voltar ao painel</a></p>
+  </div>
+</header>
+
+<div class="pagina nomes">
+  <section class="cartao" aria-labelledby="n-cod">
+    <h2 id="n-cod">Como ler o código de um ativo</h2>
+    <p>Os dados vêm do CU-BEMS, um prédio de escritórios em Bangkok com medidores separados por zona e por tipo de carga. Cada <b>ativo</b> do painel é um desses medidores, e o nome dele segue o padrão abaixo.</p>
+    <div class="anatomia" aria-label="Exemplo: z1_AC1 é a zona 1, tipo ar-condicionado, número 1">
+      <div class="peca"><b>z1</b><span><b style="font-size:.9rem;font-family:inherit">zona 1</b><br>divisão do andar com seus medidores</span></div>
+      <div class="peca"><b>AC</b><span><b style="font-size:.9rem;font-family:inherit">tipo</b><br>AC = ar-condicionado<br>Light = iluminação<br>Plug = tomadas</span></div>
+      <div class="peca"><b>1</b><span><b style="font-size:.9rem;font-family:inherit">número</b><br>qual unidade, quando há mais de uma</span></div>
+    </div>
+    <p>Então <code>z1_AC1</code> é o <b>ar-condicionado 1 da zona 1</b>. O painel mostra o nome por extenso e deixa o código ao lado, porque é o código que aparece nos arquivos de dados.</p>
+    <p>O dado cobre as zonas 1 a 4 do <b>andar 2</b>, medidas minuto a minuto, em <b>kW</b> (potência). O painel usa 8 desses ativos; o motivo individual da escolha não foi registrado, então não vale como amostra do andar inteiro.</p>
+  </section>
+
+  <section class="cartao" aria-labelledby="n-ativos">
+    <h2 id="n-ativos">Os 8 ativos do painel</h2>
+    <div style="overflow-x:auto"><table>
+      <thead><tr><th class="esq">Código</th><th class="esq">Nome no painel</th><th class="esq">Zona</th><th class="esq">O que mede</th></tr></thead>
+      <tbody id="tab-ativos"></tbody>
+    </table></div>
+  </section>
+
+  <section class="cartao" aria-labelledby="n-termos">
+    <h2 id="n-termos">Termos usados no painel</h2>
+    <dl class="termos">
+      <dt>Observado</dt>
+      <dd>Energia que o ativo consumiu de fato no dia, em kWh por dia (potência média do dia × 24 h). Dia com menos de 95% dos minutos medidos não entra.</dd>
+      <dt>Esperado, referência ou linha de base</dt>
+      <dd>Estimativa do que o ativo consumiria num dia comum: a <b>mediana</b> da energia diária dos mesmos dias da semana numa janela anterior ao período avaliado. É uma estimativa nossa, <b>não</b> é “consumo normal medido”.</dd>
+      <dt>Referência A, B e C</dt>
+      <dd><b>A</b>: janela de 8 semanas (09/09 a 03/11). <b>B</b>: só as 4 últimas semanas (07/10 a 03/11). <b>C</b>: as 8 semanas sem os feriados de 13, 15 e 23/10, que tiveram consumo zero. Trocar a referência serve para ver se a prioridade muda.</dd>
+      <dt>Mediana</dt>
+      <dd>O valor do meio quando se ordenam os números. Ao contrário da média, um dia muito fora do comum (um feriado com consumo zero) pesa pouco.</dd>
+      <dt>Desvio</dt>
+      <dd>Observado menos esperado, em kWh por dia. Positivo = acima da referência; negativo = abaixo. É uma pista de onde olhar, <b>não</b> prova de desperdício.</dd>
+      <dt>Desvio relativo</dt>
+      <dd>100 × desvio ÷ esperado, em %. Só se calcula quando o esperado é maior que zero; senão aparece <b>n/c</b>.</dd>
+      <dt>n/c</dt>
+      <dd>“Não calculável”: a conta não faz sentido (por exemplo, dividir por esperado = 0). Não é zero.</dd>
+      <dt>Soma dos desvios positivos</dt>
+      <dd>Soma só dos dias em que o ativo ficou <b>acima</b> da referência, em kWh. É o que define a ordem do ranking e o “Investigar primeiro”.</dd>
+      <dt>Soma dos desvios negativos</dt>
+      <dd>Soma só dos dias em que o ativo ficou <b>abaixo</b> da referência, em kWh.</dd>
+      <dt>Saldo</dt>
+      <dd>Soma dos positivos mais a dos negativos. Dias abaixo compensam dias acima, por isso o saldo <b>não</b> define a ordem do ranking.</dd>
+      <dt>Lacuna</dt>
+      <dd>Dia sem dado suficiente (menos de 95% dos minutos). Aparece como falha no gráfico, nunca como zero.</dd>
+      <dt>Expediente assumido</dt>
+      <dd>Faixa de 7h às 18h, de segunda a sexta. É uma hipótese tirada do perfil do ar-condicionado da zona 1, <b>não</b> um horário informado pela unidade.</dd>
+      <dt>kW e kWh</dt>
+      <dd><b>kW</b> é potência, a “força” num instante (usada no perfil por hora). <b>kWh</b> é energia, o total consumido ao longo do tempo (usada nos dias e no ranking). Não se somam nem se comparam entre si.</dd>
+      <dt>Dado real público</dt>
+      <dd>As medições são reais, mas de um prédio de Bangkok publicado como dado aberto (CC BY 4.0, Pipattanasomporn et al., 2020). Não é de um cliente do MAPEN.</dd>
+      <dt>Candidato a investigação</dt>
+      <dd>Um ativo ou dia que o painel aponta para alguém conferir ocupação, agenda e necessidade operacional antes de concluir qualquer coisa.</dd>
+    </dl>
+  </section>
+  <p class="volta"><a href="index.html">← Voltar ao painel</a></p>
+</div>
+<script src="dados.js"></script>
+<script src="nomes.js"></script>
+</body>
+</html>

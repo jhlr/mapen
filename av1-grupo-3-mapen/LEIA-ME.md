@@ -44,7 +44,7 @@ Depois, na ordem:
 | 1 | `python codigo/av1_desvio.py` | Imprime a sensibilidade e os rankings das referências A, B e C. Regrava `dados/base_*.csv`, `dashboard/dados.js` e `evidencias/resultados_python.json` com o mesmo conteúdo (se `git status` mostrar mudança, algo diverge) |
 | 2 | `python codigo/conta_independente.py z1_AC1 2018-11-12 A` | `observado=289.4012 esperado=284.0763 desvio=5.3248 kWh` e `maior diferença absoluta = 0.00003 kWh -> OK` |
 | 3 | `node codigo/conferencia_cruzada.js` | `{"comparacoes":2016,"maior_diferenca_abs":0.0001...,"falhas":0}` (o que importa é `"falhas":0`) |
-| 4 | `python -m pytest codigo -q` | `5 passed` |
+| 4 | `python -m pytest codigo -q` | `7 passed` |
 
 A conta do passo 2 usa só a biblioteca padrão do Python e lê o CSV bruto, sem reaproveitar código do pipeline.
 
@@ -64,7 +64,7 @@ Isso **sobrescreve** `dados/recorte_minuto.csv.gz` e `evidencias/verificacoes_qu
 | `racionalizacao.pdf` / `.md` | relatório (modelo do professor, seções 1 a 18 + anexo) |
 | `dados/` | recorte por minuto, bases diária e horária, `dicionario.md` |
 | `codigo/` | pipeline, conta independente, conferência cruzada, testes |
-| `dashboard/` | painel estático (HTML, CSS, JS, `dados.js`) |
+| `dashboard/` | painel estático (HTML, CSS, JS, `dados.js`) e `nomes.html`, a página que explica os nomes dos ativos e os termos |
 | `evidencias/` | rascunho, versões do painel, captura anotada, casos (E4), qualidade, contrastes, resultados |
 | `rodar.py` | roda e confere tudo (cria `.venv`, instala, passos 1 a 4) |
 | `requirements.txt` | dependências Python dos passos 1, 2 e 4 |

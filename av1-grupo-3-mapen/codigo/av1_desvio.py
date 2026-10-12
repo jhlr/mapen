@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 from datetime import date, timedelta
 from pathlib import Path
 from typing import Final, TypedDict
@@ -202,7 +203,35 @@ def perfil_horario(horaria: pd.DataFrame, diaria: pd.DataFrame, ref: JanelaRef) 
     return pd.concat([o, r], axis=1).reset_index().assign(ref=ref["id"])
 
 
-def dados_js(diaria: pd.DataFrame, horaria: pd.DataFrame) -> str:
+TIPOS_ATIVO: Final[dict[str, tuple[str, str]]] = {
+    "AC": ("Ar-condicionado", "Unidade de ar-condicionado da zona."),
+    "Light": ("Iluminação", "Circuito de iluminação da zona."),
+    "Plug": ("Tomadas", "Equipamentos ligados nas tomadas da zona (o que o dado chama de plug loads)."),
+}
+
+
+def rotulos_ativos(ativos: list[str], maximos: dict[str, float]) -> dict[str, dict[str, object]]:
+    """Nome legível de cada ativo, derivado do código do CU-BEMS (z<zona>_<tipo><número>), numa fonte só.
+
+    O painel e a página nomes.html leem daqui (dados.js); código fora do padrão cai no próprio código.
+    `nota` só aparece quando o ativo nunca consumiu no recorte (máximo 0), que é dado, não suposição.
+    """
+    saida: dict[str, dict[str, object]] = {}
+    for a in ativos:
+        m = re.fullmatch(r"z(\d+)_(AC|Light|Plug)(\d*)", a)
+        nota = "Nunca consumiu no recorte (máximo 0 kW): serve de teste do caso esperado = 0." if maximos.get(a, 1.0) == 0 else ""
+        if not m:
+            saida[a] = {"nome": a, "completo": a, "zona": None, "tipo": "", "descricao": "", "nota": nota}
+            continue
+        zona, tipo, numero = int(m.group(1)), m.group(2), m.group(3)
+        nome_tipo, descricao = TIPOS_ATIVO[tipo]
+        nome = f"{nome_tipo} {numero}" if numero else nome_tipo
+        saida[a] = {"nome": nome, "completo": f"{nome} · zona {zona}", "zona": zona, "tipo": nome_tipo,
+                    "descricao": descricao, "nota": nota}
+    return saida
+
+
+def dados_js(diaria: pd.DataFrame, horaria: pd.DataFrame, rotulos: dict[str, dict[str, object]]) -> str:
     """Base compacta para o painel recalcular no navegador (mesma janela de 84 dias)."""
     datas = sorted(diaria["data"].dt.strftime("%Y-%m-%d").unique())
     pivot = diaria.pivot(index="data", columns="ativo", values="kwh")
@@ -216,6 +245,7 @@ def dados_js(diaria: pd.DataFrame, horaria: pd.DataFrame) -> str:
         "expediente": {"inicio": EXPEDIENTE_INICIO, "fim": EXPEDIENTE_FIM, "natureza": "hipótese inferida do perfil, não informada"},
         "referencias": REFERENCIAS,
         "ativos": ATIVOS,
+        "rotulos": rotulos,
         "diario": {a: [None if np.isnan(v) else round(float(v), 4) for v in pivot[a].to_numpy()] for a in ATIVOS},
         "horario": {
             a: [
@@ -256,7 +286,7 @@ def main() -> None:
     diaria, horaria = base_diaria(minuto), base_horaria(minuto)
     diaria.to_csv(RAIZ / "dados" / "base_diaria.csv", index=False, float_format="%.4f", lineterminator="\n")
     horaria.to_csv(RAIZ / "dados" / "base_horaria.csv", index=False, float_format="%.3f", lineterminator="\n")
-    (RAIZ / "dashboard" / "dados.js").write_text(dados_js(diaria, horaria), encoding="utf-8", newline="\n")
+    (RAIZ / "dashboard" / "dados.js").write_text(dados_js(diaria, horaria, rotulos_ativos(ATIVOS, {a: float(minuto[a].max()) for a in ATIVOS})), encoding="utf-8", newline="\n")
 
     desvios = {r["id"]: esperado_diario(diaria, r) for r in REFERENCIAS}
     rankings = {k: ranking(v) for k, v in desvios.items()}
