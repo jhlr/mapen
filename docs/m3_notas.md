@@ -58,7 +58,7 @@ Calendario (hora 11.5%, dia da semana 3.3%, feriado 0.1%) = **14.9%** do |SHAP| 
 
 ### Alertas em dado real: candidatos, nao corroborados
 
-Periodo reservado, limiar |z| >= 4.0: 160 alertas de z-score e 54 de LightGBM (214 no total), sobre 12.727 horas-equipamento. Zero corroborados pelo cliente (nao ha cliente). Os maiores z-scores sao quedas abaixo do esperado em z2_AC2/AC3/AC4 de manha (ex.: 2018-11-05 09:00; varios em 2018-11-17, um sabado), compativeis com ar-condicionado desligado, nao com falha; nao confirmado.
+Periodo reservado, limiar |z| >= 4.0: 128 alertas de z-score e 54 de LightGBM (182 no total; eram 160 e 214 antes da troca do baseline do z-score por naive-168, ver "Resultado real" abaixo), sobre 12.727 horas-equipamento. Zero corroborados pelo cliente (nao ha cliente). Os maiores z-scores sao quedas abaixo do esperado em z2_AC2/AC3/AC4 de manha (ex.: 2018-11-05 09:00; varios em 2018-11-17, um sabado), compativeis com ar-condicionado desligado, nao com falha; nao confirmado.
 
 ### Benchmark SINTETICO (nao e precisao/recall em dado real)
 

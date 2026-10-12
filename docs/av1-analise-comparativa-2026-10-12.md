@@ -1,15 +1,15 @@
 # AV1: o pacote do Grupo 3 cumpre as orientações do professor?
 
-**Data:** 2026-10-12 (revisão da análise de 12/10, após o commit `d0b5571` trazer `av1-grupo-3-mapen/`)
+**Data:** 2026-10-12 (terceira revisão, sobre a `main` em `ecee47b`, depois do pacote com painel v4, `rodar.py`, teste de leitura e contribuições)
 **Referência:** `docs/av1-especificacoes-2026-10-12.md`
 **Atualização (mesmo dia):** a divergência de reprodução (2.1), as lacunas do LEIA-ME (2.2), o identificador da fonte (4.2), a frase dos 8 ativos (4.5) e a seção 15 do relatório (4.8) foram resolvidos nesta mesma branch. O relatório e o `racionalizacao.pdf` foram regerados. O SR1 é outra entrega, então a conferência das seções 1 e 14 contra ele saiu da lista (4.3).
-**Objeto:** `av1-grupo-3-mapen/` (relatório `racionalizacao.md` e `.pdf`, `dados/`, `codigo/`, `dashboard/`, `evidencias/`, `LEIA-ME.md`).
+**Objeto:** `av1-grupo-3-mapen/` (relatório `racionalizacao.md` e `.pdf`, `dados/`, `codigo/`, `dashboard/` com `index.html` e `nomes.html`, `evidencias/`, `LEIA-ME.md`, `rodar.py`, `requirements.txt`).
 
-**O que foi feito nesta conferência:** leitura completa de `racionalizacao.md` e `LEIA-ME.md`; reprodução numa cópia temporária (Python 3.13, pandas 3.0.6, numpy, pytest, Node 22) de `av1_desvio.py`, `conta_independente.py`, `pytest` e `conferencia_cruzada.js`. **Não** abri o painel no navegador nem conferi as imagens de `evidencias/`; não li o código do painel nem `dicionario.md` linha a linha.
+**O que foi feito nesta conferência:** leitura das seções 9, 10, 12, 15 a 18 e do Anexo A de `racionalizacao.md`; execução de `python rodar.py --sem-abrir` na máquina do autor (Python 3.14.7), que rodou os quatro passos do zero; contagem de páginas do PDF. As reproduções em Python 3.11, 3.12 e 3.13 (Linux) e a simulação para Windows são da conferência anterior, não repetidas. **Não** abri o painel no navegador nem conferi as imagens de `evidencias/`; não li o código do painel nem `dicionario.md` linha a linha.
 
 ## Veredito
 
-O pacote cobre quase tudo que o professor pede e responde à encomenda do Grupo 3. O teste de leitura e as contribuições, que eram as maiores pendências, foram preenchidos pelo grupo (seções 12 e 16). Restam: registrar quem aplicou o teste, quando e quanto durou, decidir se refaz o teste com a versão 4, cada integrante confirmar a própria linha e confirmar o motivo real da escolha dos 8 ativos. A divergência de reprodução, o identificador da fonte, a frase dos 8 ativos e a seção 15 do relatório foram resolvidos. A nota depende agora de detalhes de registro, não de falta de método.
+O pacote cobre quase tudo que o professor pede e responde à encomenda do Grupo 3. O teste de leitura e as contribuições foram preenchidos pelo grupo (seções 12 e 16) e o painel ganhou a versão 4 (nomes legíveis e `nomes.html`). Restam: registrar quem aplicou o teste, quando e quanto durou, decidir se refaz o teste com a versão 4, cada integrante confirmar a própria linha, confirmar o motivo real da escolha dos 8 ativos e, se existir, trocar o rascunho reconstruído por um real. A nota depende de detalhes de registro, não de falta de método.
 
 ## 1. Conferência contra a encomenda do Grupo 3
 
@@ -42,10 +42,11 @@ O pacote cobre quase tudo que o professor pede e responde à encomenda do Grupo 
 |---|---|
 | `python codigo/av1_desvio.py` | Rodou. As bases `dados/*.csv` e `dashboard/dados.js` saíram idênticas às do repositório |
 | `python codigo/conta_independente.py z1_AC1 2018-11-12 A` | Observado 289,4012, esperado 284,0763, desvio +5,3248 kWh; diferença 0,00003 kWh. Bate com a seção 7 |
-| `python -m pytest codigo -q` | 4 passaram |
+| `python -m pytest codigo -q` | 4 passaram (na época; hoje são 7) |
 | `node codigo/conferencia_cruzada.js` (arquivos do repositório) | 2.016 comparações, 0 falhas. Bate com o relatório |
 | `node codigo/conferencia_cruzada.js` **depois** de regenerar, antes da correção | 2.016 comparações, **4 falhas** (ver 2.1) |
-| Mesma sequência **depois** da correção, em Python 3.11, 3.12 e 3.13 (pandas 3.0.6) | Bases e `resultados_python.json` idênticos aos versionados; conta +5,3248 kWh; 5 testes passam (hoje 7, depois da revisão dos nomes); conferência com **0 falhas** |
+| Mesma sequência **depois** da correção, em Python 3.11, 3.12 e 3.13 (pandas 3.0.6) | Bases e `resultados_python.json` idênticos aos versionados; conta +5,3248 kWh; 5 testes passam (hoje 7); conferência com **0 falhas** |
+| `python rodar.py --sem-abrir` na `main` atual (Python 3.14.7, esta revisão) | Quatro passos `OK`: bases idênticas, +5,3248 kWh, 2.016 comparações com 0 falhas, 7 testes passando; a árvore git não ficou suja |
 
 ### 2.1 Divergência de reprodução (achado e corrigido)
 
@@ -57,7 +58,7 @@ Correção (nesta branch): `ranking()` ordena por `["soma_positivos", "ativo"]` 
 
 ### 2.2 Documentação de como rodar (corrigida)
 
-O LEIA-ME tinha o essencial (arquivo que abre o painel, ordem dos comandos, origem do dado), mas faltavam: instrução de instalação e `requirements.txt`, saída esperada de cada passo, fallback do painel (`python -m http.server`), origem do CSV usado por `--fonte` e o aviso de que ele sobrescreve arquivos. O requisito "Python 3.14" também era mais rígido que o necessário.
+(Texto da revisão anterior, mantido como histórico.) O LEIA-ME tinha o essencial (arquivo que abre o painel, ordem dos comandos, origem do dado), mas faltavam: instrução de instalação e `requirements.txt`, saída esperada de cada passo, fallback do painel (`python -m http.server`), origem do CSV usado por `--fonte` e o aviso de que ele sobrescreve arquivos. O requisito "Python 3.14" também era mais rígido que o necessário.
 
 Agora o LEIA-ME traz tudo isso e há um atalho, `python rodar.py` (só biblioteca padrão), que cria o `.venv`, instala, roda os quatro passos e confere cada resultado (testado do zero em Python 3.11, 3.12 e 3.13 no Linux, e com adulteração de um arquivo versionado, que ele acusa). Ele abre o painel por padrão (`--sem-abrir` desliga) e foi ajustado para Windows: acentos no console, fim de linha CRLF e `py rodar.py`. Isso foi verificado por simulação, não em uma máquina Windows, e o requisito virou "Python 3.11 ou mais novo" (testado em 3.11, 3.12 e 3.13; Node 22). A seção 15 do relatório foi alinhada ao LEIA-ME: requisito mínimo Python 3.11, instalação, saída esperada de cada passo e o ambiente do autor (Python 3.14, pandas 3.0.5, Node 26) mantido como registro.
 
@@ -70,14 +71,14 @@ Faixas são minha estimativa, não nota. Usam a escala do professor (100%, 75%, 
 | Recorte e decisão (1,0) | Integral | Estado, usuário, ação, P1 a P3 e encomenda atendidos |
 | Dados e qualidade (2,0) | Integral ou 75% | Fonte, reprodução e LEIA-ME corrigidos (4.2, 2.1 e 2.2); resta confirmar o motivo da escolha dos 8 ativos (4.5) |
 | Indicadores e análise (1,5) | Integral | Fórmulas, denominadores, conta independente e conferência cruzada presentes |
-| Racionalização visual (3,0) | 75% a integral | O rascunho foi **reconstruído depois da versão 1**, e o próprio relatório avisa. Pode ser lido como "rascunho inicial parcial". Substituir por um rascunho real, se existir |
+| Racionalização visual (3,0) | 75% a integral | O rascunho foi **reconstruído depois da versão 1**, e o próprio relatório avisa (Anexo A). Pode ser lido como "rascunho inicial parcial". Substituir por um rascunho real, se existir. Revisão 3 (nomes legíveis, versão 4) já está na seção 9 |
 | Dashboard e comunicação (1,0) | Integral ou 75% | Acessibilidade calculada mas não auditada por ferramenta (declarado) |
-| Validação e rastreabilidade (1,5) | 75% provável | Lacunas pontuais: dados do teste (quem, quando, tempo), correção pós-teste e confirmação individual das contribuições |
+| Validação e rastreabilidade (1,5) | 75% provável | Lacunas pontuais: dados do teste (quem, quando, tempo), correção pós-teste (o relatório diz que nada foi registrado como causado pelo teste) e confirmação individual das contribuições |
 
 ## 4. Pendências e pontos a decidir
 
 ### 4.1 Teste de leitura (seção 12)
-Feito pelo grupo com uma pessoa externa, anonimizada no relatório (o guia pede perfil sem dados pessoais desnecessários). O registro mostra que ela leu bem os gráficos, mas não citou o ativo a investigar primeiro, comparou os dois painéis da V3 em vez de dois recortes e não distinguiu kW de kWh. O relatório agora diz isso, além dos limites (uma sessão, pessoa que não é o gestor previsto). Falta: quem aplicou, data, tempo aproximado e o que foi corrigido depois. A decisão em aberto é refazer o teste com a versão 4 do painel (nomes legíveis e `nomes.html`).
+Feito pelo grupo com uma pessoa externa, anonimizada no relatório (o guia pede perfil sem dados pessoais desnecessários). O registro mostra que ela leu bem os gráficos, mas não citou o ativo a investigar primeiro, comparou os dois painéis da V3 em vez de dois recortes e não distinguiu kW de kWh. O relatório diz isso, além dos limites (uma sessão, pessoa que não é o gestor previsto). Falta: quem aplicou, data, tempo aproximado e o que foi corrigido depois (a `nomes.html`, com o verbete de kW × kWh, nasceu de outro retorno e **não foi testada com leitor externo**). A decisão em aberto é refazer o teste com a versão 4 do painel, incluindo as tarefas 1 e 2, que falharam.
 
 ### 4.2 Fonte do dado (resolvido)
 Não havia conflito: `10.6084/m9.figshare.11726517` é o DOI do artigo (CU-BEMS, versão 6, consultado no figshare) e `21350166` é o id do arquivo `2018Floor2.csv` (cerca de 41 MB). O relatório citava só o id do arquivo em um lugar e só o DOI em outro. Agora a seção 5, a seção 15, o `dicionario.md` e o LEIA-ME dizem a mesma coisa: DOI do artigo, nome e id do arquivo, tamanho.
@@ -91,14 +92,14 @@ Preenchidas para os 7 integrantes a partir do Google Docs do grupo. Cada integra
 ### 4.5 Escolha dos 8 ativos (frase escrita; falta confirmar o motivo)
 O relatório (seção 2) e o `dicionario.md` agora dizem: 8 dos 24 equipamentos do andar 2, cobrindo as quatro zonas e os três tipos de carga, com `z4_Plug` mantido de propósito como caso de denominador zero; os outros 16 ficaram fora, o motivo individual da escolha não foi registrado, e por isso os achados não se generalizam para o andar. Isso descreve o que se pode verificar no recorte. Quem escolheu os ativos (provavelmente quem montou o recorte) deve confirmar o motivo real e, se existir, trocar a frase.
 
-### 4.6 Relação com o M3
-O painel da AV1 usa mediana do mesmo dia da semana; o M3 usa naive de 168 h e LightGBM. O relatório diz que o código M1 a M3 é "apenas contexto, não reaproveitado". Vale uma frase explicando por que a referência é diferente (a encomenda sugere mediana de intervalos comparáveis), para o avaliador não ler como inconsistência.
+### 4.6 Relação com o M3 (resolvido)
+O painel da AV1 usa mediana do mesmo dia da semana; o M3 usa naive de 168 h e LightGBM. O relatório só diz, na seção 17, que o código M1 a M3 é "apenas contexto, não reaproveitado". Agora o item D do Anexo A explica que a diferença é deliberada (a encomenda pede regra simples e auditável) e que os modelos do M3 não alimentam o painel.
 
 ### 4.7 Documentos do repositório fora de sincronia
-`docs/m3_notas.md` ainda traz na primeira tabela de alertas "160 de z-score e 54 de LightGBM" (214), enquanto o relatório e o status de 03/10 usam 128 e 54 (182) após o naive-168. `docs/crisp_dm.md` (12/08) ainda lista fases como não iniciadas. Não afeta a nota da AV1, mas o relatório cita `m3_notas.md` como fonte.
+`docs/m3_notas.md` trazia na primeira tabela de alertas "160 de z-score e 54 de LightGBM" (214); corrigido para 128 e 54 (182), igual à tabela comparativa do mesmo arquivo e ao status de 03/10. As datas e horários dos maiores z-scores citados no mesmo parágrafo vêm da análise anterior ao naive-168 e não foram reconferidos. `docs/crisp_dm.md` (12/08) ainda lista fases como não iniciadas. Não afeta a nota da AV1, mas o relatório cita `m3_notas.md` como fonte.
 
 ### 4.8 Limites já declarados no relatório (manter)
-Auditoria automática de acessibilidade (axe), leitor de tela real, simulação de daltonismo e calendário de feriados conferido contra fonte oficial. Botões "?" com 28 px, abaixo dos 44 px dos demais controles. Relatório em PDF com 14 páginas depois de regerado: corpo principal nas páginas 1 a 11 e Anexo A a partir da 11, dentro da referência de 8 a 12 páginas de corpo. A seção 15 já foi alinhada ao LEIA-ME e o PDF regerado.
+Auditoria automática de acessibilidade (axe), leitor de tela real, simulação de daltonismo e calendário de feriados conferido contra fonte oficial. Botões "?" com 28 px, abaixo dos 44 px dos demais controles. Relatório enxugado (6.458 → cerca de 5.730 palavras) e regerado no Mac (Chrome, Helvetica Neue): **12 páginas no total, com o Anexo A**; corpo nas páginas 1 a 9, anexo da 9 à 12. A versão anterior tinha 13 páginas no Mac e 16 no Linux (outra fonte). A paginação depende da fonte; conferir a cada regeração. O Windows continua não testado em máquina Windows.
 
 ## 5. Próximos passos
 
@@ -106,4 +107,7 @@ Auditoria automática de acessibilidade (axe), leitor de tela real, simulação 
 2. Cada integrante confirmar a própria linha da seção 16 (4.4).
 3. Confirmar o motivo real da escolha dos 8 ativos (4.5).
 4. Se existir um rascunho feito antes do painel (papel ou Figma), substituir o reconstruído.
-5. Se mudar qualquer seção, regerar o `racionalizacao.pdf` e conferir que o corpo continua em até 12 páginas.
+5. Se mudar qualquer seção, regerar o `racionalizacao.pdf` e conferir que o corpo continua em até 12 páginas (hoje 9 no Mac, 12 com o anexo; ver `docs/ferramentas/README.md`).
+6. ~~Frase sobre a referência da AV1 versus M3 (4.6)~~ feita: item D do Anexo A.
+7. Trocar o Google Doc do Drive (versão antiga, com o nome completo da participante) pelo conteúdo atual.
+8. Aguardar a divulgação do peso e do prazo da AV1 pelo professor; não assumir data.
