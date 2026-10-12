@@ -33,6 +33,20 @@ Recorte de 8 dos 24 equipamentos do andar 2: cobre as quatro zonas (z1 a z4) e o
 | `desvio` | `kwh − esperado` | kWh/dia, com sinal | V1 (barras), V2 |
 | `desvio_rel_pct` | `100 × desvio / esperado`, só se `esperado > 0`; senão vazio (n/c) | % | tabela da V1 |
 
+## Rótulos dos ativos (`dashboard/dados.js`, chave `rotulos`)
+
+Gerados por `rotulos_ativos` em `codigo/av1_desvio.py` a partir do código do CU-BEMS `z<zona>_<tipo><número>`; o código original continua sendo a chave em todos os arquivos.
+
+| Campo | Significado | Exemplo (`z1_AC1`) |
+|---|---|---|
+| `nome` | tipo por extenso, com o número quando existe | Ar-condicionado 1 |
+| `zona` | número da zona do andar | 1 |
+| `completo` | `nome · zona N` | Ar-condicionado 1 · zona 1 |
+| `tipo` / `descricao` | AC = ar-condicionado, Light = iluminação, Plug = tomadas (*plug loads*) | Ar-condicionado / "Unidade de ar-condicionado da zona." |
+| `nota` | só preenchida quando o máximo do recorte é 0 kW | vazio (`z4_Plug` tem a nota) |
+
+Código fora do padrão usa o próprio código como nome. A página `dashboard/nomes.html` mostra esta tabela e os termos do painel.
+
 ## Medidas agregadas (V2)
 
 - `soma_positivos` = Σ dos `desvio` > 0 no período (kWh). **Define a ordem.**

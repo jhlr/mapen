@@ -15,6 +15,10 @@ from datetime import date, timedelta
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
+
+# Windows: console ou redirecionamento podem usar codificação sem acentos (cp1252, cp850).
+if (sys.stdout.encoding or "").lower().replace("-", "") != "utf8":
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 JANELAS = {"A": ("2018-09-09", "2018-11-04", False), "B": ("2018-10-07", "2018-11-04", False), "C": ("2018-09-09", "2018-11-04", True)}
 FERIADOS = {"2018-10-13", "2018-10-15", "2018-10-23"}
 
@@ -22,7 +26,7 @@ FERIADOS = {"2018-10-13", "2018-10-15", "2018-10-23"}
 def energia_diaria(ativo: str) -> dict[str, float]:
     soma: dict[str, float] = {}
     n: dict[str, int] = {}
-    with gzip.open(RAIZ / "dados" / "recorte_minuto.csv.gz", "rt", newline="") as f:
+    with gzip.open(RAIZ / "dados" / "recorte_minuto.csv.gz", "rt", encoding="utf-8", newline="") as f:
         for linha in csv.DictReader(f):
             v = linha[ativo]
             if v == "":
@@ -50,7 +54,7 @@ def main() -> None:
     esperado = statistics.median(v for _, v in amostra)
     observado = kwh[alvo]
     desvio = observado - esperado
-    exibido = next(x for x in json.loads((RAIZ / "evidencias" / "resultados_python.json").read_text())["desvios_diarios"][ref]
+    exibido = next(x for x in json.loads((RAIZ / "evidencias" / "resultados_python.json").read_text(encoding="utf-8"))["desvios_diarios"][ref]
                    if x["ativo"] == ativo and x["data"] == alvo)
     print(f"ativo={ativo} data={alvo} referencia={ref}")
     print("dias da referência (mesmo dia da semana):", [(i, round(v, 2)) for i, v in amostra])

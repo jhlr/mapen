@@ -67,7 +67,9 @@
       ref: document.querySelector("input[name=ref]:checked").value,
     };
   }
-  const nomeAtivo = (a) => (a === TODOS ? "Todos os ativos somados" : a);
+  // Nome legível vem de dados.js (rotulos), gerado a partir do código do ativo; sem rótulo, mostra o código.
+  const R = (a) => (D.rotulos && D.rotulos[a]) || { nome: a, completo: a, zona: null };
+  const nomeAtivo = (a) => (a === TODOS ? "Todos os ativos somados" : R(a).completo);
 
   /* ---------- Herói: o ativo a investigar primeiro (independe do filtro de ativo) ---------- */
   function desenharHeroi(rk) {
@@ -75,17 +77,19 @@
     const acima = rk.filter((r) => r.soma_positivos > 0);
     if (!topo || topo.soma_positivos <= 0) {
       $("h-ativo").textContent = "Nenhum";
+      $("h-cod").textContent = "";
       $("h-valor").textContent = "sem desvio positivo";
       $("h-titulo").textContent = "Nenhum ativo acima da referência no período.";
       $("h-apoio").replaceChildren();
       $("h-aviso").textContent = "";
       return;
     }
-    $("h-ativo").textContent = topo.ativo;
+    $("h-ativo").textContent = R(topo.ativo).nome.replace(/-/g, "\u2011"); // hífen que não quebra linha
+    $("h-cod").textContent = R(topo.ativo).zona === null ? topo.ativo : `zona ${R(topo.ativo).zona} · código ${topo.ativo}`;
     $("h-valor").textContent = `${sinal(topo.soma_positivos)} kWh acima`;
     const segundo = acima[1];
     $("h-titulo").textContent =
-      `${topo.dias_acima} dias acima da referência` + (segundo ? `. Depois: ${segundo.ativo} (${sinal(segundo.soma_positivos)} kWh).` : ".");
+      `${topo.dias_acima} dias acima da referência` + (segundo ? `. Depois: ${R(segundo.ativo).completo} (${sinal(segundo.soma_positivos)} kWh).` : ".");
     const dl = $("h-apoio");
     dl.replaceChildren();
     const item = (t, v) => {
@@ -188,7 +192,7 @@
 
   /* ---------- V2: ranking por ativo (clicável): soma dos desvios positivos e negativos ---------- */
   function desenharV2(linhas, e) {
-    const W = 440, linhaH = 40, m = { t: 52, r: 62, b: 16, l: 70 };
+    const W = 480, linhaH = 40, m = { t: 52, r: 62, b: 16, l: 132 };
     const H = m.t + linhas.length * linhaH + m.b;
     const s = svg(W, H);
     const lim = Math.max(1, ...linhas.flatMap((r) => [r.soma_positivos, -r.soma_negativos])) * 1.12;
@@ -200,9 +204,10 @@
     linhas.forEach((r, i) => {
       const yy = m.t + i * linhaH;
       const sel = r.ativo === e.ativo;
-      const g = el("g", { class: "linha-sel", tabindex: 0, role: "button", "aria-pressed": sel, "aria-label": `Selecionar ${r.ativo}: soma de desvios positivos ${sinal(r.soma_positivos) || "0,0"} kWh` });
+      const g = el("g", { class: "linha-sel", tabindex: 0, role: "button", "aria-pressed": sel, "aria-label": `Selecionar ${R(r.ativo).completo}: soma de desvios positivos ${sinal(r.soma_positivos) || "0,0"} kWh` });
       g.appendChild(el("rect", { x: 0, y: yy - 3, width: W, height: linhaH - 4, rx: 6, fill: sel ? COR.faixa : "transparent", stroke: sel ? COR.obs : "none", "stroke-width": 1.5 }));
-      texto(g, m.l - 8, yy + 19, { "text-anchor": "end", "font-weight": sel ? 800 : 500 }, r.ativo);
+      texto(g, m.l - 8, yy + 16, { "text-anchor": "end", "font-weight": sel ? 800 : 600 }, R(r.ativo).nome);
+      texto(g, m.l - 8, yy + 31, { "text-anchor": "end", "font-size": 12, style: `fill:${COR.ref}` }, R(r.ativo).zona === null ? r.ativo : `zona ${R(r.ativo).zona} · ${r.ativo}`);
       g.appendChild(el("rect", { x: x(r.soma_negativos), y: yy + 4, width: Math.max(x(0) - x(r.soma_negativos), 0), height: 22, fill: COR.abx }));
       g.appendChild(el("rect", { x: x(0), y: yy + 4, width: Math.max(x(r.soma_positivos) - x(0), 0), height: 22, fill: COR.exc }));
       if (r.soma_positivos >= 0.05) texto(g, x(r.soma_positivos) + 5, yy + 20, { "font-weight": 700, "font-size": 12, style: `fill:${COR.exc}` }, `▲ ${sinal(r.soma_positivos)}`);
@@ -221,11 +226,11 @@
     $("g2").replaceChildren(s);
     const acima = linhas.filter((r) => r.soma_positivos > 0);
     const t2 = acima.length === 0 ? "Nenhum ativo acima da referência"
-      : `Investigar ${acima[0].ativo}${acima[1] ? `, depois ${acima[1].ativo}` : ""}`;
+      : `Investigar ${R(acima[0].ativo).completo}${acima[1] ? `, depois ${R(acima[1].ativo).completo}` : ""}`;
     $("t2-txt").textContent = t2;
     $("g2").setAttribute("aria-label", `${t2}. Barras: soma dos desvios diários positivos (acima da referência) e negativos (abaixo), em kWh, por ativo. Tabela equivalente abaixo.`);
     $("tab2").replaceChildren(tabela(["Ativo", "Soma desvios + (kWh)", "Soma desvios − (kWh)", "Saldo (kWh)", "Observado (kWh)", "Esperado (kWh)", "Dias válidos"],
-      linhas.map((r) => [r.ativo, sinal(r.soma_positivos) || "0,0", sinal(r.soma_negativos) || "0,0", sinal(r.saldo) || "0,0", nf1.format(r.observado), nf1.format(r.esperado), String(r.dias_validos)])));
+      linhas.map((r) => [`${R(r.ativo).completo} (${r.ativo})`, sinal(r.soma_positivos) || "0,0", sinal(r.soma_negativos) || "0,0", sinal(r.saldo) || "0,0", nf1.format(r.observado), nf1.format(r.esperado), String(r.dias_validos)])));
     $("d2").textContent = "Ordem: soma dos desvios positivos (kWh). Clique numa linha para escolher o ativo.";
   }
 
@@ -282,7 +287,7 @@
       p.forEach((q) => linhasTab.push([tipo === "dia_util" ? "dia útil" : "fim de semana", `${q.hora}h`,
         q.observado_kw === null ? "sem dado" : nf1.format(q.observado_kw), q.referencia_kw === null ? "sem dado" : nf1.format(q.referencia_kw)]));
     }
-    const t3 = `${e.ativo}, maior diferença horária: ${resumo.join(" · ")}`;
+    const t3 = `${nomeAtivo(e.ativo)}, maior diferença horária: ${resumo.join(" · ")}`;
     $("t3-txt").textContent = t3;
     $("g3").setAttribute("aria-label", `${t3}. Tabela equivalente abaixo.`);
     $("tab3").replaceChildren(tabela(["Tipo de dia", "Hora", "Observado (kW)", "Referência (kW)"], linhasTab));
@@ -320,7 +325,7 @@
     $("cabecalho").textContent = `CU-BEMS, andar 2 · ${dmy(D.inicio_avaliacao)} a ${dmy(ULTIMO)}`;
     const sel = $("f-ativo");
     sel.add(new Option("Todos os ativos (somados)", TODOS));
-    for (const a of D.ativos) sel.add(new Option(a, a));
+    for (const a of D.ativos) sel.add(new Option(R(a).zona === null ? a : `${R(a).completo} (${a})`, a));
     sel.value = "z1_AC1";
     const q = new URLSearchParams(window.location.search); // estado inicial por URL: ?ativo=&de=&ate=&ref=
     if (q.get("ativo")) sel.value = q.get("ativo") === "todos" ? TODOS : q.get("ativo");

@@ -16,19 +16,24 @@ Estado do painel pela URL: `index.html?ativo=z1_AC1&de=2018-11-04&ate=2018-12-01
 **Jeito rápido:** com Python 3.11 ou mais novo, na pasta `av1-grupo-3-mapen`:
 
 ```
-python rodar.py            # cria .venv, instala as dependências, roda os 4 passos e confere cada resultado
-python rodar.py --abrir    # idem, e abre o painel no navegador no fim
+python rodar.py              # cria .venv, instala, roda os 4 passos, confere cada um e abre o painel
+python rodar.py --sem-abrir  # idem, sem abrir o navegador
 ```
 
-Só usa a biblioteca padrão. Cada passo termina com `OK`, `FALHOU` ou `PULADO` (Node ausente) e o script sai com código 1 se algo falhar. Leva cerca de 20 segundos (a primeira vez inclui baixar pandas e numpy). Os passos manuais abaixo fazem a mesma coisa, um por um.
+- **Windows:** se `python` não for reconhecido, use `py rodar.py`. Pensado para o PowerShell e o Prompt de Comando; foi verificado por simulação (acentos e fim de linha), mas **não testado em uma máquina Windows**: se algo falhar, avise o grupo. Sem Node instalado, o passo 3 aparece como `PULADO` e o resto roda normal.
+- **Mac e Linux:** `python3 rodar.py` se `python` não existir.
+- Só usa a biblioteca padrão. Cada passo termina com `OK`, `FALHOU` ou `PULADO`, e o script sai com código 1 se algo falhar. O painel só abre se nada falhou.
+- Leva cerca de 20 segundos (a primeira vez inclui baixar pandas e numpy).
+- O painel é um arquivo HTML local: **não usa porta nem servidor**. Se o navegador não abrir sozinho, o script avisa e você abre `dashboard/index.html` com duplo clique.
 
+Os passos manuais abaixo fazem a mesma coisa, um por um.
 
 Requisitos: **Python 3.11 ou mais novo** (testado em 3.11, 3.12 e 3.13) e **Node** (só para o passo 3; testado com Node 22). Sem Node, `rodar.py` pula o passo 3.
 
 ```
 cd av1-grupo-3-mapen
 python -m venv .venv
-source .venv/bin/activate          # Windows: .venv\Scripts\activate
+source .venv/bin/activate          # Windows (PowerShell): .venv\Scripts\Activate.ps1  |  Prompt de Comando: .venv\Scripts\activate
 pip install -r requirements.txt    # pandas, numpy, pytest
 ```
 
@@ -39,7 +44,7 @@ Depois, na ordem:
 | 1 | `python codigo/av1_desvio.py` | Imprime a sensibilidade e os rankings das referências A, B e C. Regrava `dados/base_*.csv`, `dashboard/dados.js` e `evidencias/resultados_python.json` com o mesmo conteúdo (se `git status` mostrar mudança, algo diverge) |
 | 2 | `python codigo/conta_independente.py z1_AC1 2018-11-12 A` | `observado=289.4012 esperado=284.0763 desvio=5.3248 kWh` e `maior diferença absoluta = 0.00003 kWh -> OK` |
 | 3 | `node codigo/conferencia_cruzada.js` | `{"comparacoes":2016,"maior_diferenca_abs":0.0001...,"falhas":0}` (o que importa é `"falhas":0`) |
-| 4 | `python -m pytest codigo -q` | `5 passed` |
+| 4 | `python -m pytest codigo -q` | `7 passed` |
 
 A conta do passo 2 usa só a biblioteca padrão do Python e lê o CSV bruto, sem reaproveitar código do pipeline.
 
@@ -59,7 +64,7 @@ Isso **sobrescreve** `dados/recorte_minuto.csv.gz` e `evidencias/verificacoes_qu
 | `racionalizacao.pdf` / `.md` | relatório (modelo do professor, seções 1 a 18 + anexo) |
 | `dados/` | recorte por minuto, bases diária e horária, `dicionario.md` |
 | `codigo/` | pipeline, conta independente, conferência cruzada, testes |
-| `dashboard/` | painel estático (HTML, CSS, JS, `dados.js`) |
+| `dashboard/` | painel estático (HTML, CSS, JS, `dados.js`) e `nomes.html`, a página que explica os nomes dos ativos e os termos |
 | `evidencias/` | rascunho, versões do painel, captura anotada, casos (E4), qualidade, contrastes, resultados |
 | `rodar.py` | roda e confere tudo (cria `.venv`, instala, passos 1 a 4) |
 | `requirements.txt` | dependências Python dos passos 1, 2 e 4 |

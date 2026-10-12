@@ -1,0 +1,5 @@
+# Fim de linha igual em qualquer SO: o rodar.py compara arquivos regenerados com os versionados.
+* text=auto eol=lf
+*.png binary
+*.gz binary
+*.pdf binary

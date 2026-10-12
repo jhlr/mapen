@@ -30,7 +30,7 @@ label.radio input{width:18px;height:18px}
 .heroi{display:grid;grid-template-columns:minmax(220px,300px) 1fr;gap:0;background:var(--cartao);border:1px solid var(--linha);border-radius:14px;overflow:hidden;margin-bottom:16px}
 .heroi-numero{background:#fdf1f0;border-right:4px solid var(--exc);padding:18px 20px}
 .rotulo{margin:0;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--suave);font-weight:600}
-.grande{margin:4px 0 0;font-size:2.3rem;line-height:1.1;font-weight:800;color:var(--texto)}
+.grande{margin:4px 0 0;font-size:1.9rem;line-height:1.15;font-weight:800;color:var(--texto);overflow-wrap:anywhere}
 .sub{margin:4px 0 0;font-size:1.25rem;font-weight:700;color:var(--exc)}
 .heroi-texto{padding:16px 22px}
 .heroi-texto h2{margin:0 0 10px;font-size:1.2rem;line-height:1.35}
@@ -60,7 +60,7 @@ svg text{font-family:inherit;fill:var(--texto)}
 svg .eixo{stroke:#4b5563;stroke-width:1}
 svg .grade-l{stroke:#e3e7ee;stroke-width:1}
 svg .linha-sel{cursor:pointer}
-@media (max-width:640px){.heroi{grid-template-columns:1fr}.heroi-numero{border-right:0;border-bottom:4px solid var(--exc)}.grande{font-size:2rem}h1{font-size:1.3rem}}
+@media (max-width:640px){.heroi{grid-template-columns:1fr}.heroi-numero{border-right:0;border-bottom:4px solid var(--exc)}.grande{font-size:1.7rem}h1{font-size:1.3rem}}
 @media print{.rapido,#filtros{display:none}}
 
 .ajuda{flex:none;width:28px;height:28px;border-radius:50%;border:1.5px solid var(--obs);background:#fff;color:var(--obs);font:700 .85rem/1 inherit;cursor:pointer;margin-left:auto;padding:0}
@@ -78,3 +78,21 @@ svg .linha-sel{cursor:pointer}
 
 .cartao h2 .txt{display:flex;flex-direction:column;min-width:0}
 .nome{font-size:.74rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--suave)}
+
+.cod{margin:2px 0 0;font-size:.88rem;color:var(--suave)}
+.ver-nomes{margin:8px 0 0;font-size:.85rem}
+.ver-nomes a{color:#cfe0f7}
+.ver-nomes-f{margin:8px 2px 0;font-size:.88rem}
+.ver-nomes-f a,.volta a{color:var(--obs);font-weight:600}
+.nomes .cartao{margin-bottom:16px}
+.nomes h2{margin:0 0 8px;font-size:1.1rem;display:block}
+.nomes p{margin:6px 0}
+.anatomia{display:flex;flex-wrap:wrap;gap:8px 4px;align-items:stretch;margin:10px 0}
+.anatomia .peca{border:1.5px solid var(--obs);border-radius:10px;padding:8px 12px;background:#eef3fb;min-width:120px}
+.anatomia .peca b{display:block;font-size:1.3rem;font-family:ui-monospace,Menlo,Consolas,monospace}
+.anatomia .peca span{font-size:.85rem;color:var(--suave)}
+dl.termos dt{font-weight:700;margin-top:12px}
+dl.termos dd{margin:2px 0 0;color:var(--texto)}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;background:#eef1f5;padding:0 4px;border-radius:4px;font-size:.92em}
+td.cod-c{font-family:ui-monospace,Menlo,Consolas,monospace}
+td.esq,th.esq{text-align:left}

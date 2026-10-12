@@ -155,7 +155,7 @@ Fonte `base_diaria.csv`, indicador I2, grão ativo.
 | Escala e referência | Mesma escala nas duas direções; zero rotulado "igual à referência" | Comparação justa entre acima e abaixo |
 | Ordenação | **Pela soma dos desvios positivos**, do maior para o menor | É o que orienta onde investigar |
 | Cor e redundância | Vermelho leva ▲ e valor; cinza fica sem rótulo | Funciona em tons de cinza |
-| Título, unidade, rótulos | "Investigar `z1_AC1`, depois `z4_AC1`"; kWh em todos os valores | Resposta direta |
+| Título, unidade, rótulos | "Investigar `z1_AC1`, depois `z4_AC1`" (versão 3); na versão 4, o nome por extenso com o código ao lado (revisão 3); kWh em todos os valores | Resposta direta |
 | Informação de qualidade | Ativo sem dado mostra "sem dado" | Não finge zero |
 
 - **Alternativa descartada (e depois corrigida):** ordenar por **saldo**. Ver seção 9: a primeira versão fez isso e apontou o ativo errado.
@@ -198,6 +198,13 @@ Duas revisões reais, cada uma com a imagem da versão anterior guardada em `evi
 - Desvio só implícito nas linhas → barras de desvio em escala comum (posição).
 - Texto explicativo longo na tela → botões **?** que abrem a explicação sob demanda; a tela fica só com título, números e legendas de uma linha.
 - Contrastes calculados (seção 13); fonte mínima de 12 px nos gráficos; ranking clicável e acessível por teclado.
+
+**Revisão 3 · nomes legíveis e página de nomes** (`painel_versao3_final.png` → `painel_versao4_nomes.png`, mais `nomes_pagina.png` e `painel_versao4_celular_375.png`).
+
+- **Problema detectado (retorno do grupo, que viu o painel):** "um monte de nome feio, nenhum explicativo". Conferido no código: o painel mostrava só os códigos do dado (`z1_AC1`, `z1_Light`, `z1_Plug`...) no filtro, no destaque, nos títulos e no ranking, e nenhum texto explicava zona, tipo (AC, Light, Plug) nem número. Os botões **?** explicavam as contas de cada vista, não os nomes.
+- **Mudança:** (1) o nome legível é derivado do código em um só lugar (`rotulos_ativos` em `codigo/av1_desvio.py`, gravado em `dados.js`) e usado em todo o painel, com o código ao lado em letra menor (ex.: "Ar-condicionado 1 · zona 1 (z1_AC1)"); (2) nova página `dashboard/nomes.html`, ligada no cabeçalho e abaixo dos filtros, que explica como ler o código, lista os 8 ativos e define cada termo (esperado, desvio, saldo, n/c, lacuna, expediente, kW × kWh...). O código dos arquivos de dados não mudou.
+- **Evidência de que funciona (verificada por nós):** teste novo de rótulos (7 testes passam; vermelho antes de implementar: 2 falhas), conferência cruzada que falha se algum ativo ficar sem rótulo (vermelho antes: 8 falhas; depois: 0), 12 medições de rolagem horizontal (375, 768 e 1280 px, quatro páginas e estados) sem estouro e sem erro de JavaScript.
+- **Ainda não verificado:** se um leitor externo entende os nomes sem ajuda. Depende do teste de leitura da seção 12 (**PENDENTE**). A frase "Tomadas" para `Plug` e o "o que mede" de cada tipo seguem a descrição do conjunto de dados no figshare (consumo de unidades de ar-condicionado, iluminação e *plug loads* por zona); não foram conferidos com o artigo completo.
 
 # 10. Wireframe do dashboard
 
@@ -283,12 +290,12 @@ Registrar: perfil da pessoa (usuário real ou colega), resposta e dificuldade de
 
 - **Entrada e onde obter:** `dados/recorte_minuto.csv.gz` (já incluso). Original: figshare, DOI 10.6084/m9.figshare.11726517 (o artigo), arquivo `2018Floor2.csv` (id 21350166, cerca de 41 MB).
 - **Ferramentas:** Python 3.11 ou mais novo (testado em 3.11, 3.12 e 3.13, com pandas 3.0.6) e Node (só para a conferência cruzada; testado com Node 22); Chrome para as capturas. O autor produziu os resultados com Python 3.14, pandas 3.0.5, numpy 2.5.2 e Node 26; as bases e os resultados saem idênticos nas versões testadas. Instalação: `pip install -r requirements.txt` (pandas, numpy, pytest), de preferência num ambiente virtual.
-- **Atalho:** `python rodar.py` (só biblioteca padrão) cria o `.venv`, instala as dependências, roda os quatro passos abaixo e confere cada resultado (`OK`, `FALHOU` ou `PULADO`); `--abrir` abre o painel.
+- **Atalho:** `python rodar.py` (no Windows, `py rodar.py` se `python` não for reconhecido; só biblioteca padrão) cria o `.venv`, instala as dependências, roda os quatro passos abaixo, confere cada resultado (`OK`, `FALHOU` ou `PULADO`) e abre o painel; `--sem-abrir` não abre o navegador. Testado do zero em Python 3.11, 3.12 e 3.13 no Linux; o tratamento de acentos e de fim de linha do Windows foi verificado por simulação, **não em uma máquina Windows**.
 - **Ordem de execução**, na pasta `av1-grupo-3-mapen/` (saída esperada de cada passo no `LEIA-ME.md`):
   1. `python codigo/av1_desvio.py` (usa o recorte incluso; regrava bases e resultados com o mesmo conteúdo; com `--fonte <2018Floor2.csv>` refaz o recorte e a qualidade)
   2. `python codigo/conta_independente.py z1_AC1 2018-11-12 A` (desvio +5,3248 kWh, diferença 0,00003 kWh)
   3. `node codigo/conferencia_cruzada.js` (2.016 comparações, 0 falhas)
-  4. `python -m pytest codigo -q` (5 testes passam)
+  4. `python -m pytest codigo -q` (7 testes passam)
 - **Abre o dashboard:** `dashboard/index.html` (duplo clique ou `python -m http.server` na pasta `dashboard`).
 - **Exportações e conferências:** `evidencias/` (resultados, qualidade, contrastes, capturas).
 
@@ -308,7 +315,7 @@ Registrar: perfil da pessoa (usuário real ou colega), resposta e dificuldade de
 
 - **Ferramentas:** Claude Code (Anthropic), usado por João Rietra, com as skills `apostila-avd` (regras de visualização extraídas da apostila da disciplina) e `data-visualization` (Anthropic).
 - **Finalidade, saída aproveitada e mudanças:** esboço do pipeline Python, do painel (HTML/JS/SVG) e deste relatório. O que foi aproveitado está em `codigo/`, `dashboard/` e neste texto; o desenho final das vistas, as decisões de referência e a redação foram revisados e ajustados após críticas do integrante (seção 9).
-- **Como verificamos:** testes unitários (5 casos, incluindo o desempate do ranking por nome do ativo), conta independente em biblioteca padrão (diferença 0,00003 kWh), conferência cruzada JavaScript × Python (2.016 valores, diferença máxima 0,0001), execução do painel no navegador nos recortes da seção 11, contrastes calculados.
+- **Como verificamos:** testes unitários (7 casos, incluindo o desempate do ranking por nome do ativo e os rótulos dos ativos), conta independente em biblioteca padrão (diferença 0,00003 kWh), conferência cruzada JavaScript × Python (2.016 valores, diferença máxima 0,0001), execução do painel no navegador nos recortes da seção 11, contrastes calculados.
 - **O que não conseguimos verificar:** teste de leitura com pessoa externa, auditoria automática de acessibilidade e leitor de tela, e o calendário de feriados contra fonte oficial (só inferido dos dados e do conhecimento comum).
 - **Reutilizado de terceiros:** dados do CU-BEMS, Pipattanasomporn et al. (2020), *Scientific Data* 7:241, licença CC BY 4.0. Material da apostila da disciplina (prof. Victor Hugo Wanderley Freire) como fonte de regras. Código do repositório MAPEN (M1 a M3) apenas como contexto, não reaproveitado neste painel.
 
