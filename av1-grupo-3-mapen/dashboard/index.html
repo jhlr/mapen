@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MAPEN: onde investigar o consumo</title>
+<link rel="stylesheet" href="estilo.css">
+</head>
+<body>
+<header class="topo">
+  <div class="topo-in">
+    <div>
+      <p class="marca">MAPEN · AV1</p>
+      <h1>Consumo observado × referência</h1>
+      <p class="meta" id="cabecalho"></p>
+    </div>
+    <div class="selo-bloco"><p class="selo" role="note"><strong>Dado real público</strong> · referência <strong>estimada</strong> · desvio ≠ desperdício <button type="button" class="ajuda" aria-expanded="false" aria-controls="aj-geral" aria-label="Ajuda: sobre os dados">?</button></p><div class="ajuda-txt" id="aj-geral" hidden>Dados reais públicos do CU-BEMS (prédio de escritórios em Bangkok, 2018), não são de um cliente do MAPEN. A referência é uma estimativa feita com o histórico, não é “consumo normal medido”. Estar acima dela indica onde investigar; não prova desperdício nem economia. Confirme ocupação, calendário e necessidade operacional antes de agir.</div></div>
+  </div>
+</header>
+
+<div class="pagina">
+<form id="filtros" aria-label="Filtros do painel">
+  <label>Ativo<select id="f-ativo"></select></label>
+  <div class="grupo" role="group" aria-label="Período">
+    <span class="rotulo">Período</span>
+    <div class="rapido" id="rapido"></div>
+    <label class="data">De<input type="date" id="f-de" min="2018-11-04" max="2018-12-01" value="2018-11-04"></label>
+    <label class="data">Até<input type="date" id="f-ate" min="2018-11-04" max="2018-12-01" value="2018-12-01"></label>
+  </div>
+  <fieldset>
+    <legend>Referência (linha de base)</legend>
+    <label class="radio"><input type="radio" name="ref" value="A" checked><span>A · 8 semanas</span></label>
+    <label class="radio"><input type="radio" name="ref" value="B"><span>B · 4 semanas</span></label>
+    <label class="radio"><input type="radio" name="ref" value="C"><span>C · 8 sem. sem feriados</span></label>
+  </fieldset>
+</form>
+<div class="regra-l"><p id="regra" class="regra"></p><button type="button" class="ajuda" aria-expanded="false" aria-controls="aj-ref" aria-label="Ajuda: sobre a referência">?</button></div>
+<div class="ajuda-txt" id="aj-ref" hidden><b>Esperado</b> = mediana da energia diária (kWh) do mesmo dia da semana numa janela anterior ao período avaliado. <b>A</b>: 8 semanas (09/09 a 03/11). <b>B</b>: só as 4 últimas semanas (07/10 a 03/11). <b>C</b>: as 8 semanas sem os feriados 13, 15 e 23/10. Trocar a referência recalcula tudo; use para ver se a prioridade muda.</div>
+
+<p id="vazio" class="vazio" role="status" hidden></p>
+
+<div id="conteudo">
+  <section class="heroi" aria-labelledby="h-titulo">
+    <div class="heroi-numero">
+      <p class="rotulo">Investigar primeiro <button type="button" class="ajuda" aria-expanded="false" aria-controls="aj-heroi" aria-label="Ajuda: sobre o destaque">?</button></p>
+      <div class="ajuda-txt" id="aj-heroi" hidden>Ativo com a maior <b>soma dos desvios positivos</b> no período e na referência escolhidos: só os dias acima do esperado entram na soma (kWh). Não depende do ativo selecionado no filtro.</div>
+      <p class="grande" id="h-ativo"></p>
+      <p class="sub" id="h-valor"></p>
+    </div>
+    <div class="heroi-texto">
+      <h2 id="h-titulo"></h2>
+      <dl class="apoio" id="h-apoio"></dl>
+      <p class="aviso" id="h-aviso" hidden></p>
+    </div>
+  </section>
+
+  <main class="grade">
+    <section class="cartao v1" aria-labelledby="t1">
+      <h2 id="t1"><span class="id">V1</span><span class="txt"><small class="nome">Desvio diário</small><span id="t1-txt"></span></span><button type="button" class="ajuda" aria-expanded="false" aria-controls="aj-v1" aria-label="Ajuda: como ler a V1">?</button></h2>
+      <div class="ajuda-txt" id="aj-v1" hidden><b>Linhas</b>: energia diária observada e esperada (kWh/dia). <b>Barras</b>: desvio = observado − esperado. Desvio relativo = 100 × desvio ÷ esperado, só com esperado &gt; 0 (está na tabela; com esperado = 0 aparece n/c). Vermelho = acima (também ▲ e sinal +); cinza = abaixo. <b>Lacuna</b> = dia com menos de 95% dos minutos, mostrado como ausência, nunca como zero. Fundo cinza = sábado e domingo. “Todos” soma os ativos e só conta dias em que todos têm dado.</div>
+      <div class="grafico" id="g1" role="img"></div>
+      <p class="leg" id="d1"></p>
+      <details><summary>Tabela</summary><div id="tab1"></div></details>
+    </section>
+
+    <section class="cartao v2" aria-labelledby="t2">
+      <h2 id="t2"><span class="id">V2</span><span class="txt"><small class="nome">Ranking por ativo</small><span id="t2-txt"></span></span><button type="button" class="ajuda" aria-expanded="false" aria-controls="aj-v2" aria-label="Ajuda: como ler a V2">?</button></h2>
+      <div class="ajuda-txt" id="aj-v2" hidden><b>Direita</b>: soma dos desvios diários positivos (define a ordem). <b>Esquerda</b>: soma dos negativos. <b>Saldo</b> = positivos + negativos; deixa dias abaixo compensarem dias acima, por isso não define a ordem. Clique numa linha (ou Enter) para escolher o ativo na V1 e na V3.</div>
+      <div class="grafico" id="g2" role="img"></div>
+      <p class="leg" id="d2"></p>
+      <details><summary>Tabela</summary><div id="tab2"></div></details>
+    </section>
+
+    <section class="cartao v3" aria-labelledby="t3">
+      <h2 id="t3"><span class="id">V3</span><span class="txt"><small class="nome">Perfil horário</small><span id="t3-txt"></span></span><button type="button" class="ajuda" aria-expanded="false" aria-controls="aj-v3" aria-label="Ajuda: como ler a V3">?</button></h2>
+      <div class="ajuda-txt" id="aj-v3" hidden>Mediana, entre os dias do tipo, da potência média por hora (kW é potência; kWh é energia). Observado no período avaliado; referência na janela escolhida. Mesma escala vertical nos dois painéis. A faixa cinza é o <b>expediente assumido</b> (7h às 18h, seg a sex): é uma hipótese inferida do perfil, não um horário informado pela unidade. Consumo fora do expediente não é desperdício por si só.</div>
+      <div class="grafico duplo" id="g3" role="img"></div>
+      <p class="leg" id="d3"></p>
+      <details><summary>Tabela</summary><div id="tab3"></div></details>
+    </section>
+  </main>
+</div>
+<footer id="rodape"></footer>
+</div>
+<script src="dados.js"></script>
+<script src="calculo.js"></script>
+<script src="painel.js"></script>
+</body>
+</html>
