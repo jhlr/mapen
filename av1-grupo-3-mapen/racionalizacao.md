@@ -12,7 +12,7 @@ subtitle: "Grupo 3 · MAPEN/MAPPEN · Análise e Visualização de Dados 2026.2"
 | **Versão e localização** | versão 1.0 do pacote, 08/10/2026. Pasta `av1-grupo-3-mapen/` (índice na seção 18 e no `LEIA-ME.md`) |
 | **Painel** | `dashboard/index.html` (abre direto no navegador, sem servidor) |
 
-> **Pendente do grupo (não preenchido por quem redigiu este rascunho):** seção 12 (teste de leitura com pessoa externa) e seção 16 (contribuições individuais de cada integrante). Estão marcadas **PENDENTE** no texto. Nada foi inventado para elas.
+> **Registro do grupo:** as seções 12 (teste de leitura, com participante anonimizado) e 16 (contribuições) foram preenchidas pelo grupo no Google Docs e trazidas para este arquivo. Ainda falta o grupo registrar **quem aplicou o teste, quando e quanto durou**, e cada integrante **confirmar a própria linha** da seção 16. Nada foi inventado para esses itens.
 
 # 1. Estado atual comprovado
 
@@ -184,7 +184,7 @@ Fonte `base_horaria.csv`, indicador I3, grão ativo × hora.
 
 # 9. Revisão de vistas
 
-Duas revisões reais, cada uma com a imagem da versão anterior guardada em `evidencias/`.
+Três revisões reais, cada uma com a imagem da versão anterior guardada em `evidencias/`.
 
 **Revisão 1 · V2 por saldo → por soma dos desvios positivos** (`painel_versao1_inicial.png` → `painel_versao2_revisado.png`).
 
@@ -199,12 +199,12 @@ Duas revisões reais, cada uma com a imagem da versão anterior guardada em `evi
 - Texto explicativo longo na tela → botões **?** que abrem a explicação sob demanda; a tela fica só com título, números e legendas de uma linha.
 - Contrastes calculados (seção 13); fonte mínima de 12 px nos gráficos; ranking clicável e acessível por teclado.
 
-**Revisão 3 · nomes legíveis e página de nomes** (`painel_versao3_final.png` → `painel_versao4_nomes.png`, mais `nomes_pagina.png` e `painel_versao4_celular_375.png`).
+**Revisão 3 · nomes legíveis e página de nomes** (`painel_versao3_final.png` → `painel_versao4_nomes.png`; também `nomes_pagina.png` e `painel_versao4_celular_375.png`).
 
-- **Problema detectado (retorno do grupo, que viu o painel):** "um monte de nome feio, nenhum explicativo". Conferido no código: o painel mostrava só os códigos do dado (`z1_AC1`, `z1_Light`, `z1_Plug`...) no filtro, no destaque, nos títulos e no ranking, e nenhum texto explicava zona, tipo (AC, Light, Plug) nem número. Os botões **?** explicavam as contas de cada vista, não os nomes.
-- **Mudança:** (1) o nome legível é derivado do código em um só lugar (`rotulos_ativos` em `codigo/av1_desvio.py`, gravado em `dados.js`) e usado em todo o painel, com o código ao lado em letra menor (ex.: "Ar-condicionado 1 · zona 1 (z1_AC1)"); (2) nova página `dashboard/nomes.html`, ligada no cabeçalho e abaixo dos filtros, que explica como ler o código, lista os 8 ativos e define cada termo (esperado, desvio, saldo, n/c, lacuna, expediente, kW × kWh...). O código dos arquivos de dados não mudou.
-- **Evidência de que funciona (verificada por nós):** teste novo de rótulos (7 testes passam; vermelho antes de implementar: 2 falhas), conferência cruzada que falha se algum ativo ficar sem rótulo (vermelho antes: 8 falhas; depois: 0), 12 medições de rolagem horizontal (375, 768 e 1280 px, quatro páginas e estados) sem estouro e sem erro de JavaScript.
-- **Ainda não verificado:** se um leitor externo entende os nomes sem ajuda. Depende do teste de leitura da seção 12 (**PENDENTE**). A frase "Tomadas" para `Plug` e o "o que mede" de cada tipo seguem a descrição do conjunto de dados no figshare (consumo de unidades de ar-condicionado, iluminação e *plug loads* por zona); não foram conferidos com o artigo completo.
+- **Problema (retorno do grupo):** "um monte de nome feio, nenhum explicativo". Conferido no código: o painel mostrava só os códigos do dado (`z1_AC1`, `z1_Light`, `z1_Plug`...), e nada explicava zona, tipo (AC, Light, Plug) nem número; os botões **?** explicavam as contas, não os nomes.
+- **Mudança:** o nome legível é derivado do código em um só lugar (`rotulos_ativos`, gravado em `dados.js`) e usado em todo o painel, com o código ao lado ("Ar-condicionado 1 · zona 1 (z1_AC1)"); a nova página `dashboard/nomes.html`, ligada no cabeçalho e abaixo dos filtros, explica o código, lista os 8 ativos e define cada termo (esperado, desvio, saldo, n/c, lacuna, expediente, kW × kWh). Os arquivos de dados não mudaram.
+- **Verificado por nós:** 7 testes passam (2 novos, vermelhos antes); a conferência cruzada falha se faltar rótulo (8 falhas antes, 0 depois); 12 medições de rolagem horizontal (375, 768 e 1280 px) sem estouro nem erro de JavaScript.
+- **Não verificado:** se um leitor externo entende os nomes sem ajuda (o teste da seção 12 não perguntou sobre eles). O significado de AC, Light e Plug segue a descrição do conjunto de dados no figshare, não o artigo completo.
 
 # 10. Wireframe do dashboard
 
@@ -258,13 +258,21 @@ Imagens: `e4_recorte2_sem3_refB_z4AC1.png`, `e4_zero_z4Plug.png`, `e4_sem_dados.
 
 # 12. Teste de leitura
 
-**PENDENTE (grupo).** A atividade exige uma pessoa externa ao grupo. Roteiro para aplicar, sem ajudar:
+**Participante (nome omitido, sem dados pessoais desnecessários):** 54 anos, doméstica, ensino fundamental II. **Não é cliente nem a usuária prevista do painel** (o usuário previsto é o gestor de uma unidade): pessoa consultada aleatoriamente, fora do grupo. **Quem aplicou, data e tempo aproximado: a registrar pelo grupo** (não constam do registro original).
 
-1. Encontre o período ou ativo a investigar primeiro. (resposta esperada: `z1_AC1`, mês inteiro, referência A)
-2. Compare dois recortes (por exemplo, mês inteiro × Sem. 3) e diga o que mudou.
-3. Explique de onde veio o esperado e por que o desvio não pode virar "desperdício" automaticamente; diga a diferença entre kW e kWh.
+| Tarefa | Resposta esperada | O que a participante fez |
+|---|---|---|
+| 1 · Encontre o período ou ativo a investigar primeiro | `z1_AC1`, mês inteiro, referência A | Identificou o período avaliado (04/11/2018 a 01/12/2018). **Não citou o ativo** a investigar primeiro |
+| 2 · Compare dois recortes (por exemplo, mês inteiro × Sem. 3) e diga o que mudou | Mudança dos números ao trocar o filtro | Comparou os **dois painéis da V3** (dia útil × fim de semana), não dois recortes do filtro. Notou consumo maior entre 7h e 18h nos dias úteis e baixo e constante aos sábados e domingos |
+| 3 · Explique de onde veio o esperado e por que o desvio não vira "desperdício" automaticamente; diga a diferença entre kW e kWh | Esperado = mediana de dias anteriores; desvio é pista, não prova; kW potência, kWh energia | Explicou o consumo maior nos dias de trabalho: "porque você usa computador, telefone… aparelhos que a gente liga na energia, o que não acontece nas empresas dia de sábado e domingo". **Não soube distinguir kW de kWh** (entende kWh como medida de energia e tempo). O registro não traz resposta sobre a origem do esperado nem sobre desvio ≠ desperdício |
 
-Registrar: perfil da pessoa (usuário real ou colega), resposta e dificuldade de cada tarefa, e o que foi corrigido depois. Quem aplicou e a data: **PENDENTE**.
+**Leitura geral (registro do grupo):** achou os gráficos fáceis de entender, entendeu o período e as informações, achou fácil ver o pico "pela faixa em azul" (no painel o expediente é a faixa cinza e a linha azul é o observado; ela provavelmente se referiu à linha azul) e disse que as cores e os elementos ajudam. A dificuldade apontada foi kW × kWh.
+
+**O que o registro mostra:** a leitura visual funcionou, mas ela não chegou ao resultado principal (qual ativo investigar primeiro), não fez a comparação de recortes pedida e não distinguiu kW de kWh.
+
+**O que foi corrigido depois do teste:** **nada foi registrado pelo grupo como correção causada por este teste.** O verbete "kW e kWh" da `nomes.html` (revisão 3, seção 9) cobre a dificuldade, mas a página nasceu de outro retorno e não foi testada com um leitor externo. **A decidir pelo grupo:** refazer o teste com a versão 4 do painel.
+
+**Limites do teste:** uma única sessão, com uma pessoa que não é o usuário previsto. Serve como indício sobre a leitura dos gráficos, não valida o painel com o gestor de uma unidade nem permite generalizar.
 
 # 13. Acessibilidade
 
@@ -301,22 +309,26 @@ Registrar: perfil da pessoa (usuário real ou colega), resposta e dificuldade de
 
 # 16. Contribuições
 
+Registro feito pelo grupo no Google Docs; **cada integrante deve confirmar a própria linha**.
+
 | Integrante | Decisão ou tarefa | Artefato/evidência | Revisão feita no trabalho do grupo |
 |---|---|---|---|
-| João Rietra | Recorte, pipeline, painel, conferências, rascunho deste relatório | `codigo/`, `dashboard/`, `evidencias/` | PENDENTE (revisão dos colegas) |
-| Alex Távora | **PENDENTE** | | |
-| Eloiza Merkl | **PENDENTE** | | |
-| Jéssica Freitas | **PENDENTE** | | |
-| Lucca Lima | **PENDENTE** | | |
-| Nathália Monteiro | **PENDENTE** (relatório SR1 e material de status) | | |
-| Wellen Mariah Lisba | **PENDENTE** | | |
+| João Rietra | Recorte, pipeline, painel, conferências, rascunho deste relatório, gerenciamento de commits no GitHub | `codigo/`, `dashboard/`, `evidencias/` | Revisão técnica integrada e consistência do repositório |
+| Alex Távora | Definição da linha de base, regras de agregação e cálculo dos indicadores de desvio | Seções de indicadores e regras da linha de base no relatório | Revisão da coerência matemática das fórmulas e hipóteses de desvio |
+| Eloiza Merkl | Execução das verificações de qualidade, inventário de dados e construção do dicionário | Pasta `dados/`, `dicionario.md` e registros de qualidade | Revisão dos critérios de exclusão, nulos e tratamento de lacunas temporais |
+| Jéssica Freitas | Redação do relatório de racionalização, estruturação textual, achados, limitações e próximos passos | Seções textuais do relatório principal | Revisão argumentativa, estrutural e gramatical da totalidade do relatório |
+| Lucca Lima | Concepção das vistas visuais (V1, V2, V3), escolha de marcas, canais e alternativas descartadas | Fichas visuais e matriz de racionalização gráfica | Revisão da clareza visual, escalas e conformidade com as regras de acessibilidade |
+| Nathália Monteiro | Análise do estado atual (alinhamento com SR1/MAPPEN) e planejamento do teste de leitura | Documentação de escopo, ficha de teste de leitura e estrutura do LEIA-ME | Revisão da fidelidade entre o percurso do projeto e as exigências da AV1 |
+| Wellen Mariah Lisba | Organização do protótipo, desenho do wireframe e estruturação dos casos de teste (vazio e denominador zero) | Capturas de tela dos estados do painel e fichas de teste | Revisão da usabilidade do dashboard e coerência dos estados alternativos |
+
+Os commits do repositório saem em nome de quem operou o Git (João Rietra); as contribuições dos demais integrantes constam nos documentos e revisões citados, sem commits próprios.
 
 # 17. Declaração de IA e reutilização
 
 - **Ferramentas:** Claude Code (Anthropic), usado por João Rietra, com as skills `apostila-avd` (regras de visualização extraídas da apostila da disciplina) e `data-visualization` (Anthropic).
 - **Finalidade, saída aproveitada e mudanças:** esboço do pipeline Python, do painel (HTML/JS/SVG) e deste relatório. O que foi aproveitado está em `codigo/`, `dashboard/` e neste texto; o desenho final das vistas, as decisões de referência e a redação foram revisados e ajustados após críticas do integrante (seção 9).
 - **Como verificamos:** testes unitários (7 casos, incluindo o desempate do ranking por nome do ativo e os rótulos dos ativos), conta independente em biblioteca padrão (diferença 0,00003 kWh), conferência cruzada JavaScript × Python (2.016 valores, diferença máxima 0,0001), execução do painel no navegador nos recortes da seção 11, contrastes calculados.
-- **O que não conseguimos verificar:** teste de leitura com pessoa externa, auditoria automática de acessibilidade e leitor de tela, e o calendário de feriados contra fonte oficial (só inferido dos dados e do conhecimento comum).
+- **O que não conseguimos verificar:** teste de leitura com o usuário previsto (o teste feito foi com uma pessoa externa, não com um gestor) e com a versão 4 do painel, auditoria automática de acessibilidade e leitor de tela, e o calendário de feriados contra fonte oficial (só inferido dos dados e do conhecimento comum).
 - **Reutilizado de terceiros:** dados do CU-BEMS, Pipattanasomporn et al. (2020), *Scientific Data* 7:241, licença CC BY 4.0. Material da apostila da disciplina (prof. Victor Hugo Wanderley Freire) como fonte de regras. Código do repositório MAPEN (M1 a M3) apenas como contexto, não reaproveitado neste painel.
 
 # 18. Conferência da entrega
@@ -332,9 +344,9 @@ Registrar: perfil da pessoa (usuário real ou colega), resposta e dificuldade de
 | Dois recortes e caso sem dados | seção 11; `evidencias/e4_*.png` |
 | Conta independente e conferência cruzada | seção 7; `codigo/` |
 | Três fichas e revisão | seções 8 e 9 |
-| Teste de leitura | **PENDENTE** (seção 12) |
+| Teste de leitura | seção 12 (uma participante; ver limites) |
 | Sensibilidade | seção 11 |
-| Contribuições e declaração de IA | seções 16 (**PENDENTE**) e 17 |
+| Contribuições e declaração de IA | seções 16 (cada integrante confirma a própria linha) e 17 |
 
 **Índice sugerido do Grupo 3:** E1 recorte vigente (seções 1 e 2) · E2 base de consumo (5, 6, `dados/`) · E3 referência e contas (7) · E4 protótipo (10 e 11) · E5 racionalização (8, 9, anexo) · E6 validação e autoria (11 a 17).
 
@@ -365,7 +377,7 @@ Versão 1 do painel: `evidencias/painel_versao1_inicial.png`. Versão 2 (revisad
 - **Alternativa descartada:** mostrar só o consumo total (V1) e ordenar por consumo ou por saldo (V2). Consumo total não separa "alto" de "alto para esse dia da semana"; o saldo apontou o ativo errado.
 - **O que mudou entre rascunho e protótipo:** o rascunho previa V2 por saldo e uma tela sem destaque; a versão 1 seguiu isso e foi revista duas vezes (seção 9).
 - **Evidência que motivou a mudança:** `z1_AC1` aparecia em penúltimo no ranking por saldo, com a maior soma de excessos (+66,2 kWh em 9 dias). Depois: sobrecarga de texto e falta de número dominante (crítica de integrante e regras da apostila).
-- **Efeito esperado ou verificado na compreensão:** a prioridade do mês sai direto do destaque H e do ranking V2; a explicação detalhada fica sob **?**. **Verificado** apenas por nós; o efeito sobre outro leitor depende do teste da seção 12 (**PENDENTE**).
+- **Efeito esperado ou verificado na compreensão:** a prioridade do mês sai direto do destaque H e do ranking V2; a explicação detalhada fica sob **?**. **Verificado** por nós e por um teste de leitura com uma participante externa (seção 12), que achou os gráficos fáceis de ler mas não chegou ao ativo a investigar primeiro nem distinguiu kW de kWh; uma sessão não permite generalizar.
 
 **E. Conclusão e limites.**
 

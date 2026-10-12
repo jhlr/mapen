@@ -70,4 +70,4 @@ Isso **sobrescreve** `dados/recorte_minuto.csv.gz` e `evidencias/verificacoes_qu
 | `requirements.txt` | dependências Python dos passos 1, 2 e 4 |
 
 ## Pendente do grupo
-Teste de leitura com pessoa externa (seção 12) e contribuições individuais (seção 16): marcados **PENDENTE** no relatório.
+O teste de leitura (seção 12) e as contribuições (seção 16) estão preenchidos. Falta o grupo registrar quem aplicou o teste, quando e quanto durou, decidir se refaz o teste com a versão 4 do painel, e cada integrante confirmar a própria linha da seção 16.

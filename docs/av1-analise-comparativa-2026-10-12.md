@@ -9,7 +9,7 @@
 
 ## Veredito
 
-O pacote cobre quase tudo que o professor pede e responde à encomenda do Grupo 3. Restam duas pendências que dependem de pessoas (teste de leitura e contribuições individuais) e uma confirmação (o motivo real da escolha dos 8 ativos). A divergência de reprodução, o identificador da fonte, a frase dos 8 ativos e a seção 15 do relatório foram resolvidos. A nota ainda não é a máxima por causa das pendências, não por falta de método.
+O pacote cobre quase tudo que o professor pede e responde à encomenda do Grupo 3. O teste de leitura e as contribuições, que eram as maiores pendências, foram preenchidos pelo grupo (seções 12 e 16). Restam: registrar quem aplicou o teste, quando e quanto durou, decidir se refaz o teste com a versão 4, cada integrante confirmar a própria linha e confirmar o motivo real da escolha dos 8 ativos. A divergência de reprodução, o identificador da fonte, a frase dos 8 ativos e a seção 15 do relatório foram resolvidos. A nota depende agora de detalhes de registro, não de falta de método.
 
 ## 1. Conferência contra a encomenda do Grupo 3
 
@@ -31,8 +31,8 @@ O pacote cobre quase tudo que o professor pede e responde à encomenda do Grupo 
 | Segunda premissa (horário operacional) | Seção 11 | Cumpre. Muda a magnitude, não a ordem |
 | kW versus kWh, origem da referência, sem promessa de economia | Seções 2, 8 e 14 | Cumpre |
 | Declaração de IA com verificações | Seção 17 | Cumpre. Declara Claude Code, finalidade, verificações e o que não foi verificado |
-| Teste de leitura com pessoa externa | Seção 12 | **Pendente.** Só há o roteiro |
-| Contribuições individuais | Seção 16 | **Pendente.** 6 de 7 integrantes sem preenchimento |
+| Teste de leitura com pessoa externa | Seção 12 | Cumpre com ressalvas: feito com uma participante anonimizada; faltam quem aplicou, data e tempo, e o que foi corrigido depois |
+| Contribuições individuais | Seção 16 | Preenchidas para os 7; cada integrante deve confirmar a própria linha |
 
 **Mudanças em relação à análise anterior:** os riscos que eu havia apontado (calendário brasileiro num prédio tailandês, "economia" nos títulos, real versus sintético por gráfico, sensibilidade de ranking, consolidação do dicionário e das cinco verificações) foram tratados no pacote. A tarifa fica fora do escopo e o selo "dado real público · referência estimada · desvio ≠ desperdício" aparece no cabeçalho do painel.
 
@@ -72,12 +72,12 @@ Faixas são minha estimativa, não nota. Usam a escala do professor (100%, 75%, 
 | Indicadores e análise (1,5) | Integral | Fórmulas, denominadores, conta independente e conferência cruzada presentes |
 | Racionalização visual (3,0) | 75% a integral | O rascunho foi **reconstruído depois da versão 1**, e o próprio relatório avisa. Pode ser lido como "rascunho inicial parcial". Substituir por um rascunho real, se existir |
 | Dashboard e comunicação (1,0) | Integral ou 75% | Acessibilidade calculada mas não auditada por ferramenta (declarado) |
-| Validação e rastreabilidade (1,5) | **50% ou menos hoje** | Teste de leitura e 6 de 7 contribuições pendentes |
+| Validação e rastreabilidade (1,5) | 75% provável | Lacunas pontuais: dados do teste (quem, quando, tempo), correção pós-teste e confirmação individual das contribuições |
 
 ## 4. Pendências e pontos a decidir
 
 ### 4.1 Teste de leitura (seção 12)
-Depende de uma pessoa externa. O roteiro está pronto. Registrar perfil (usuário real ou colega), resposta, dificuldade e correção feita; se for colega, classificar como revisão por pares. Não fabricar o teste.
+Feito pelo grupo com uma pessoa externa, anonimizada no relatório (o guia pede perfil sem dados pessoais desnecessários). O registro mostra que ela leu bem os gráficos, mas não citou o ativo a investigar primeiro, comparou os dois painéis da V3 em vez de dois recortes e não distinguiu kW de kWh. O relatório agora diz isso, além dos limites (uma sessão, pessoa que não é o gestor previsto). Falta: quem aplicou, data, tempo aproximado e o que foi corrigido depois. A decisão em aberto é refazer o teste com a versão 4 do painel (nomes legíveis e `nomes.html`).
 
 ### 4.2 Fonte do dado (resolvido)
 Não havia conflito: `10.6084/m9.figshare.11726517` é o DOI do artigo (CU-BEMS, versão 6, consultado no figshare) e `21350166` é o id do arquivo `2018Floor2.csv` (cerca de 41 MB). O relatório citava só o id do arquivo em um lugar e só o DOI em outro. Agora a seção 5, a seção 15, o `dicionario.md` e o LEIA-ME dizem a mesma coisa: DOI do artigo, nome e id do arquivo, tamanho.
@@ -86,7 +86,7 @@ Não havia conflito: `10.6084/m9.figshare.11726517` é o DOI do artigo (CU-BEMS,
 O SR1 é outra entrega, não parte da AV1. A nota do relatório que pedia essa conferência foi removida do texto. A seção 1 continua dizendo o que foi consultado e o que não estava disponível a quem redigiu.
 
 ### 4.4 Contribuições individuais (seção 16)
-Só João Rietra está preenchido, e a revisão dele por colegas também consta como pendente. Cada integrante deve preencher a própria linha com base em trabalho real.
+Preenchidas para os 7 integrantes a partir do Google Docs do grupo. Cada integrante deve confirmar a própria linha. O histórico do git tem commits de um autor só, então o relatório diz que os demais constam nos documentos e revisões citados, sem commits próprios; vale cada um apontar uma evidência verificável (comentário, versão do Doc, revisão datada).
 
 ### 4.5 Escolha dos 8 ativos (frase escrita; falta confirmar o motivo)
 O relatório (seção 2) e o `dicionario.md` agora dizem: 8 dos 24 equipamentos do andar 2, cobrindo as quatro zonas e os três tipos de carga, com `z4_Plug` mantido de propósito como caso de denominador zero; os outros 16 ficaram fora, o motivo individual da escolha não foi registrado, e por isso os achados não se generalizam para o andar. Isso descreve o que se pode verificar no recorte. Quem escolheu os ativos (provavelmente quem montou o recorte) deve confirmar o motivo real e, se existir, trocar a frase.
@@ -102,8 +102,8 @@ Auditoria automática de acessibilidade (axe), leitor de tela real, simulação 
 
 ## 5. Próximos passos
 
-1. Aplicar o teste de leitura com alguém de fora e preencher a seção 12 (4.1).
-2. Cada integrante preencher a própria linha da seção 16 (4.4).
+1. Registrar quem aplicou o teste de leitura, quando e quanto durou; decidir se refaz com a versão 4 (4.1).
+2. Cada integrante confirmar a própria linha da seção 16 (4.4).
 3. Confirmar o motivo real da escolha dos 8 ativos (4.5).
 4. Se existir um rascunho feito antes do painel (papel ou Figma), substituir o reconstruído.
-5. Depois de preencher as seções 12 e 16, regerar o `racionalizacao.pdf` e conferir que o corpo continua em até 12 páginas.
+5. Se mudar qualquer seção, regerar o `racionalizacao.pdf` e conferir que o corpo continua em até 12 páginas.
