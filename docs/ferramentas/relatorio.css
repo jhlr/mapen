@@ -1,0 +1,21 @@
+<style>
+@page{size:A4;margin:13mm 14mm 13mm 14mm}
+html{font-family:"Helvetica Neue",Helvetica,Arial,"Liberation Sans",sans-serif;font-size:9pt;line-height:1.34;color:#1c2430}
+body{max-width:none;margin:0;padding:0}
+header#title-block-header{margin-bottom:6mm;border-bottom:1.5px solid #1c2430;padding-bottom:2mm}
+h1.title{font-size:19pt;line-height:1.2;margin:0 0 1mm}
+p.subtitle{margin:0;color:#5b6675;font-size:10pt}
+h1{font-size:12pt;margin:5mm 0 2mm;padding-bottom:1mm;border-bottom:1px solid #c9d2de;break-after:avoid}
+h2{font-size:10pt;margin:3.5mm 0 1.5mm;break-after:avoid}
+p{margin:1.5mm 0}
+ul,ol{margin:2mm 0;padding-left:5mm}li{margin:1mm 0}
+table{border-collapse:collapse;width:100%;margin:2mm 0;font-size:7.8pt;break-inside:auto}
+tr{break-inside:avoid}
+th,td{border:1px solid #c9d2de;padding:1mm 1.6mm;text-align:left;vertical-align:top}
+th{background:#f1f4f8}
+code{font-family:"DejaVu Sans Mono",Menlo,Consolas,monospace;font-size:.88em;background:#f1f4f8;padding:0 .8mm;border-radius:2px;word-break:break-word}
+blockquote{margin:3mm 0;padding:2mm 4mm;background:#fff7ed;border-left:3px solid #d9480f;break-inside:avoid}
+blockquote p{margin:1mm 0}
+img{max-width:100%;height:auto;break-inside:avoid;border:1px solid #c9d2de}
+em{color:#3a4350}
+</style>
