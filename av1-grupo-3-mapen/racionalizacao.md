@@ -35,8 +35,6 @@ subtitle: "Grupo 3 · MAPEN/MAPPEN · Análise e Visualização de Dados 2026.2"
 
 **Entrada escolhida (exigida pela encomenda):** histórico existente em CSV, de **dado real público** (CU-BEMS). Não são leituras IoT do grupo (não existem) nem uma simulação: as leituras reais de um prédio público fazem o papel das que a tomada IoT faria. Formato de uma linha e a mensagem equivalente do MAPPEN: `dados/dicionario.md`.
 
-> **Pendente do grupo:** conferir esta seção contra o relatório SR1 Innovation 2026 (S5) e a apresentação MAPPEN (S6), que o professor cita e que não estavam no material usado aqui. Se o relatório da Nathália for outro arquivo, as seções 1 e 14 devem ser conferidas contra ele.
-
 # 2. Decisão e perguntas
 
 > **A pessoa que gerencia uma unidade (um andar de prédio comercial) consulta o painel toda semana para decidir quais ativos e quais dias investigar quando o consumo se afasta da referência, no contexto de um andar com 8 ativos monitorados (ar-condicionado, iluminação, tomadas).**
@@ -48,6 +46,7 @@ subtitle: "Grupo 3 · MAPEN/MAPPEN · Análise e Visualização de Dados 2026.2"
 | P3 | O padrão ao longo do dia acompanha o funcionamento esperado (dia útil × fim de semana)? | Distinguir uso fora do expediente de desvio real | `base_horaria.csv` (kW por hora) |
 
 - **Período e unidade de análise:** 04/11 a 01/12/2018 (28 dias), andar 2 do CU-BEMS, 8 ativos, grão ativo × dia (P1, P2) e ativo × hora (P3).
+- **Ativos do recorte:** Recorte de 8 dos 24 equipamentos do andar 2: cobre as quatro zonas (z1 a z4) e os três tipos de carga (ar-condicionado, iluminação e tomadas) e mantém `z4_Plug`, que nunca consome, de propósito, como caso de denominador zero. Os outros 16 ficaram fora e o motivo individual da escolha não foi registrado, então os 8 não são uma amostra estatística do andar e os achados não se generalizam para ele.
 - **Fica fora:** IoT, controle de equipamentos, previsão, economia e perdas de distribuição. Estimativa monetária também fica fora; se um dia for feita, será a soma do desvio positivo × tarifa do intervalo, como cenário parcial que pode não representar a fatura.
 - **Conclusão que ainda não podemos sustentar:** que um desvio seja desperdício, ou que exista economia realizável. O painel só diz onde investigar.
 
@@ -71,7 +70,7 @@ Dicionário completo e regra de cada campo: `dados/dicionario.md`. Resumo:
 
 | Fonte/versão | Grão/chave | Período e registros | Real, estimada ou simulada |
 |---|---|---|---|
-| CU-BEMS 2018Floor2.csv (figshare 21350166, CC BY 4.0), recorte `recorte_minuto.csv.gz` | 1 linha/minuto, chave `Date` | 09/09 a 01/12/2018, 120.960 linhas | **Real** (público, não é do cliente) |
+| CU-BEMS 2018Floor2.csv (figshare, DOI 10.6084/m9.figshare.11726517, arquivo 21350166, CC BY 4.0), recorte `recorte_minuto.csv.gz` | 1 linha/minuto, chave `Date` | 09/09 a 01/12/2018, 120.960 linhas | **Real** (público, não é do cliente) |
 | `base_diaria.csv` | ativo × dia | 672 linhas (8 × 84) | Derivada (energia = potência média × 24 h) |
 | `base_horaria.csv` | ativo × hora | 16.128 linhas | Derivada (média de potência por hora) |
 | Referência (esperado) | ativo × dia da semana | janela anterior ao período avaliado | **Estimada** |
@@ -282,13 +281,13 @@ Registrar: perfil da pessoa (usuário real ou colega), resposta e dificuldade de
 
 # 15. Como reproduzir
 
-- **Entrada e onde obter:** `dados/recorte_minuto.csv.gz` (já incluso). Original: figshare, DOI 10.6084/m9.figshare.11726517, arquivo `2018Floor2.csv`.
-- **Ferramentas:** Python 3.14, pandas 3.0.5, numpy 2.5.2; Node 26 (só para a conferência cruzada); Chrome para as capturas.
-- **Ordem de execução**, na pasta `av1-grupo-3-mapen/`:
-  1. `python codigo/av1_desvio.py` (usa o recorte incluso; com `--fonte <2018Floor2.csv>` refaz o recorte e a qualidade)
-  2. `python codigo/conta_independente.py z1_AC1 2018-11-12 A`
-  3. `node codigo/conferencia_cruzada.js`
-  4. `python -m pytest codigo -q`
+- **Entrada e onde obter:** `dados/recorte_minuto.csv.gz` (já incluso). Original: figshare, DOI 10.6084/m9.figshare.11726517 (o artigo), arquivo `2018Floor2.csv` (id 21350166, cerca de 41 MB).
+- **Ferramentas:** Python 3.11 ou mais novo (testado em 3.11, 3.12 e 3.13, com pandas 3.0.6) e Node (só para a conferência cruzada; testado com Node 22); Chrome para as capturas. O autor produziu os resultados com Python 3.14, pandas 3.0.5, numpy 2.5.2 e Node 26; as bases e os resultados saem idênticos nas versões testadas. Instalação: `pip install -r requirements.txt` (pandas, numpy, pytest), de preferência num ambiente virtual.
+- **Ordem de execução**, na pasta `av1-grupo-3-mapen/` (saída esperada de cada passo no `LEIA-ME.md`):
+  1. `python codigo/av1_desvio.py` (usa o recorte incluso; regrava bases e resultados com o mesmo conteúdo; com `--fonte <2018Floor2.csv>` refaz o recorte e a qualidade)
+  2. `python codigo/conta_independente.py z1_AC1 2018-11-12 A` (desvio +5,3248 kWh, diferença 0,00003 kWh)
+  3. `node codigo/conferencia_cruzada.js` (2.016 comparações, 0 falhas)
+  4. `python -m pytest codigo -q` (5 testes passam)
 - **Abre o dashboard:** `dashboard/index.html` (duplo clique ou `python -m http.server` na pasta `dashboard`).
 - **Exportações e conferências:** `evidencias/` (resultados, qualidade, contrastes, capturas).
 
@@ -308,7 +307,7 @@ Registrar: perfil da pessoa (usuário real ou colega), resposta e dificuldade de
 
 - **Ferramentas:** Claude Code (Anthropic), usado por João Rietra, com as skills `apostila-avd` (regras de visualização extraídas da apostila da disciplina) e `data-visualization` (Anthropic).
 - **Finalidade, saída aproveitada e mudanças:** esboço do pipeline Python, do painel (HTML/JS/SVG) e deste relatório. O que foi aproveitado está em `codigo/`, `dashboard/` e neste texto; o desenho final das vistas, as decisões de referência e a redação foram revisados e ajustados após críticas do integrante (seção 9).
-- **Como verificamos:** teste unitário (4 casos), conta independente em biblioteca padrão (diferença 0,00003 kWh), conferência cruzada JavaScript × Python (2.016 valores, diferença máxima 0,0001), execução do painel no navegador nos recortes da seção 11, contrastes calculados.
+- **Como verificamos:** testes unitários (5 casos, incluindo o desempate do ranking por nome do ativo), conta independente em biblioteca padrão (diferença 0,00003 kWh), conferência cruzada JavaScript × Python (2.016 valores, diferença máxima 0,0001), execução do painel no navegador nos recortes da seção 11, contrastes calculados.
 - **O que não conseguimos verificar:** teste de leitura com pessoa externa, auditoria automática de acessibilidade e leitor de tela, e o calendário de feriados contra fonte oficial (só inferido dos dados e do conhecimento comum).
 - **Reutilizado de terceiros:** dados do CU-BEMS, Pipattanasomporn et al. (2020), *Scientific Data* 7:241, licença CC BY 4.0. Material da apostila da disciplina (prof. Victor Hugo Wanderley Freire) como fonte de regras. Código do repositório MAPEN (M1 a M3) apenas como contexto, não reaproveitado neste painel.
 

@@ -35,7 +35,7 @@ A conta do passo 2 usa só a biblioteca padrão do Python e lê o CSV bruto, sem
 
 ### Refazer o recorte a partir do arquivo original (opcional)
 
-O `dados/recorte_minuto.csv.gz` já está no pacote e basta para os passos acima. Para refazê-lo e o registro de qualidade, baixe `2018Floor2.csv` do CU-BEMS (https://doi.org/10.6084/m9.figshare.11726517, CC BY 4.0, Pipattanasomporn et al. 2020) e rode:
+O `dados/recorte_minuto.csv.gz` já está no pacote e basta para os passos acima. Para refazê-lo e o registro de qualidade, baixe `2018Floor2.csv` (cerca de 41 MB) do CU-BEMS (https://doi.org/10.6084/m9.figshare.11726517, CC BY 4.0, Pipattanasomporn et al. 2020) e rode:
 
 ```
 python codigo/av1_desvio.py --fonte caminho/para/2018Floor2.csv
