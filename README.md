@@ -30,6 +30,9 @@ ponto de partida para direcionar investimentos.
 mapen/
 ├── data/                  # datasets baixados e derivados (não versionado, ver abaixo)
 ├── src/                   # scripts avulsos de dados/plot
+│   ├── extract.py                 # lê CSV, Parquet e Excel
+│   ├── transform.py               # preserva os dados já pré-tratados
+│   ├── load.py                    # carrega tabelas no Neon
 │   ├── ons_load.py                # baixa datasets do portal ONS (CKAN)
 │   ├── redflags_perdas.py         # cruza EPE + SAMP, calcula perdas e redflags
 │   ├── plot_br_grid.py            # mapa da rede de distribuição
@@ -62,6 +65,9 @@ baixados a pedido mas estão fora do foco.
 # baixar dados do ONS
 .venv/bin/python src/ons_load.py <dataset-id> [--ano YYYY]
 
+# ETL: carrega as bases diária e horária da AV1 no Neon
+.venv/bin/python main.py
+
 # calcular perdas e redflags (gera CSVs em data/analise/)
 .venv/bin/python src/redflags_perdas.py [--plot] [--uf PE]
 
@@ -72,6 +78,11 @@ baixados a pedido mas estão fora do foco.
 ```
 
 Requer Python ≥ 3.11 e o ambiente virtual do projeto (`.venv/`).
+Para o ETL, configure `DATABASE_URL` com a URL PostgreSQL do Neon no ambiente ou
+em `.env`. O modo padrão `--if-exists replace` recria a tabela a cada execução;
+use `--if-exists append` para acrescentar linhas ou `--if-exists fail` para não
+substituir uma tabela existente. A transformação não altera os dados de entrada;
+o ETL não modifica os arquivos de origem.
 
 ## Docs
 
@@ -82,6 +93,7 @@ Requer Python ≥ 3.11 e o ambiente virtual do projeto (`.venv/`).
 - [`docs/perdas_energia_brasil.md`](docs/perdas_energia_brasil.md) — perdas de energia
 - [`docs/modelagem_redflags.md`](docs/modelagem_redflags.md) — abordagem de modelagem
 - [`docs/redflags_perdas_prototipo.md`](docs/redflags_perdas_prototipo.md) — protótipo de redflags
+- [`docs/etl.md`](docs/etl.md) — ETL de dados locais para o Neon
 
 ## Fora deste repo
 

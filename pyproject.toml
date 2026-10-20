@@ -21,6 +21,9 @@ dependencies = [
     "shap",
     "pyyaml",
     "python-dateutil",
+    "python-dotenv",
+    "sqlalchemy",
+    "psycopg[binary]",
     "fastapi",
     "uvicorn",
 ]
