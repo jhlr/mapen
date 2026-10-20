@@ -2,43 +2,34 @@
 
 **Atualizado em:** 2026-10-20
 
-O ETL em `main.py` usa exclusivamente os arquivos `base_diaria.csv` e
-`base_horaria.csv` em `av1-grupo-3-mapen/dados/`. Não lê outros arquivos do
-diretório nem dados de tarifas. Os scripts mantêm os nomes `src/extract.py`,
-`src/transform.py` e `src/load.py`.
+Pacote `src/mapen_etl/` (camadas `domain`/`application`/`infrastructure`/`interface`, contratos no
+import-linter). Lê só `base_diaria.csv` e `base_horaria.csv` de `av1-grupo-3-mapen/dados/` e grava
+cada uma em uma tabela de mesmo nome. Não lê outros arquivos (tarifas, por exemplo), não baixa dados
+e não calcula perdas nem redflags.
 
-## Fontes e tabelas de destino
-
-| Arquivo de entrada | Tabela Neon |
+| Arquivo | Tabela Neon |
 |---|---|
-| `av1-grupo-3-mapen/dados/base_diaria.csv` | `base_diaria` |
-| `av1-grupo-3-mapen/dados/base_horaria.csv` | `base_horaria` |
+| `base_diaria.csv` | `base_diaria` (`data` vira `TIMESTAMP`) |
+| `base_horaria.csv` | `base_horaria` (`inicio_hora` vira `TIMESTAMP`) |
 
-O ETL lê e valida os dois arquivos antes de iniciar a carga. Se qualquer um
-estiver ausente ou sem linhas, encerra com erro e não inicia a conexão com o Neon.
-Cada CSV é carregado separadamente em sua tabela correspondente.
+## Tratamento
 
-## Tratamento dos dados
+Os CSVs já chegam pré-tratados: não há etapa de transformação. A leitura só tipa as colunas de data,
+deixa o pandas inferir os demais tipos (booleanos viram `BOOLEAN`) e acrescenta `source_file` e
+`source_row` para rastrear a origem de cada linha. Colunas de entrada com esses nomes são recusadas.
 
-A extração lê os CSVs e adiciona `source_file` e `source_row` para registrar a
-origem de cada linha. A transformação é intencionalmente neutra: preserva colunas,
-valores e linhas já pré-tratados, sem limpeza ou conversões adicionais.
+## Execução
 
-## Configuração e execução
+Defina `DATABASE_URL` (URL PostgreSQL do Neon) no ambiente ou em `.env` na raiz; `.env` é ignorado
+pelo git. Depois de `pip install -e .`:
 
-Defina `DATABASE_URL` como a URL PostgreSQL do Neon no ambiente ou em `.env` na
-raiz do repositório. Não versione credenciais. Instale as dependências do projeto
-com `pip install -e .` no ambiente virtual e execute na raiz:
-
-```powershell
-.\.venv\Scripts\python.exe main.py
+```bash
+mapen-etl [--if-exists fail|append|replace] [--data-dir PASTA]
 ```
 
-O modo padrão `--if-exists replace` substitui as duas tabelas a cada execução.
-Use `--if-exists append` para acrescentar as linhas ou `--if-exists fail` para
-interromper se qualquer tabela já existir. O modo `append` pode duplicar dados ao
-reexecutar o pipeline.
+- `fail` (padrão): aborta se a tabela já existir; nada é apagado.
+- `append`: acrescenta; reexecutar duplica as linhas.
+- `replace`: apaga e recria a tabela. Só com pedido explícito.
 
-O ETL não baixa arquivos, não processa outros datasets ou geometrias GeoJSON e
-não calcula perdas ou redflags. Nenhuma tabela de tarifas é criada ou carregada
-por este fluxo.
+As duas bases são lidas e validadas antes de qualquer gravação: arquivo ausente ou vazio aborta sem
+tocar no Neon. Os testes (`tests/etl/`) usam SQLite; nenhuma gravação real no Neon foi feita.
