@@ -1,4 +1,4 @@
-"""Gravacao em PostgreSQL (Neon). A URL vem de `DATABASE_URL` (ambiente ou `.env`), nunca do codigo."""
+"""Etapa Load: gravacao em PostgreSQL (Neon). A URL vem de `DATABASE_URL` (ambiente ou `.env`), nunca do codigo."""
 
 from __future__ import annotations
 
@@ -22,7 +22,7 @@ def _com_driver(url: str) -> str:
     return url
 
 
-class GravadorNeon:
+class Load:
     def __init__(self, url: str | None = None) -> None:
         load_dotenv()
         bruta = url or os.getenv("DATABASE_URL")
@@ -30,7 +30,7 @@ class GravadorNeon:
             raise ValueError("Configure DATABASE_URL no ambiente ou no arquivo .env para conectar ao Neon.")
         self._url = _com_driver(bruta)
 
-    def gravar(self, conteudo: pd.DataFrame, tabela: str, modo: ModoCarga) -> int:
+    def load_neon(self, conteudo: pd.DataFrame, tabela: str, modo: ModoCarga) -> int:
         if not _NOME_TABELA.fullmatch(tabela):
             raise ValueError("O nome da tabela deve comecar por letra ou _ e ter so letras ASCII, numeros e _.")
         if modo not in _MODOS:

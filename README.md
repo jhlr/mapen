@@ -63,7 +63,7 @@ baixados a pedido mas estão fora do foco.
 .venv/bin/python src/ons_load.py <dataset-id> [--ano YYYY]
 
 # ETL: carrega as bases diária e horária da AV1 no Neon (DATABASE_URL no ambiente ou .env)
-.venv/bin/mapen-etl [--if-exists fail|append|replace]
+.venv/bin/mapen-etl [--if-exists replace|append|fail]   # Windows: .\.venv\Scripts\mapen-etl.exe
 
 # calcular perdas e redflags (gera CSVs em data/analise/)
 .venv/bin/python src/redflags_perdas.py [--plot] [--uf PE]

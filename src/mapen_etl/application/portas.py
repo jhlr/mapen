@@ -1,4 +1,4 @@
-"""Portas do ETL. O conteudo lido e opaco para a aplicacao (`T`): quem le e quem grava combinam o tipo."""
+"""Portas do ETL. O conteudo lido e opaco para a aplicacao (`T`): Extract e Load combinam o tipo."""
 
 from __future__ import annotations
 
@@ -11,9 +11,9 @@ T_co = TypeVar("T_co", covariant=True)
 T_contra = TypeVar("T_contra", contravariant=True)
 
 
-class LeitorBase(Protocol[T_co]):
-    def ler(self, base: BaseAv1, caminho: Path) -> T_co: ...
+class ExtractPort(Protocol[T_co]):
+    def extract(self, base: BaseAv1, caminho: Path) -> T_co: ...
 
 
-class GravadorTabela(Protocol[T_contra]):
-    def gravar(self, conteudo: T_contra, tabela: str, modo: ModoCarga) -> int: ...
+class LoadPort(Protocol[T_contra]):
+    def load_neon(self, conteudo: T_contra, tabela: str, modo: ModoCarga) -> int: ...
