@@ -10,6 +10,9 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 from matplotlib.lines import Line2D
 
+# graficos bonitos em matplotlib
+plt.style.use("seaborn-v0_8-muted")
+
 BASE = Path(__file__).resolve().parent.parent
 ONS_GRID = BASE / "data" / "power_grid_maps" / "ons_brasil"
 ONS_LOAD = BASE / "data" / "consumo" / "ons"
