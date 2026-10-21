@@ -21,6 +21,9 @@ dependencies = [
     "shap",
     "pyyaml",
     "python-dateutil",
+    "python-dotenv",
+    "sqlalchemy",
+    "psycopg[binary]",
     "fastapi",
     "uvicorn",
 ]
@@ -30,20 +33,21 @@ dev = ["pytest", "mypy", "pandas-stubs", "types-PyYAML", "types-python-dateutil"
 
 [project.scripts]
 mapen-simulador = "mapen_simulador.interface.cli:main"
+mapen-etl = "mapen_etl.interface.cli:main"
 
 [tool.setuptools]
 py-modules = []
 
 [tool.setuptools.packages.find]
 where = ["src"]
-include = ["mapen_aconselhamento*", "mapen_plataforma*", "mapen_modelos*", "mapen_simulador*"]
+include = ["mapen_aconselhamento*", "mapen_plataforma*", "mapen_modelos*", "mapen_simulador*", "mapen_etl*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 
 [tool.mypy]
 strict = true
-files = ["src/mapen_aconselhamento", "src/mapen_plataforma", "src/mapen_modelos", "src/mapen_simulador", "tests/m1", "tests/m2", "tests/m3", "tests/simulador", "tests/contratos"]
+files = ["src/mapen_aconselhamento", "src/mapen_plataforma", "src/mapen_modelos", "src/mapen_simulador", "src/mapen_etl", "tests/m1", "tests/m2", "tests/m3", "tests/simulador", "tests/etl", "tests/contratos"]
 
 # scikit-learn e statsmodels nao publicam marcador py.typed nem stubs: tipos Any so nas fronteiras
 # dos adaptadores de infraestrutura do M3.
@@ -52,7 +56,7 @@ module = ["sklearn.*", "statsmodels.*"]
 ignore_missing_imports = true
 
 [tool.importlinter]
-root_packages = ["mapen_aconselhamento", "mapen_plataforma", "mapen_modelos", "mapen_simulador"]
+root_packages = ["mapen_aconselhamento", "mapen_plataforma", "mapen_modelos", "mapen_simulador", "mapen_etl"]
 include_external_packages = true
 
 [[tool.importlinter.contracts]]
@@ -168,3 +172,35 @@ name = "Nenhuma outra peca depende do simulador"
 type = "forbidden"
 source_modules = ["mapen_aconselhamento", "mapen_plataforma", "mapen_modelos"]
 forbidden_modules = ["mapen_simulador"]
+
+[[tool.importlinter.contracts]]
+name = "ETL camadas: interface > infrastructure > application > domain"
+type = "layers"
+layers = [
+    "mapen_etl.interface",
+    "mapen_etl.infrastructure",
+    "mapen_etl.application",
+    "mapen_etl.domain",
+]
+
+[[tool.importlinter.contracts]]
+name = "ETL dominio e aplicacao sem I/O, banco nem outras pecas"
+type = "forbidden"
+source_modules = ["mapen_etl.domain", "mapen_etl.application"]
+forbidden_modules = [
+    "pandas",
+    "numpy",
+    "sqlalchemy",
+    "psycopg",
+    "dotenv",
+    "mapen_aconselhamento",
+    "mapen_plataforma",
+    "mapen_modelos",
+    "mapen_simulador",
+]
+
+[[tool.importlinter.contracts]]
+name = "Nenhuma outra peca depende do ETL"
+type = "forbidden"
+source_modules = ["mapen_aconselhamento", "mapen_plataforma", "mapen_modelos", "mapen_simulador"]
+forbidden_modules = ["mapen_etl"]

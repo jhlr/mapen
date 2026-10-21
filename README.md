@@ -62,6 +62,9 @@ baixados a pedido mas estão fora do foco.
 # baixar dados do ONS
 .venv/bin/python src/ons_load.py <dataset-id> [--ano YYYY]
 
+# ETL: carrega as bases diária e horária da AV1 no Neon (DATABASE_URL no ambiente ou .env)
+.venv/bin/mapen-etl [--if-exists replace|append|fail]   # Windows: .\.venv\Scripts\mapen-etl.exe
+
 # calcular perdas e redflags (gera CSVs em data/analise/)
 .venv/bin/python src/redflags_perdas.py [--plot] [--uf PE]
 
@@ -72,6 +75,7 @@ baixados a pedido mas estão fora do foco.
 ```
 
 Requer Python ≥ 3.11 e o ambiente virtual do projeto (`.venv/`).
+Para o ETL, configure `DATABASE_URL` com a URL PostgreSQL do Neon (ver [`docs/etl.md`](docs/etl.md)).
 
 ## Docs
 
@@ -82,6 +86,7 @@ Requer Python ≥ 3.11 e o ambiente virtual do projeto (`.venv/`).
 - [`docs/perdas_energia_brasil.md`](docs/perdas_energia_brasil.md) — perdas de energia
 - [`docs/modelagem_redflags.md`](docs/modelagem_redflags.md) — abordagem de modelagem
 - [`docs/redflags_perdas_prototipo.md`](docs/redflags_perdas_prototipo.md) — protótipo de redflags
+- [`docs/etl.md`](docs/etl.md) — ETL de dados locais para o Neon
 
 ## Fora deste repo
 
